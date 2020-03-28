@@ -1,4 +1,4 @@
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A collection of string extension methods.

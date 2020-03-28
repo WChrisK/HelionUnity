@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
 
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A collection of extensions for primitive numbers.

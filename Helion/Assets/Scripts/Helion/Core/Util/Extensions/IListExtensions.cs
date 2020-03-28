@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A collection of IList extension helpers.

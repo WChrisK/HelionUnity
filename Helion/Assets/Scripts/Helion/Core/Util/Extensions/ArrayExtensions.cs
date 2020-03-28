@@ -1,4 +1,4 @@
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A series of helper methods for an array.

@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Helion.Util.Extensions;
+using Helion.Core.Util.Extensions;
 
-namespace Helion.Util
+namespace Helion.Core.Util
 {
     /// <summary>
     /// A helper class that makes sure all its characters are upper case.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A group of enumerable range helpers.

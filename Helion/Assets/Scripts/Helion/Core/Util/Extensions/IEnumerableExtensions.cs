@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
 
-namespace Helion.Util.Extensions
+namespace Helion.Core.Util.Extensions
 {
     /// <summary>
     /// A collection of extensions for IEnumerable.

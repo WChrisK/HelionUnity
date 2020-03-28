@@ -5,7 +5,7 @@ using System.Linq;
 using MoreLinq;
 using UnityEngine;
 
-namespace Helion.Util
+namespace Helion.Core.Util
 {
     /// <summary>
     /// Parses the command line arguments.
