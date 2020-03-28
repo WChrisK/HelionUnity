@@ -1,4 +1,6 @@
-﻿using Helion.Core.Util;
+﻿using Helion.Core.Resource;
+using Helion.Core.Resource.Maps;
+using Helion.Core.Util;
 using UnityEngine;
 
 namespace Helion.Unity
@@ -16,7 +18,16 @@ namespace Helion.Unity
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeGame()
         {
-            // Wad.From(CommandLineArgs.First());
+            if (!GameData.Load(CommandLineArgs))
+            {
+                Debug.Log("Error loading archive data, aborting!");
+                Application.Quit(1);
+            }
+
+            Debug.Log("Ready!");
+
+            Optional<IMap> map = GameData.FindMap("MAP01");
+            Debug.Log($">>> {map.HasValue}");
         }
 
         private void Start()

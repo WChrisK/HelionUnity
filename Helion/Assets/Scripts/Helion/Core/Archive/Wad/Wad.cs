@@ -65,6 +65,8 @@ namespace Helion.Core.Archive.Wad
             return new List<IEntry>();
         }
 
+        public IArchiveMapIterator GetMaps() => new WadArchiveMapIterator(this);
+
         public IEnumerator<IEntry> GetEnumerator() => entries.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

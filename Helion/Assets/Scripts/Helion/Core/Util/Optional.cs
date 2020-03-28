@@ -51,8 +51,18 @@ namespace Helion.Core.Util
         /// </remarks>
         public static Optional<T> Empty() => new Optional<T>(null);
 
+        /// <summary>
+        /// Allows us to use this in boolean expressions.
+        /// </summary>
+        /// <param name="self">The optional value.</param>
+        /// <returns>True if it has a value, false if empty.</returns>
         public static implicit operator bool(Optional<T> self) => self.HasValue;
 
+        /// <summary>
+        /// A conversion value from an object to an optional.
+        /// </summary>
+        /// <param name="value">The value to make an optional from.</param>
+        /// <returns>The optional for the value.</returns>
         public static implicit operator Optional<T>(T value) => new Optional<T>(value);
 
         /// <summary>
@@ -96,7 +106,7 @@ namespace Helion.Core.Util
         /// is empty.</returns>
         public Optional<U> Map<U>(Func<T, U> func) where U : class
         {
-            return HasValue ? func(Value) : Optional<U>.Empty();
+            return new Optional<U>(HasValue ? func(Value) : null);
         }
 
         /// <summary>
