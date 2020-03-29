@@ -1,21 +1,24 @@
 ﻿using Helion.Core.Util;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Maps.Doom
 {
     public class DoomSidedef
     {
-        public DoomSector Sector;
+        public Vector2 Offset;
         public UpperString UpperTexture;
         public UpperString MiddleTexture;
         public UpperString LowerTexture;
+        public DoomSector Sector;
         public DoomLinedef Line;
 
-        public DoomSidedef(DoomSector sector, UpperString upper, UpperString middle, UpperString lower)
+        public DoomSidedef(Vector2 offset, UpperString upper, UpperString middle, UpperString lower, DoomSector sector)
         {
-            Sector = sector;
+            Offset = offset;
             UpperTexture = upper;
             MiddleTexture = middle;
             LowerTexture = lower;
+            Sector = sector;
         }
     }
 }

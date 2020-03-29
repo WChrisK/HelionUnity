@@ -1,27 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Core.Resource.Maps.Shared;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Maps.Doom
 {
     public class DoomMap : IMap
     {
+        private const int BytesPerLine = 14;
+        protected const int BytesPerSector = 26;
+        protected const int BytesPerSide = 30;
+        private const int BytesPerThing = 10;
+        protected const int BytesPerVertex = 4;
+        public const ushort NoSidedef = (ushort)0xFFFFU;
+
         public readonly IList<DoomVertex> Vertices;
         public readonly IList<DoomVertex> GLVertices;
         public readonly IList<DoomSector> Sectors;
         public readonly IList<DoomSidedef> Sidedefs;
         public readonly IList<DoomLinedef> Linedefs;
         public readonly IList<DoomThing> Things;
+        public readonly IList<GLSubsector> Subsectors;
         public readonly IList<GLNode> Nodes;
 
         public MapType Type => MapType.Doom;
 
         private DoomMap(IList<DoomVertex> vertices, IList<DoomVertex> glVertices,
             IList<DoomSector> sectors, IList<DoomSidedef> sidedefs, IList<DoomLinedef> linedefs,
-            IList<DoomThing> things, IList<GLNode> nodes)
+            IList<DoomThing> things, IList<GLSubsector> subsectors, IList<GLNode> nodes)
         {
             Vertices = vertices;
             GLVertices = glVertices;
@@ -29,6 +39,7 @@ namespace Helion.Core.Resource.Maps.Doom
             Sidedefs = sidedefs;
             Linedefs = linedefs;
             Things = things;
+            Subsectors = subsectors;
             Nodes = nodes;
         }
 
@@ -40,14 +51,16 @@ namespace Helion.Core.Resource.Maps.Doom
             try
             {
                 IList<DoomVertex> vertices = ReadVertices(components);
-                IList<DoomVertex> glVertices = ReadGLVertices(components);
+                IList<DoomVertex> glVertices = GLReader.ReadDoomGLVertices(components);
                 IList<DoomSector> sectors = ReadSectors(components);
                 IList<DoomSidedef> sidedefs = ReadSidedefs(components, sectors);
-                IList<DoomLinedef> linedefs = ReadLinedefs(components, sidedefs);
+                IList<DoomLinedef> linedefs = ReadLinedefs(components, vertices, sidedefs);
                 IList<DoomThing> things = ReadThings(components);
-                IList<GLNode> nodes = ReadGLNodes(components, vertices, glVertices);
+                IList<GLSubsector> subsectors = GLReader.ReadDoomGLSubsectors(components, vertices, glVertices);
+                IList<GLNode> nodes = GLReader.ReadDoomGLNodes(components, subsectors);
+                AssertWellFormedGeometryOrThrow(sidedefs, linedefs, subsectors);
 
-                IMap map = new DoomMap(vertices, glVertices, sectors, sidedefs, linedefs, things, nodes);
+                IMap map = new DoomMap(vertices, glVertices, sectors, sidedefs, linedefs, things, subsectors, nodes);
                 return new Optional<IMap>(map);
             }
             catch
@@ -58,11 +71,11 @@ namespace Helion.Core.Resource.Maps.Doom
 
         internal static IList<DoomVertex> ReadVertices(MapComponents components)
         {
-            IList<DoomVertex> vertices = new List<DoomVertex>();
+            List<DoomVertex> vertices = new List<DoomVertex>();
 
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.Vertices.Value.Data);
 
-            int count = reader.Length / 4;
+            int count = reader.Length / BytesPerVertex;
             for (int i = 0; i < count; i++)
             {
                 float x = reader.Short();
@@ -74,56 +87,114 @@ namespace Helion.Core.Resource.Maps.Doom
             return vertices;
         }
 
-        internal static IList<DoomVertex> ReadGLVertices(MapComponents components)
-        {
-            IList<DoomVertex> glVertices = new List<DoomVertex>();
-
-            ByteReader reader = ByteReader.From(ByteOrder.Little, components.GLVertices.Value.Data);
-
-            string header = reader.String(4);
-            if (header != "gNd2")
-                throw new Exception("Currently unsupported (expected gNd2 for GL_VERT)");
-
-            int count = (reader.Length - 4) / 8;
-            for (int i = 0; i < count; i++)
-            {
-                float x = new Fixed(reader.Int()).Float();
-                float y = new Fixed(reader.Int()).Float();
-                DoomVertex vertex = new DoomVertex(x, y);
-                glVertices.Add(vertex);
-            }
-
-            return glVertices;
-        }
-
         internal static IList<DoomSector> ReadSectors(MapComponents components)
         {
-            // TODO
-            return new List<DoomSector>();
+            List<DoomSector> sectors = new List<DoomSector>();
+
+            ByteReader reader = ByteReader.From(ByteOrder.Little, components.Sectors.Value.Data);
+
+            int count = reader.Length / BytesPerSector;
+            for (int i = 0; i < count; i++)
+            {
+                short floorHeight = reader.Short();
+                short ceilingHeight = reader.Short();
+                string floorTexture = reader.StringWithoutNulls(8).ToUpper();
+                string ceilTexture = reader.StringWithoutNulls(8).ToUpper();
+                short lightLevel = reader.Short();
+                ushort specialBits = reader.UShort();
+                ushort tag = reader.UShort();
+
+                DoomSector sector = new DoomSector(floorHeight, ceilingHeight, floorTexture, ceilTexture, lightLevel, specialBits, tag);
+                sectors.Add(sector);
+            }
+
+            return sectors;
         }
 
         internal static IList<DoomSidedef> ReadSidedefs(MapComponents components, IList<DoomSector> sectors)
         {
-            // TODO
-            return new List<DoomSidedef>();
+            List<DoomSidedef> sides = new List<DoomSidedef>();
+
+            ByteReader reader = ByteReader.From(ByteOrder.Little, components.Sidedefs.Value.Data);
+
+            int count = reader.Length / BytesPerSide;
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 offset = new Vector2(reader.Short(), reader.Short());
+                UpperString upperTexture = reader.StringWithoutNulls(8);
+                UpperString lowerTexture = reader.StringWithoutNulls(8);
+                UpperString middleTexture = reader.StringWithoutNulls(8);
+                DoomSector sector = sectors[reader.UShort()];
+
+                DoomSidedef side = new DoomSidedef(offset, upperTexture, middleTexture, lowerTexture, sector);
+                sides.Add(side);
+            }
+
+            return sides;
         }
 
-        internal static IList<DoomLinedef> ReadLinedefs(MapComponents components, IList<DoomSidedef> sidedefs)
+        internal static IList<DoomLinedef> ReadLinedefs(MapComponents components, IList<DoomVertex> vertices,
+            IList<DoomSidedef> sidedefs)
         {
-            // TODO
-            return new List<DoomLinedef>();
+            List<DoomLinedef> lines = new List<DoomLinedef>();
+
+            ByteReader reader = ByteReader.From(ByteOrder.Little, components.Linedefs.Value.Data);
+
+            int count = reader.Length / BytesPerLine;
+            for (int i = 0; i < count; i++)
+            {
+                DoomVertex startVertex = vertices[reader.UShort()];
+                DoomVertex endVertex = vertices[reader.UShort()];
+                ushort flags = reader.UShort();
+                ushort type = reader.UShort();
+                ushort sectorTag = reader.UShort();
+                DoomSidedef front = sidedefs[reader.UShort()];
+                ushort leftSidedef = reader.UShort();
+                DoomSidedef back = (leftSidedef != NoSidedef ? sidedefs[leftSidedef] : null);
+
+                DoomLinedef line = new DoomLinedef(startVertex, endVertex, front, back, flags, type, sectorTag);
+                lines.Add(line);
+
+                front.Line = line;
+                if (back != null)
+                    back.Line = line;
+            }
+
+            return lines;
         }
 
         internal static IList<DoomThing> ReadThings(MapComponents components)
         {
-            // TODO
-            return new List<DoomThing>();
+            List<DoomThing> things = new List<DoomThing>();
+
+            ByteReader reader = ByteReader.From(ByteOrder.Little, components.Things.Value.Data);
+
+            int count = reader.Length / BytesPerThing;
+            for (int id = 0; id < count; id++)
+            {
+                float x = new Fixed(reader.Short(), 0).Float();
+                float y = new Fixed(reader.Short(), 0).Float();
+                Vector2 position = new Vector2(x, y);
+                ushort angle = reader.UShort();
+                ushort editorNumber = reader.UShort();
+                ushort flags = reader.UShort();
+
+                DoomThing thing = new DoomThing(position, angle, editorNumber, flags);
+                things.Add(thing);
+            }
+
+            return things;
         }
 
-        internal static IList<GLNode> ReadGLNodes(MapComponents components, IList<DoomVertex> vertices, IList<DoomVertex> glVertices)
+        private static void AssertWellFormedGeometryOrThrow(IEnumerable<DoomSidedef> sidedefs,
+            IEnumerable<DoomLinedef> linedefs, IEnumerable<GLSubsector> subsectors)
         {
-            // TODO
-            return new List<GLNode>();
+            if (sidedefs.Any(side => side.Line == null))
+                throw new Exception("Missing parent line for side");
+            if (linedefs.Any(line => line.Front == null))
+                throw new Exception("Missing front side for line");
+            if (subsectors.Any(subsector => subsector.Vertices.Count < 3))
+                throw new Exception("Subsector is degenerate");
         }
     }
 }

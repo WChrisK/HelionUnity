@@ -12,7 +12,8 @@ namespace Helion.Core.Resource.Maps.Doom
         public readonly DoomSidedef Front;
         public readonly Optional<DoomSidedef> Back;
 
-        public DoomLinedef(DoomVertex start, DoomVertex end, DoomSidedef front, DoomSidedef back = null)
+        public DoomLinedef(DoomVertex start, DoomVertex end, DoomSidedef front, DoomSidedef back,
+            ushort type, ushort flags, ushort sectorTag)
         {
             Start = start;
             End = end;
