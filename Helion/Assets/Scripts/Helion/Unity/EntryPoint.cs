@@ -27,7 +27,6 @@ namespace Helion.Unity
             Debug.Log("Ready!");
 
             Optional<IMap> map = GameData.FindMap("MAP01");
-            Debug.Log($">>> {map.HasValue}");
         }
 
         private void Start()

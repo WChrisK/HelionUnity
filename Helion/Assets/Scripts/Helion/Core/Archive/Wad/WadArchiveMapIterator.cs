@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
-using Helion.Core.Util.Extensions;
 
 namespace Helion.Core.Archive.Wad
 {
-/// <summary>
+    /// <summary>
     /// A map finding iterator for a wad archive.
     /// </summary>
     public class WadArchiveMapIterator : IArchiveMapIterator

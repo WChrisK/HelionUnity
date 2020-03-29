@@ -32,5 +32,7 @@ namespace Helion.Core.Archive.Wad
             Data = data;
             Name = Path.Name;
         }
+
+        public override string ToString() => Path.ToString();
     }
 }
