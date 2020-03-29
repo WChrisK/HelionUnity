@@ -18,20 +18,22 @@ namespace Helion.Core.Resource.Maps.Doom
         protected const int BytesPerVertex = 4;
         public const ushort NoSidedef = (ushort)0xFFFFU;
 
-        public readonly IList<DoomVertex> Vertices;
-        public readonly IList<DoomVertex> GLVertices;
+        public readonly IList<MapVertex> Vertices;
+        public readonly IList<MapVertex> GLVertices;
         public readonly IList<DoomSector> Sectors;
         public readonly IList<DoomSidedef> Sidedefs;
         public readonly IList<DoomLinedef> Linedefs;
         public readonly IList<DoomThing> Things;
+        public readonly IList<GLSegment> Segments;
         public readonly IList<GLSubsector> Subsectors;
         public readonly IList<GLNode> Nodes;
 
         public MapType Type => MapType.Doom;
 
-        private DoomMap(IList<DoomVertex> vertices, IList<DoomVertex> glVertices,
+        private DoomMap(IList<MapVertex> vertices, IList<MapVertex> glVertices,
             IList<DoomSector> sectors, IList<DoomSidedef> sidedefs, IList<DoomLinedef> linedefs,
-            IList<DoomThing> things, IList<GLSubsector> subsectors, IList<GLNode> nodes)
+            IList<DoomThing> things, IList<GLSegment> segments, IList<GLSubsector> subsectors,
+            IList<GLNode> nodes)
         {
             Vertices = vertices;
             GLVertices = glVertices;
@@ -39,6 +41,7 @@ namespace Helion.Core.Resource.Maps.Doom
             Sidedefs = sidedefs;
             Linedefs = linedefs;
             Things = things;
+            Segments = segments;
             Subsectors = subsectors;
             Nodes = nodes;
         }
@@ -50,17 +53,18 @@ namespace Helion.Core.Resource.Maps.Doom
 
             try
             {
-                IList<DoomVertex> vertices = ReadVertices(components);
-                IList<DoomVertex> glVertices = GLReader.ReadDoomGLVertices(components);
+                IList<MapVertex> vertices = ReadVertices(components);
+                IList<MapVertex> glVertices = GLReader.ReadGLVertices(components);
                 IList<DoomSector> sectors = ReadSectors(components);
                 IList<DoomSidedef> sidedefs = ReadSidedefs(components, sectors);
                 IList<DoomLinedef> linedefs = ReadLinedefs(components, vertices, sidedefs);
                 IList<DoomThing> things = ReadThings(components);
-                IList<GLSubsector> subsectors = GLReader.ReadDoomGLSubsectors(components, vertices, glVertices);
-                IList<GLNode> nodes = GLReader.ReadDoomGLNodes(components, subsectors);
+                IList<GLSegment> segments = GLReader.ReadGLSegments(components, vertices, glVertices);
+                IList<GLSubsector> subsectors = GLReader.ReadGLSubsectors(components, segments);
+                IList<GLNode> nodes = GLReader.ReadGLNodes(components, subsectors);
                 AssertWellFormedGeometryOrThrow(sidedefs, linedefs, subsectors);
 
-                IMap map = new DoomMap(vertices, glVertices, sectors, sidedefs, linedefs, things, subsectors, nodes);
+                IMap map = new DoomMap(vertices, glVertices, sectors, sidedefs, linedefs, things, segments, subsectors, nodes);
                 return new Optional<IMap>(map);
             }
             catch
@@ -69,9 +73,9 @@ namespace Helion.Core.Resource.Maps.Doom
             }
         }
 
-        internal static IList<DoomVertex> ReadVertices(MapComponents components)
+        internal static IList<MapVertex> ReadVertices(MapComponents components)
         {
-            List<DoomVertex> vertices = new List<DoomVertex>();
+            List<MapVertex> vertices = new List<MapVertex>();
 
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.Vertices.Value.Data);
 
@@ -80,7 +84,7 @@ namespace Helion.Core.Resource.Maps.Doom
             {
                 float x = reader.Short();
                 float y = reader.Short();
-                DoomVertex vertex = new DoomVertex(x, y);
+                MapVertex vertex = new MapVertex(x, y);
                 vertices.Add(vertex);
             }
 
@@ -133,7 +137,7 @@ namespace Helion.Core.Resource.Maps.Doom
             return sides;
         }
 
-        internal static IList<DoomLinedef> ReadLinedefs(MapComponents components, IList<DoomVertex> vertices,
+        internal static IList<DoomLinedef> ReadLinedefs(MapComponents components, IList<MapVertex> vertices,
             IList<DoomSidedef> sidedefs)
         {
             List<DoomLinedef> lines = new List<DoomLinedef>();
@@ -143,8 +147,8 @@ namespace Helion.Core.Resource.Maps.Doom
             int count = reader.Length / BytesPerLine;
             for (int i = 0; i < count; i++)
             {
-                DoomVertex startVertex = vertices[reader.UShort()];
-                DoomVertex endVertex = vertices[reader.UShort()];
+                MapVertex startVertex = vertices[reader.UShort()];
+                MapVertex endVertex = vertices[reader.UShort()];
                 ushort flags = reader.UShort();
                 ushort type = reader.UShort();
                 ushort sectorTag = reader.UShort();
@@ -193,7 +197,7 @@ namespace Helion.Core.Resource.Maps.Doom
                 throw new Exception("Missing parent line for side");
             if (linedefs.Any(line => line.Front == null))
                 throw new Exception("Missing front side for line");
-            if (subsectors.Any(subsector => subsector.Vertices.Count < 3))
+            if (subsectors.Any(subsector => subsector.Segments.Count < 3))
                 throw new Exception("Subsector is degenerate");
         }
     }

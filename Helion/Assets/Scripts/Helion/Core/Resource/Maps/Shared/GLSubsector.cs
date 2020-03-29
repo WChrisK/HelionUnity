@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Helion.Core.Resource.Maps.Shared
 {
@@ -9,17 +8,17 @@ namespace Helion.Core.Resource.Maps.Shared
     public class GLSubsector
     {
         /// <summary>
-        /// A collection of the clockwise convex vertices.
+        /// A collection of the clockwise segments.
         /// </summary>
-        public readonly IList<Vector2> Vertices;
+        public readonly IList<GLSegment> Segments;
 
         /// <summary>
-        /// Creates a subsector from a list of clockwise convex vertices.
+        /// Creates a subsector from a list of clockwise segments.
         /// </summary>
-        /// <param name="vertices">The subsector vertices.</param>
-        public GLSubsector(IList<Vector2> vertices)
+        /// <param name="segments">The subsector segments.</param>
+        public GLSubsector(IList<GLSegment> segments)
         {
-            Vertices = vertices;
+            Segments = segments;
         }
     }
 }

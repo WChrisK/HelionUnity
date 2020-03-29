@@ -5,8 +5,16 @@ using UnityEngine;
 
 namespace Helion.Unity
 {
+    /// <summary>
+    /// The single object in the world that is used to act as a game controller
+    /// and do required tasks like reading the archive data, spawn everything
+    /// into the levels, and manage everything.
+    /// </summary>
     public class EntryPoint : MonoBehaviour
     {
+        /// <summary>
+        /// The runtime command line arguments.
+        /// </summary>
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
 
         /// <summary>
@@ -23,14 +31,21 @@ namespace Helion.Unity
                 Debug.Log("Error loading archive data, aborting!");
                 Application.Quit(1);
             }
-
-            Debug.Log("Ready!");
-
-            Optional<IMap> map = GameData.FindMap("MAP01");
         }
 
         private void Start()
         {
+            // --------------------------------------------
+            // The following is all temporary testing code.
+            // --------------------------------------------
+            Optional<IMap> map = GameData.FindMap("MAP01");
+            if (!map)
+            {
+                Debug.Log("Error loading MAP01");
+                return;
+            }
+
+            Debug.Log("Loaded MAP01");
         }
 
         private void Update()

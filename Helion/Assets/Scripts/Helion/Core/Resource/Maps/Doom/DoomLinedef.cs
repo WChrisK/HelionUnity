@@ -1,4 +1,5 @@
-﻿using Helion.Core.Util;
+﻿using Helion.Core.Resource.Maps.Shared;
+using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Maps.Doom
 {
@@ -7,12 +8,12 @@ namespace Helion.Core.Resource.Maps.Doom
     /// </summary>
     public class DoomLinedef
     {
-        public readonly DoomVertex Start;
-        public readonly DoomVertex End;
+        public readonly MapVertex Start;
+        public readonly MapVertex End;
         public readonly DoomSidedef Front;
         public readonly Optional<DoomSidedef> Back;
 
-        public DoomLinedef(DoomVertex start, DoomVertex end, DoomSidedef front, DoomSidedef back,
+        public DoomLinedef(MapVertex start, MapVertex end, DoomSidedef front, DoomSidedef back,
             ushort type, ushort flags, ushort sectorTag)
         {
             Start = start;

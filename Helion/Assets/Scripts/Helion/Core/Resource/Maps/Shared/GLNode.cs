@@ -44,36 +44,15 @@ namespace Helion.Core.Resource.Maps.Shared
         /// </summary>
         public Optional<GLSubsector> RightSubsector;
 
-        public GLNode(Line2 partition, Rect rightBox, Rect leftBox, GLNode leftNode, GLNode rightNode) :
-            this(partition, rightBox, leftBox, leftNode, rightNode, null, null)
-        {
-        }
-
-        public GLNode(Line2 partition, Rect rightBox, Rect leftBox, GLNode leftNode, GLSubsector rightSubsector) :
-            this(partition, rightBox, leftBox, leftNode, null, null, rightSubsector)
-        {
-        }
-
-        public GLNode(Line2 partition, Rect rightBox, Rect leftBox, GLSubsector leftSubsector, GLNode rightNode) :
-            this(partition, rightBox, leftBox, null, rightNode, leftSubsector, null)
-        {
-        }
-
-        public GLNode(Line2 partition, Rect rightBox, Rect leftBox, GLSubsector leftSubsector, GLSubsector rightSubsector) :
-            this(partition, rightBox, leftBox, null, null, leftSubsector, rightSubsector)
-        {
-        }
-
-        private GLNode(Line2 partition, Rect rightBox, Rect leftBox, GLNode leftNode, GLNode rightNode,
-                       GLSubsector leftSubsector, GLSubsector rightSubsector)
+        public GLNode(Line2 partition, Rect rightBox, Rect leftBox)
         {
             Partition = partition;
             RightBox = rightBox;
             LeftBox = leftBox;
-            LeftNode = leftNode;
-            RightNode = rightNode;
-            LeftSubsector = leftSubsector;
-            RightSubsector = rightSubsector;
+            LeftNode = new Optional<GLNode>();
+            RightNode = new Optional<GLNode>();
+            LeftSubsector = new Optional<GLSubsector>();
+            RightSubsector = new Optional<GLSubsector>();
         }
     }
 }
