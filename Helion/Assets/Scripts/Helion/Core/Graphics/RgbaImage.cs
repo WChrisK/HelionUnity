@@ -77,7 +77,7 @@ namespace Helion.Core.Graphics
         /// <returns>A 2D texture made of the pixels from this image.</returns>
         public Texture2D ToTexture()
         {
-            Texture2D texture = new Texture2D(Width, Height);
+            Texture2D texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
 
             // Note: This assumes the bottom left is the origin. We assume the
             // top left is the origin. As such, the UV coordinates will need to

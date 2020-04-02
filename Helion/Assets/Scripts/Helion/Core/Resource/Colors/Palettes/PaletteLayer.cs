@@ -36,7 +36,10 @@ namespace Helion.Core.Resource.Colors.Palettes
             for (int i = 0; i < ColorsPerLayer; i++)
             {
                 int offset = dataOffset + (i * BytesPerColor);
-                colors[i] = new Color(data[offset], data[offset + 1], data[offset + 2]);
+                float r = data[offset] / 255.0f;
+                float g = data[offset + 1] / 255.0f;
+                float b = data[offset + 2] / 255.0f;
+                colors[i] = new Color(r, g, b);
             }
 
             return new PaletteLayer(colors);

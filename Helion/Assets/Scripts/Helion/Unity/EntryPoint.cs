@@ -46,6 +46,13 @@ namespace Helion.Unity
             }
 
             Debug.Log("Loaded MAP01");
+
+            GameObject quad = GameObject.FindWithTag("Quad");
+            if (quad)
+            {
+                Material brnsmal1 = GameData.Resources.TextureManager.Materials["BRNSMAL1"];
+                quad.GetComponent<Renderer>().material = brnsmal1;
+            }
         }
 
         private void Update()
