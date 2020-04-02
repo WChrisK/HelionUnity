@@ -19,6 +19,10 @@ namespace Helion.Unity
 
         private float cameraPitch;
         private float cameraYaw;
+        private float yawSensitivity = 2.0f;
+        private float pitchSensitivity = 1.0f;
+        private string fpsText;
+        private float deltaTime;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -61,6 +65,7 @@ namespace Helion.Unity
         void Update()
         {
             UpdateCamera();
+            UpdateFPS();
         }
 
         void FixedUpdate()
@@ -69,8 +74,8 @@ namespace Helion.Unity
 
         void OnGUI()
         {
-            // GUI.Label(new Rect(200, 200, 100, 15), "Hello!");
-            //
+            GUI.Label(new Rect(4, 4, 100, 25), $"FPS: {fpsText}");
+
             // if (GUI.Button(new Rect(10, 10, 150, 100), "I am a button"))
             //     print("You clicked the button!");
         }
@@ -93,8 +98,8 @@ namespace Helion.Unity
             if (Input.GetKey(KeyCode.C))
                 cameraTransform.Translate(new Vector3(0, -Constants.MapUnit, 0));
 
-            cameraPitch += Input.GetAxisRaw("Mouse Y");
-            cameraYaw += Input.GetAxisRaw("Mouse X");
+            cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
+            cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
 
             cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
             while (cameraYaw < 0)
@@ -103,6 +108,13 @@ namespace Helion.Unity
                 cameraYaw -= 360;
 
             cameraTransform.eulerAngles = new Vector3(-cameraPitch, cameraYaw, 0f);
+        }
+
+        private void UpdateFPS()
+        {
+            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+            float fps = 1.0f / deltaTime;
+            fpsText = Mathf.Ceil(fps).ToString();
         }
     }
 }
