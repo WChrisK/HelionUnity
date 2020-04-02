@@ -1,7 +1,7 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Util;
 
-namespace Helion.Core.Archive.Wad
+namespace Helion.Core.Archives.Wad
 {
     /// <summary>
     /// An entry in a wad file.

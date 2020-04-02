@@ -1,7 +1,7 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Util;
 
-namespace Helion.Core.Archive
+namespace Helion.Core.Archives
 {
     /// <summary>
     /// An entry in an archive.

@@ -1,4 +1,4 @@
-﻿namespace Helion.Core.Archive.Wad
+﻿namespace Helion.Core.Archives.Wad
 {
     /// <summary>
     /// The header for a wad archive.

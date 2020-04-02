@@ -4,7 +4,7 @@ using System.Linq;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 
-namespace Helion.Core.Archive
+namespace Helion.Core.Archives
 {
     /// <summary>
     /// A path for an entry.

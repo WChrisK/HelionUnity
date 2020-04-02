@@ -1,4 +1,4 @@
-﻿using Helion.Core.Archive;
+﻿using Helion.Core.Archives;
 using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Maps

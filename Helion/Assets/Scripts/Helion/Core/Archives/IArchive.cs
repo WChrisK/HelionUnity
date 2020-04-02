@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Util;
 
-namespace Helion.Core.Archive
+namespace Helion.Core.Archives
 {
     /// <summary>
     /// An archive that contains entries.

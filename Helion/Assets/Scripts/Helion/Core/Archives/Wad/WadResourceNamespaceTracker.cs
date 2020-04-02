@@ -2,7 +2,7 @@
 using Helion.Core.Resource;
 using Helion.Core.Util;
 
-namespace Helion.Core.Archive.Wad
+namespace Helion.Core.Archives.Wad
 {
     /// <summary>
     /// Tracks namespace changes to always yield the proper namespace when

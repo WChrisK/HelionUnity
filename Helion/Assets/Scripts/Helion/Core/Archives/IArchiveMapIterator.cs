@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Resource.Maps;
 
-namespace Helion.Core.Archive
+namespace Helion.Core.Archives
 {
     /// <summary>
     /// An iterator for some archive that finds maps.

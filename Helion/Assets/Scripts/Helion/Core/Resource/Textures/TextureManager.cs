@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Helion.Core.Archive;
+using Helion.Core.Archives;
 using Helion.Core.Graphics;
 using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;

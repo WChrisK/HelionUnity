@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Helion.Core.Archive;
-using Helion.Core.Archive.Wad;
+using Helion.Core.Archives;
+using Helion.Core.Archives.Wad;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
