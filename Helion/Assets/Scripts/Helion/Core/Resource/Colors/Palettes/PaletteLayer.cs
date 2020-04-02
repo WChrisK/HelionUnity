@@ -1,4 +1,5 @@
-﻿using Helion.Core.Util;
+﻿using System;
+using Helion.Core.Util;
 using UnityEngine;
 
 namespace Helion.Core.Resource.Colors.Palettes
@@ -45,6 +46,13 @@ namespace Helion.Core.Resource.Colors.Palettes
             return new PaletteLayer(colors);
         }
 
+        /// <summary>
+        /// Gets the color at the index provided.
+        /// </summary>
+        /// <param name="index">The color index.
+        /// </param>
+        /// <exception cref="IndexOutOfRangeException">If the index is not in
+        /// the palette value range.</exception>
         public Color this[int index] => colors[index];
     }
 }

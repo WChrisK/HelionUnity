@@ -33,7 +33,7 @@ namespace Helion.Unity
             }
         }
 
-        private void Start()
+        void Start()
         {
             // --------------------------------------------
             // The following is all temporary testing code.
@@ -55,20 +55,47 @@ namespace Helion.Unity
             }
         }
 
-        private void Update()
+        void Update()
+        {
+            UpdateCamera();
+        }
+
+        void FixedUpdate()
         {
         }
 
-        private void FixedUpdate()
-        {
-        }
-
-        private void OnGUI()
+        void OnGUI()
         {
             // GUI.Label(new Rect(200, 200, 100, 15), "Hello!");
             //
             // if (GUI.Button(new Rect(10, 10, 150, 100), "I am a button"))
             //     print("You clicked the button!");
+        }
+
+        private void UpdateCamera()
+        {
+            Camera camera = Camera.main;
+            Transform transform = camera.transform;
+
+            float rotateHorizontal = Input.GetAxisRaw("Mouse X");
+            float rotateVertical = Input.GetAxisRaw("Mouse Y");
+
+            if (Input.GetKey(KeyCode.W))
+                transform.Translate(new Vector3(0, 0, Constants.MapUnit));
+            if (Input.GetKey(KeyCode.A))
+                transform.Translate(new Vector3(-Constants.MapUnit, 0, 0));
+            if (Input.GetKey(KeyCode.S))
+                transform.Translate(new Vector3(0, 0, -Constants.MapUnit));
+            if (Input.GetKey(KeyCode.D))
+                transform.Translate(new Vector3(Constants.MapUnit, 0, 0));
+            if (Input.GetKey(KeyCode.Space))
+                transform.Translate(new Vector3(0, Constants.MapUnit, 0));
+            if (Input.GetKey(KeyCode.C))
+                transform.Translate(new Vector3(0, -Constants.MapUnit, 0));
+
+            float sensitivity = 1.0f;
+            transform.Rotate(-transform.right * rotateVertical * sensitivity);
+            transform.Rotate(transform.up * rotateHorizontal * sensitivity);
         }
     }
 }
