@@ -17,6 +17,9 @@ namespace Helion.Unity
         /// </summary>
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
 
+        private float cameraPitch;
+        private float cameraYaw;
+
         /// <summary>
         /// Called before anything in the game loads, which can be used to
         /// initialize all the managers and data before anything starts. If
@@ -72,30 +75,34 @@ namespace Helion.Unity
             //     print("You clicked the button!");
         }
 
+        // TODO: This is temporary code
         private void UpdateCamera()
         {
-            Camera camera = Camera.main;
-            Transform transform = camera.transform;
-
-            float rotateHorizontal = Input.GetAxisRaw("Mouse X");
-            float rotateVertical = Input.GetAxisRaw("Mouse Y");
+            Transform cameraTransform = Camera.main.transform;
 
             if (Input.GetKey(KeyCode.W))
-                transform.Translate(new Vector3(0, 0, Constants.MapUnit));
+                cameraTransform.Translate(new Vector3(0, 0, Constants.MapUnit));
             if (Input.GetKey(KeyCode.A))
-                transform.Translate(new Vector3(-Constants.MapUnit, 0, 0));
+                cameraTransform.Translate(new Vector3(-Constants.MapUnit, 0, 0));
             if (Input.GetKey(KeyCode.S))
-                transform.Translate(new Vector3(0, 0, -Constants.MapUnit));
+                cameraTransform.Translate(new Vector3(0, 0, -Constants.MapUnit));
             if (Input.GetKey(KeyCode.D))
-                transform.Translate(new Vector3(Constants.MapUnit, 0, 0));
+                cameraTransform.Translate(new Vector3(Constants.MapUnit, 0, 0));
             if (Input.GetKey(KeyCode.Space))
-                transform.Translate(new Vector3(0, Constants.MapUnit, 0));
+                cameraTransform.Translate(new Vector3(0, Constants.MapUnit, 0));
             if (Input.GetKey(KeyCode.C))
-                transform.Translate(new Vector3(0, -Constants.MapUnit, 0));
+                cameraTransform.Translate(new Vector3(0, -Constants.MapUnit, 0));
 
-            float sensitivity = 1.0f;
-            transform.Rotate(-transform.right * rotateVertical * sensitivity);
-            transform.Rotate(transform.up * rotateHorizontal * sensitivity);
+            cameraPitch += Input.GetAxisRaw("Mouse Y");
+            cameraYaw += Input.GetAxisRaw("Mouse X");
+
+            cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
+            while (cameraYaw < 0)
+                cameraYaw += 360;
+            while (cameraYaw >= 360)
+                cameraYaw -= 360;
+
+            cameraTransform.eulerAngles = new Vector3(-cameraPitch, cameraYaw, 0f);
         }
     }
 }
