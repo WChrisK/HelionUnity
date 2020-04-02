@@ -22,5 +22,17 @@ namespace Helion.Core.Util.Extensions
                 array[i] = value;
             return array;
         }
+
+        /// <summary>
+        /// Fills an array with the value provided.
+        /// </summary>
+        /// <param name="array">The array to fill</param>
+        /// <param name="value">The value to fill.</param>
+        /// <typeparam name="T">The array element type.</typeparam>
+        public static void Fill<T>(this T[] array, T value)
+        {
+            for (int i = 0; i < array.Length; i++)
+                array[i] = value;
+        }
     }
 }

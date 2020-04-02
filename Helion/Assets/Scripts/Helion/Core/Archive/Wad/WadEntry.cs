@@ -9,14 +9,9 @@ namespace Helion.Core.Archive.Wad
     public class WadEntry : IEntry
     {
         public EntryPath Path { get; }
+        public UpperString Name { get; }
         public ResourceNamespace Namespace { get; }
         public byte[] Data { get; }
-
-        /// <summary>
-        /// The name of the entry. This will be identical to the upper case
-        /// name of the entry path.
-        /// </summary>
-        public UpperString Name;
 
         /// <summary>
         /// Creates a new wad entry.
@@ -28,9 +23,9 @@ namespace Helion.Core.Archive.Wad
         public WadEntry(UpperString name, ResourceNamespace resourceNamespace, byte[] data)
         {
             Path = new EntryPath(name);
+            Name = Path.Name;
             Namespace = resourceNamespace;
             Data = data;
-            Name = Path.Name;
         }
 
         public override string ToString() => Path.ToString();

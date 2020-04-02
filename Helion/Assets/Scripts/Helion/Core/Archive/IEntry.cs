@@ -1,4 +1,5 @@
 ﻿using Helion.Core.Resource;
+using Helion.Core.Util;
 
 namespace Helion.Core.Archive
 {
@@ -11,6 +12,11 @@ namespace Helion.Core.Archive
         /// The path to the entry.
         /// </summary>
         EntryPath Path { get; }
+
+        /// <summary>
+        /// The upper cased name of the entry.
+        /// </summary>
+        UpperString Name { get; }
 
         /// <summary>
         /// The namespace of the entry.

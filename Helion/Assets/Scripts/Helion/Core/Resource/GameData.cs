@@ -14,6 +14,7 @@ namespace Helion.Core.Resource
     /// </summary>
     public static class GameData
     {
+        public static ResourceManager Resources = new ResourceManager();
         private static List<IArchive> archives = new List<IArchive>();
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace Helion.Core.Resource
         /// <returns>True if they all loaded, false if any failed.</returns>
         public static bool Load(IEnumerable<string> filePaths)
         {
-            archives = new List<IArchive>();
+            List<IArchive> archiveList = new List<IArchive>();
 
             foreach (string filePath in filePaths)
             {
@@ -35,14 +36,20 @@ namespace Helion.Core.Resource
                     return false;
                 }
 
-                if (!ProcessArchive(wad.Value))
-                {
-                    Debug.Log($"Error processing archive data for: {filePath}");
-                    return false;
-                }
-
-                archives.Add(wad.Value);
+                archiveList.Add(wad.Value);
             }
+
+            // TODO: This should not go here cause failure after will invalidate invariants!
+            archives = archiveList;
+
+            ResourceManager resourceManager = new ResourceManager();
+            if (!resourceManager.Load(archiveList))
+            {
+                Debug.Log($"Error processing resources when loading");
+                return false;
+            }
+
+            Resources = resourceManager;
 
             return true;
         }
@@ -112,12 +119,6 @@ namespace Helion.Core.Resource
             }
 
             return Optional<IMap>.Empty();
-        }
-
-        private static bool ProcessArchive(IArchive archive)
-        {
-            // TODO
-            return true;
         }
     }
 }
