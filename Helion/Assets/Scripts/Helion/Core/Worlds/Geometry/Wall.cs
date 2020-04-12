@@ -68,7 +68,7 @@ namespace Helion.Core.Worlds.Geometry
                 }
             };
 
-            meshFilter.mesh = mesh;
+            meshFilter.sharedMesh = mesh;
             mesh.RecalculateBounds();
             // TODO: mesh.RecalculateNormals()? mesh.RecalculateTangents()?
 

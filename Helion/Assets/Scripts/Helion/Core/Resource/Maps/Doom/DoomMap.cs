@@ -202,6 +202,8 @@ namespace Helion.Core.Resource.Maps.Doom
                 throw new Exception("Missing front side for line");
             if (subsectors.Any(subsector => subsector.Segments.Count < 3))
                 throw new Exception("Subsector is degenerate");
+            if (subsectors.Any(subsector => subsector.Sector == null))
+                throw new Exception("BSP tree generated a subsector of only minisegs");
         }
     }
 }

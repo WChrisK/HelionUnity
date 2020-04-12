@@ -110,7 +110,7 @@ namespace Helion.Core.Resource.Maps.Shared
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.GLSubsectors.Value.Data);
 
             int count = reader.Length / BytesPerGLSubsectorV1;
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
                 int segCount = reader.UShort();
                 int firstSeg = reader.UShort();
@@ -119,7 +119,7 @@ namespace Helion.Core.Resource.Maps.Shared
                 for (int segIndex = firstSeg; segIndex < firstSeg + segCount; segIndex++)
                     edges.Add(segments[segIndex]);
 
-                GLSubsector subsector = new GLSubsector(edges);
+                GLSubsector subsector = new GLSubsector(index, edges);
                 subsectors.Add(subsector);
             }
 
