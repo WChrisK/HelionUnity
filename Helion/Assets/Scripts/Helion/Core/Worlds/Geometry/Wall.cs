@@ -9,17 +9,14 @@ namespace Helion.Core.Worlds.Geometry
     {
         private GameObject gameObject;
 
-        public Wall(DoomSidedef side)
+        public Wall(DoomSidedef front)
         {
-            DoomLinedef line = side.Line;
-            DoomSector sector = side.Sector;
+            DoomLinedef line = front.Line;
+            DoomSector sector = front.Sector;
 
-            float lightLevel = sector.LightLevel * Constants.InverseLightLevel;
-
-            //=================================================================
-            gameObject = new GameObject($"Wall_L{line.Index}_S{side.Index}_Middle");
+            gameObject = new GameObject($"Wall_L{line.Index}_S{front.Index}_Middle");
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = GameData.Resources.TextureManager.FindMaterial(side.MiddleTexture);
+            meshRenderer.sharedMaterial = GameData.Resources.TextureManager.FindMaterial(front.MiddleTexture);
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 
             Vector3[] vertices =
@@ -36,6 +33,8 @@ namespace Helion.Core.Worlds.Geometry
             float x = normal.x;
             normal.x = -z;
             normal.z = x;
+
+            float lightLevel = sector.LightLevel * Constants.InverseLightLevel;
 
             Mesh mesh = new Mesh
             {
@@ -75,7 +74,6 @@ namespace Helion.Core.Worlds.Geometry
             // TODO: Should only do this if the line is blocking.
             MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = mesh;
-            //=================================================================
         }
     }
 }

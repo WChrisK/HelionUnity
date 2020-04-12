@@ -37,11 +37,22 @@ namespace Helion.Core.Worlds
 
             foreach (DoomLinedef line in map.Linedefs)
             {
-                if (line.TwoSided || line.Length.ApproxZero())
+                if (line.Length.ApproxZero())
                     continue;
 
-                Wall wall = new Wall(line.Front);
-                walls.Add(wall);
+                if (line.OneSided)
+                {
+                    Wall wall = new Wall(line.Front);
+                    walls.Add(wall);
+                }
+                else
+                {
+                    Wall frontWall = new Wall(line.Front);
+                    Wall backWall = new Wall(line.Back.Value);
+                    walls.Add(frontWall);
+                    walls.Add(backWall);
+                }
+
             }
 
             foreach (GLSubsector glSubsector in map.Subsectors)
