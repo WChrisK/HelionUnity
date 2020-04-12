@@ -11,8 +11,17 @@ namespace Helion.Core.Resource.Textures
 {
     public class TextureManager
     {
-        public Dictionary<UpperString, Material> Materials = new Dictionary<UpperString, Material>();
-        public Dictionary<UpperString, Texture2D> Textures = new Dictionary<UpperString, Texture2D>();
+        private Dictionary<UpperString, Material> Materials = new Dictionary<UpperString, Material>();
+        private Dictionary<UpperString, Texture2D> Textures = new Dictionary<UpperString, Texture2D>();
+
+        public Material FindMaterial(UpperString name)
+        {
+            if (Materials.TryGetValue(name, out Material material))
+                return material;
+
+            Debug.Log($"Cannot find material: {name}");
+            return Resources.Load<Material>("Materials/null");
+        }
 
         public void Update(ResourceManager resources)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Helion.Core.Resource.Maps.Doom;
+using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
@@ -53,13 +55,17 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <param name="components">The map components.</param>
         /// <param name="vertices">The regular map vertices.</param>
         /// <param name="glVertices">The extra GL vertices.</param>
+        /// <param name="linedefs">The linedefs to reference.</param>
+        /// <param name="sidedefs">The sidedefs to reference.</param>
         /// <returns>A list of the GL segments.</returns>
         /// <exception cref="Exception">If it is not compiled to match the V2
         /// specification of GLBSP nodes.</exception>
         public static IList<GLSegment> ReadGLSegments(MapComponents components,
-            IList<MapVertex> vertices, IList<MapVertex> glVertices)
+            IList<MapVertex> vertices, IList<MapVertex> glVertices, IList<DoomLinedef> linedefs,
+            IList<DoomSidedef> sidedefs)
         {
             IList<GLSegment> segments = new List<GLSegment>();
+            List<int> partnerSegIndices = new List<int>();
 
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.GLSegments.Value.Data);
 
@@ -71,10 +77,19 @@ namespace Helion.Core.Resource.Maps.Shared
                 Line2 line = new Line2(start.Vector, end.Vector);
                 ushort linedefIndex = reader.UShort();
                 bool onRightSide = reader.UShort() == 0;
-                ushort partnerSegIndex = reader.UShort();
+                var (linedef, sidedef) = GetLineAndSide(linedefIndex, onRightSide, linedefs, sidedefs);
+                partnerSegIndices.Add(reader.UShort());
 
-                GLSegment segment = new GLSegment(line, onRightSide);
+                GLSegment segment = new GLSegment(line, onRightSide, linedef, sidedef);
                 segments.Add(segment);
+            }
+
+            // We have to hook these in after they've all been instantiated.
+            for (int i = 0; i < segments.Count; i++)
+            {
+                int partnerSegIndex = partnerSegIndices[i];
+                if (partnerSegIndex < segments.Count)
+                    segments[i].Partner = segments[partnerSegIndex];
             }
 
             return segments;
@@ -184,6 +199,17 @@ namespace Helion.Core.Resource.Maps.Shared
             return (index & GLVertexIsGLV2) == GLVertexIsGLV2 ?
                 glVertices[index & ~GLVertexIsGLV2] :
                 vertices[index];
+        }
+
+        private static (Optional<DoomLinedef>, Optional<DoomSidedef>) GetLineAndSide(ushort linedefIndex,
+            bool onRightSide, IList<DoomLinedef> linedefs, IList<DoomSidedef> sidedefs)
+        {
+            if (linedefIndex >= linedefs.Count)
+                return (Optional<DoomLinedef>.Empty(), Optional<DoomSidedef>.Empty());
+
+            DoomLinedef linedef = linedefs[linedefIndex];
+            DoomSidedef sidedef = onRightSide ? linedef.Front : linedef.Back.Value;
+            return (linedef, sidedef);
         }
 
         private static Rect ReadNodeBox(ByteReader reader)

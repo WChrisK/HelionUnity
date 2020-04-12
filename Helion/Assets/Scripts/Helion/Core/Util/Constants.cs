@@ -14,5 +14,10 @@
         /// A conversion factor of meters to map units.
         /// </summary>
         public const float MapUnit = 1.0f / MeterToMapUnits;
+
+        /// <summary>
+        /// A conversion factor of light level units to a normalized range.
+        /// </summary>
+        public const float InverseLightLevel = 1.0f / 255;
     }
 }

@@ -8,6 +8,11 @@ namespace Helion.Core.Resource.Maps.Doom
     public class DoomSector
     {
         /// <summary>
+        /// The index of the sector.
+        /// </summary>
+        public readonly int Index;
+
+        /// <summary>
         /// The height of the floor.
         /// </summary>
         public short FloorHeight { get; }
@@ -40,6 +45,7 @@ namespace Helion.Core.Resource.Maps.Doom
         /// <summary>
         /// Creates a new Doom sector.
         /// </summary>
+        /// <param name="index">The index of this sector in the entry.</param>
         /// <param name="floorHeight">The floor height.</param>
         /// <param name="ceilingHeight">The ceiling height.</param>
         /// <param name="floorTexture">The floor texture.</param>
@@ -47,10 +53,11 @@ namespace Helion.Core.Resource.Maps.Doom
         /// <param name="lightLevel">The light level.</param>
         /// <param name="specialBits">The bits for the sector special.</param>
         /// <param name="tag">The sector tag.</param>
-        public DoomSector(short floorHeight, short ceilingHeight, UpperString floorTexture,
+        public DoomSector(int index, short floorHeight, short ceilingHeight, UpperString floorTexture,
                           UpperString ceilingTexture, short lightLevel, ushort specialBits,
                           ushort tag)
         {
+            Index = index;
             FloorHeight = floorHeight;
             CeilingHeight = ceilingHeight;
             FloorTexture = floorTexture;

@@ -59,7 +59,7 @@ namespace Helion.Core.Resource.Maps.Doom
                 IList<DoomSidedef> sidedefs = ReadSidedefs(components, sectors);
                 IList<DoomLinedef> linedefs = ReadLinedefs(components, vertices, sidedefs);
                 IList<DoomThing> things = ReadThings(components);
-                IList<GLSegment> segments = GLReader.ReadGLSegments(components, vertices, glVertices);
+                IList<GLSegment> segments = GLReader.ReadGLSegments(components, vertices, glVertices, linedefs, sidedefs);
                 IList<GLSubsector> subsectors = GLReader.ReadGLSubsectors(components, segments);
                 IList<GLNode> nodes = GLReader.ReadGLNodes(components, subsectors);
                 AssertWellFormedGeometryOrThrow(sidedefs, linedefs, subsectors);
@@ -98,17 +98,18 @@ namespace Helion.Core.Resource.Maps.Doom
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.Sectors.Value.Data);
 
             int count = reader.Length / BytesPerSector;
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
                 short floorHeight = reader.Short();
                 short ceilingHeight = reader.Short();
                 string floorTexture = reader.StringWithoutNulls(8).ToUpper();
-                string ceilTexture = reader.StringWithoutNulls(8).ToUpper();
+                string ceilingTexture = reader.StringWithoutNulls(8).ToUpper();
                 short lightLevel = reader.Short();
                 ushort specialBits = reader.UShort();
                 ushort tag = reader.UShort();
 
-                DoomSector sector = new DoomSector(floorHeight, ceilingHeight, floorTexture, ceilTexture, lightLevel, specialBits, tag);
+                DoomSector sector = new DoomSector(index, floorHeight, ceilingHeight, floorTexture,
+                    ceilingTexture, lightLevel, specialBits, tag);
                 sectors.Add(sector);
             }
 
@@ -122,7 +123,7 @@ namespace Helion.Core.Resource.Maps.Doom
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.Sidedefs.Value.Data);
 
             int count = reader.Length / BytesPerSide;
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
                 Vector2 offset = new Vector2(reader.Short(), reader.Short());
                 UpperString upperTexture = reader.StringWithoutNulls(8);
@@ -130,7 +131,8 @@ namespace Helion.Core.Resource.Maps.Doom
                 UpperString middleTexture = reader.StringWithoutNulls(8);
                 DoomSector sector = sectors[reader.UShort()];
 
-                DoomSidedef side = new DoomSidedef(offset, upperTexture, middleTexture, lowerTexture, sector);
+                DoomSidedef side = new DoomSidedef(index, offset, upperTexture, middleTexture,
+                    lowerTexture, sector);
                 sides.Add(side);
             }
 
@@ -145,7 +147,7 @@ namespace Helion.Core.Resource.Maps.Doom
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.Linedefs.Value.Data);
 
             int count = reader.Length / BytesPerLine;
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
                 MapVertex startVertex = vertices[reader.UShort()];
                 MapVertex endVertex = vertices[reader.UShort()];
@@ -156,7 +158,8 @@ namespace Helion.Core.Resource.Maps.Doom
                 ushort leftSidedef = reader.UShort();
                 DoomSidedef back = (leftSidedef != NoSidedef ? sidedefs[leftSidedef] : null);
 
-                DoomLinedef line = new DoomLinedef(startVertex, endVertex, front, back, flags, type, sectorTag);
+                DoomLinedef line = new DoomLinedef(index, startVertex, endVertex, front, back,
+                    flags, type, sectorTag);
                 lines.Add(line);
 
                 front.Line = line;

@@ -5,6 +5,7 @@ namespace Helion.Core.Resource.Maps.Doom
 {
     public class DoomSidedef
     {
+        public readonly int Index;
         public Vector2 Offset;
         public UpperString UpperTexture;
         public UpperString MiddleTexture;
@@ -12,8 +13,13 @@ namespace Helion.Core.Resource.Maps.Doom
         public DoomSector Sector;
         public DoomLinedef Line;
 
-        public DoomSidedef(Vector2 offset, UpperString upper, UpperString middle, UpperString lower, DoomSector sector)
+        public bool IsFront => ReferenceEquals(Line.Front, this);
+        public bool IsBack => !IsFront;
+
+        public DoomSidedef(int index, Vector2 offset, UpperString upper, UpperString middle, UpperString lower,
+                           DoomSector sector)
         {
+            Index = index;
             Offset = offset;
             UpperTexture = upper;
             MiddleTexture = middle;

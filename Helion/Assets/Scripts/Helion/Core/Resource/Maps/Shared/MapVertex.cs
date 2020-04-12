@@ -33,6 +33,13 @@ namespace Helion.Core.Resource.Maps.Shared
             Y = y;
         }
 
+        /// <summary>
+        /// Gets the distance from this map vertex to another one.
+        /// </summary>
+        /// <param name="other">The other map vertex.</param>
+        /// <returns>The distance from this vertex to the other.</returns>
+        public float Distance(MapVertex other) => (Vector - other.Vector).magnitude;
+
         public override string ToString() => $"{X}, {Y}";
     }
 }

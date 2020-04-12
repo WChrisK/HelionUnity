@@ -1,6 +1,7 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
+using Helion.Core.Worlds;
 using UnityEngine;
 
 namespace Helion.Unity
@@ -23,6 +24,7 @@ namespace Helion.Unity
         private float pitchSensitivity = 1.0f;
         private string fpsText;
         private float deltaTime;
+        private World world;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -52,14 +54,14 @@ namespace Helion.Unity
                 return;
             }
 
-            Debug.Log("Loaded MAP01");
-
-            GameObject quad = GameObject.FindWithTag("Quad");
-            if (quad)
+            Optional<World> worldOpt = World.From(map.Value);
+            if (!worldOpt)
             {
-                Material brnsmal1 = GameData.Resources.TextureManager.Materials["BRNSMAL1"];
-                quad.GetComponent<Renderer>().material = brnsmal1;
+                Debug.Log("Could not load world from MAP01");
+                return;
             }
+
+            world = worldOpt.Value;
         }
 
         void Update()
