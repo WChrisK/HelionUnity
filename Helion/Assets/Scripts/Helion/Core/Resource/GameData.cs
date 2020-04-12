@@ -15,7 +15,7 @@ namespace Helion.Core.Resource
     public static class GameData
     {
         public static ResourceManager Resources = new ResourceManager();
-        private static List<IArchive> archives = new List<IArchive>();
+        public static List<IArchive> Archives = new List<IArchive>();
 
         /// <summary>
         /// Loads all of the archives at the file paths provided.
@@ -40,7 +40,7 @@ namespace Helion.Core.Resource
             }
 
             // TODO: This should not go here cause failure after will invalidate invariants!
-            archives = archiveList;
+            Archives = archiveList;
 
             ResourceManager resourceManager = new ResourceManager();
             if (!resourceManager.Load(archiveList))
@@ -62,9 +62,9 @@ namespace Helion.Core.Resource
         /// </returns>
         public static Optional<IEntry> Find(UpperString name)
         {
-            for (int i = archives.Count - 1; i >= 0; i--)
+            for (int i = Archives.Count - 1; i >= 0; i--)
             {
-                Optional<IEntry> entry = archives[i].Find(name);
+                Optional<IEntry> entry = Archives[i].Find(name);
                 if (entry)
                     return entry;
             }
@@ -82,8 +82,8 @@ namespace Helion.Core.Resource
         public static IEnumerable<IEntry> FindAll(UpperString name)
         {
             List<IEntry> entries = new List<IEntry>();
-            for (int i = archives.Count - 1; i >= 0; i--)
-                entries.AddRange(archives[i].FindAll(name));
+            for (int i = Archives.Count - 1; i >= 0; i--)
+                entries.AddRange(Archives[i].FindAll(name));
 
             return entries;
         }
@@ -97,9 +97,9 @@ namespace Helion.Core.Resource
         /// </returns>
         public static Optional<IMap> FindMap(UpperString name)
         {
-            for (int i = archives.Count - 1; i >= 0; i--)
+            for (int i = Archives.Count - 1; i >= 0; i--)
             {
-                foreach (MapComponents mapComponents in archives[i].GetMaps())
+                foreach (MapComponents mapComponents in Archives[i].GetMaps())
                 {
                     if (mapComponents.Name != name)
                         continue;

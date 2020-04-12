@@ -29,6 +29,7 @@ namespace Helion.Core.Resource.Textures
 
             try
             {
+                // 1) Handle textures.
                 PNames pnames = resources.PNamesDefinitions[0];
                 foreach (TextureXImage textureXImage in resources.TextureXDefinitions[0])
                 {
@@ -59,6 +60,30 @@ namespace Helion.Core.Resource.Textures
                     Material material = new Material(shader);
                     material.mainTexture = texture;
                     Materials[textureName] = material;
+                }
+
+                // 2) Handle floors: TODO: Holy crap this is hacky garbage...
+                foreach (IArchive archive in GameData.Archives)
+                {
+                    foreach (IEntry entry in archive)
+                    {
+                        if (entry.Namespace != ResourceNamespace.Flats)
+                            continue;
+
+                        Optional<PaletteImage> paletteImageOpt = PaletteImage.FromFlat(entry.Data, ResourceNamespace.Textures);
+                        if (!paletteImageOpt)
+                            continue;
+
+                        UpperString flatName = entry.Name;
+                        PaletteImage paletteImage = paletteImageOpt.Value;
+                        RgbaImage rgbaImage = paletteImage.ToColor(resources.Palette);
+                        Texture2D texture = rgbaImage.ToTexture();
+                        Textures[flatName] = texture;
+
+                        Material material = new Material(shader);
+                        material.mainTexture = texture;
+                        Materials[flatName] = material;
+                    }
                 }
             }
             catch (Exception e)
