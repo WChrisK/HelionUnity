@@ -48,12 +48,11 @@ namespace Helion.Core.Worlds.Geometry
             Mesh mesh = new Mesh
             {
                 vertices = vertices,
-                triangles = new[] { 0, 2, 1, 2, 3, 1 },
+                triangles = new[] { 0, 2, 1, 1, 2, 3 },
                 normals = CalculateNormals(vertices[0], vertices[1]),
                 uv = CreateUVCoordinates(line, line.Segment, texture),
                 colors = CreateColors(sector.LightLevelNormalized)
             };
-
             meshFilter.sharedMesh = mesh;
             mesh.RecalculateBounds();
             // TODO: mesh.RecalculateNormals()?
@@ -66,7 +65,15 @@ namespace Helion.Core.Worlds.Geometry
 
         private static Vector3[] CreateVertices(Line2 segment, SectorPlane lowerPlane, SectorPlane upperPlane)
         {
-            // TODO: This is CCW, isn't unity CW?
+            // Vertices are laid out like this in the array:
+            //
+            // 2---3
+            // |   |
+            // |   |
+            // 0---1
+            //
+            // This is so we can reference them as clockwise since Unity wants
+            // that rotation apparently.
             return new[]
             {
                 new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y) * Constants.MapUnit,
