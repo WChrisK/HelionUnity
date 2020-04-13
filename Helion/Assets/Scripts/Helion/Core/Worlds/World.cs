@@ -45,14 +45,6 @@ namespace Helion.Core.Worlds
                     Wall wall = new Wall(line.Front);
                     walls.Add(wall);
                 }
-                else
-                {
-                    Wall frontWall = new Wall(line.Front);
-                    Wall backWall = new Wall(line.Back.Value);
-                    walls.Add(frontWall);
-                    walls.Add(backWall);
-                }
-
             }
 
             foreach (GLSubsector glSubsector in map.Subsectors)
