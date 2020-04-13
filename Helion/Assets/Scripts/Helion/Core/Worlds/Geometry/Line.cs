@@ -7,6 +7,10 @@ namespace Helion.Core.Worlds.Geometry
         public Side Front;
         public Optional<Side> Back;
 
-        // TODO
+        public Line(Side front, Optional<Side> back)
+        {
+            Front = front;
+            Back = back;
+        }
     }
 }

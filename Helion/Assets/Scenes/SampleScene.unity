@@ -266,12 +266,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 306a8ce533e543ada6660f2f41972e5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RecordDemo: 0
+  BaseFolder: 
+  Files:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  Commands:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  AppendToLogFile: 0
+  LogFile: 
   StartMap: 
-  Files: []
-  TestLmao:
-  - A
-  - B
-  - C
+  DemoPath: 
+  HostServer: 0
+  Port: 21750
 --- !u!4 &914286135
 Transform:
   m_ObjectHideFlags: 0

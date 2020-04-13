@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using Helion.Core.Resource;
-using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Maps.Shared;
 using Helion.Core.Util;
+using Helion.Core.Util.Extensions;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
@@ -12,48 +11,89 @@ namespace Helion.Core.Worlds.Geometry
 
     public class Subsector
     {
+        public readonly Sector Sector;
         private readonly GameObject floorGameObject;
-        private GameObject ceilingGameObject;
+        private readonly GameObject ceilingGameObject;
 
-        public Subsector(GLSubsector subsector)
+        public Subsector(GLSubsector subsector, Sector sector, GameObject parentGameObject)
         {
+            Sector = sector;
+
             floorGameObject = CreateFlat(subsector, true);
             ceilingGameObject = CreateFlat(subsector, false);
+
+            parentGameObject.SetChild(floorGameObject);
+            parentGameObject.SetChild(ceilingGameObject);
         }
 
-        private GameObject CreateFlat(GLSubsector subsector, bool isFloor)
+        private GameObject CreateFlat(GLSubsector glSubsector, bool isFloor)
         {
-            DoomSector sector = subsector.Sector;
-
             string suffix = isFloor ? "Floor" : "Ceiling";
-            GameObject gameObject = new GameObject($"Subsector{subsector.Index}_{suffix}");
+            GameObject gameObject = new GameObject($"Subsector{glSubsector.Index}_{suffix}");
+
+            SectorPlane plane = isFloor ? Sector.FloorPlane : Sector.CeilingPlane;
+
+            UpperString textureName = plane.TextureName;
+            Material material = GameData.Resources.TextureManager.FindMaterial(textureName);
+            Texture texture = material.mainTexture;
 
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = GameData.Resources.TextureManager.FindMaterial(sector.FloorTexture);
+            meshRenderer.sharedMaterial = material;
 
+            Mesh mesh = CreateMesh(glSubsector, plane, isFloor, texture);
+
+            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = mesh;
+
+            return gameObject;
+        }
+
+        private Mesh CreateMesh(GLSubsector glSubsector, SectorPlane plane, bool isFloor, Texture texture)
+        {
             Mesh mesh = new Mesh();
 
-            int vertexCount = subsector.Segments.Count;
-
-            Vector3[] vertices = new Vector3[vertexCount];
-            int[] indices = new int[(vertexCount - 2) * 3];
-            Vector2[] uvCoords = new Vector2[vertexCount];
-            Vector3[] normals = new Vector3[vertexCount];
-            Color[] colors = new Color[vertexCount];
-
-            float y = isFloor ? sector.FloorHeight : sector.CeilingHeight;
             Vector3 normal = isFloor ? Vector3.up : Vector3.down;
-            float lightLevel = sector.LightLevel * Constants.InverseLightLevel;
+            float lightLevel = plane.LightLevelNormalized;
             Color sectorColor = new Color(lightLevel, lightLevel, lightLevel, 1.0f);
+
+            int vertexCount = glSubsector.Segments.Count;
+            (Vector3[] vertices, Vector2[] uvCoords) = CreateVertices(vertexCount, glSubsector, plane, texture, isFloor);
+
+            mesh.vertices = vertices;
+            mesh.uv = uvCoords;
+            mesh.triangles = CreateFanIndices(vertexCount);
+            mesh.normals = Arrays.Create(vertexCount, normal);
+            mesh.colors = Arrays.Create(vertexCount, sectorColor);
+
+            return mesh;
+        }
+
+        private static (Vector3[] vertices, Vector2[] uvCoords) CreateVertices(int vertexCount,
+            GLSubsector glSubsector, SectorPlane plane, Texture texture, bool isFloor)
+        {
+            Vector3[] vertices = new Vector3[vertexCount];
+            Vector2[] uvCoords = new Vector2[vertexCount];
 
             for (int i = 0; i < vertexCount; i++)
             {
-                Vector2 vertex = subsector.Segments[i].Segment.Start;
-                vertices[i] = new Vector3(vertex.x, y, vertex.y) * Constants.MapUnit;
-                uvCoords[i] = new Vector2(vertex.x, vertex.y) / 64.0f; // TODO: Fix the divisor later...
-                normals[i] = normal;
-                colors[i] = sectorColor;
+                Vector2 vertex = glSubsector.Segments[i].Segment.Start;
+                vertices[i] = new Vector3(vertex.x, plane.Height, vertex.y) * Constants.MapUnit;
+                uvCoords[i] = new Vector2(vertex.x / texture.width, vertex.y / texture.height);
             }
+
+            // If it's a ceiling, we have to reverse the triangle fan.
+            if (!isFloor)
+            {
+                Array.Reverse(vertices, 0, vertices.Length);
+                Array.Reverse(uvCoords, 0, uvCoords.Length);
+            }
+
+            return (vertices, uvCoords);
+        }
+
+        private static int[] CreateFanIndices(int vertexCount)
+        {
+            int[] indices = new int[(vertexCount - 2) * 3];
 
             // We want the vertices to be: [0, 1, 2, 0, 2, 3, ... 0, n+1, n+2].
             for (int i = 0; i < vertexCount - 2; i++)
@@ -63,23 +103,7 @@ namespace Helion.Core.Worlds.Geometry
                 indices[(i * 3) + 2] = i + 2;
             }
 
-            // If it's a ceiling, we have to reverse them.
-            if (!isFloor)
-            {
-                Array.Reverse(vertices, 0, vertices.Length);
-                Array.Reverse(uvCoords, 0, uvCoords.Length);
-            }
-
-            mesh.vertices = vertices.ToArray();
-            mesh.triangles = indices;
-            mesh.normals = normals;
-            mesh.uv = uvCoords;
-            mesh.colors = colors;
-
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = mesh;
-
-            return gameObject;
+            return indices;
         }
     }
 }

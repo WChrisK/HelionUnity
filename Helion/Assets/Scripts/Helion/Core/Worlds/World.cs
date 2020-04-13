@@ -1,59 +1,43 @@
-﻿using System.Collections.Generic;
-using Helion.Core.Resource.Maps;
-using Helion.Core.Resource.Maps.Doom;
-using Helion.Core.Resource.Maps.Shared;
+﻿using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
-using Helion.Core.Util.Extensions;
+using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
+using UnityEngine;
 
 namespace Helion.Core.Worlds
 {
+    /// <summary>
+    /// A world that runs a simulation.
+    /// </summary>
     public class World
     {
-        private readonly List<Wall> walls;
-        private readonly List<Subsector> subsectors;
+        private readonly GameObject gameObject;
+        private readonly MapGeometry geometry;
+        private readonly EntityManager entityManager;
 
-        public World(List<Wall> walls, List<Subsector> subsectors)
+        private World(IMap map)
         {
-            this.walls = walls;
-            this.subsectors = subsectors;
+            gameObject = new GameObject($"World ({map.Name})");
+            geometry = new MapGeometry(gameObject, map);
+            entityManager = new EntityManager(gameObject, map);
         }
 
+        /// <summary>
+        /// Creates a world from a map.
+        /// </summary>
+        /// <param name="map">The map to create a world from.</param>
+        /// <returns>The world for the map, or an empty value if there was an
+        /// error creating the world.</returns>
         public static Optional<World> From(IMap map)
         {
-            switch (map)
+            try
             {
-            case DoomMap doomMap:
-                return ReadDoomMap(doomMap);
+                return new World(map);
             }
-
-            return Optional<World>.Empty();
-        }
-
-        private static Optional<World> ReadDoomMap(DoomMap map)
-        {
-            List<Wall> walls = new List<Wall>();
-            List<Subsector> subsectors = new List<Subsector>();
-
-            foreach (DoomLinedef line in map.Linedefs)
+            catch
             {
-                if (line.Length.ApproxZero())
-                    continue;
-
-                if (line.OneSided)
-                {
-                    Wall wall = new Wall(line.Front);
-                    walls.Add(wall);
-                }
+                return Optional<World>.Empty();
             }
-
-            foreach (GLSubsector glSubsector in map.Subsectors)
-            {
-                Subsector subsector = new Subsector(glSubsector);
-                subsectors.Add(subsector);
-            }
-
-            return new World(walls, subsectors);
         }
     }
 }

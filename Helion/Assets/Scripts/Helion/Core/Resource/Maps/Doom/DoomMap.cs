@@ -18,6 +18,7 @@ namespace Helion.Core.Resource.Maps.Doom
         protected const int BytesPerVertex = 4;
         public const ushort NoSidedef = (ushort)0xFFFFU;
 
+        public UpperString Name { get; }
         public readonly IList<MapVertex> Vertices;
         public readonly IList<MapVertex> GLVertices;
         public readonly IList<DoomSector> Sectors;
@@ -30,11 +31,12 @@ namespace Helion.Core.Resource.Maps.Doom
 
         public MapType Type => MapType.Doom;
 
-        private DoomMap(IList<MapVertex> vertices, IList<MapVertex> glVertices,
+        private DoomMap(UpperString name, IList<MapVertex> vertices, IList<MapVertex> glVertices,
             IList<DoomSector> sectors, IList<DoomSidedef> sidedefs, IList<DoomLinedef> linedefs,
             IList<DoomThing> things, IList<GLSegment> segments, IList<GLSubsector> subsectors,
             IList<GLNode> nodes)
         {
+            Name = name;
             Vertices = vertices;
             GLVertices = glVertices;
             Sectors = sectors;
@@ -64,7 +66,7 @@ namespace Helion.Core.Resource.Maps.Doom
                 IList<GLNode> nodes = GLReader.ReadGLNodes(components, subsectors);
                 AssertWellFormedGeometryOrThrow(sidedefs, linedefs, subsectors);
 
-                IMap map = new DoomMap(vertices, glVertices, sectors, sidedefs, linedefs, things, segments, subsectors, nodes);
+                IMap map = new DoomMap(components.Name, vertices, glVertices, sectors, sidedefs, linedefs, things, segments, subsectors, nodes);
                 return new Optional<IMap>(map);
             }
             catch
