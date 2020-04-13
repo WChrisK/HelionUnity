@@ -13,6 +13,7 @@ namespace Helion.Core.Worlds.Geometry
         public readonly Optional<Wall> Upper;
         public readonly Optional<Wall> Middle;
         public readonly Optional<Wall> Lower;
+        public Vector2 Offset;
 
         public Side(Line line, DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors,
             GameObject parentGameObject)

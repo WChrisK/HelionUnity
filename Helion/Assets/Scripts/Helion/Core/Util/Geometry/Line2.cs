@@ -18,6 +18,11 @@ namespace Helion.Core.Util.Geometry
         public Vector2 End;
 
         /// <summary>
+        /// The length of the line.
+        /// </summary>
+        public float Length => (End - Start).magnitude;
+
+        /// <summary>
         /// Creates a line.
         /// </summary>
         /// <param name="start">The starting point.</param>
