@@ -6,7 +6,8 @@
     public enum WallSection
     {
         Lower,
-        Middle,
+        MiddleOneSided,
+        MiddleTwoSided,
         Upper,
     }
 }

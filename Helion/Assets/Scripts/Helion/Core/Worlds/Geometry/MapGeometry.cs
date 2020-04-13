@@ -87,17 +87,17 @@ namespace Helion.Core.Worlds.Geometry
                 if (line.Back)
                     TrackSideAndWalls(line.Back.Value);
             }
-        }
 
-        private void TrackSideAndWalls(Side side)
-        {
-            Sides.Add(side);
-            if (side.Upper)
-                Walls.Add(side.Upper.Value);
-            if (side.Middle)
-                Walls.Add(side.Middle.Value);
-            if (side.Lower)
-                Walls.Add(side.Lower.Value);
+            void TrackSideAndWalls(Side side)
+            {
+                Sides.Add(side);
+                if (side.Upper)
+                    Walls.Add(side.Upper.Value);
+                if (side.Middle)
+                    Walls.Add(side.Middle.Value);
+                if (side.Lower)
+                    Walls.Add(side.Lower.Value);
+            }
         }
     }
 }

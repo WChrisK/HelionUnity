@@ -40,10 +40,11 @@ namespace Helion.Core.Worlds.Geometry
 
             gameObject = new GameObject($"Wall_L{side.Line.Index}_S{side.Index}_{section}");
             parentGameObject.SetChild(gameObject);
-            CreateWallMesh(textureName, lowerPlane, upperPlane);
+            CreateWallMesh(textureName, lowerPlane, upperPlane, section);
         }
 
-        private void CreateWallMesh(UpperString textureName, SectorPlane lowerPlane, SectorPlane upperPlane)
+        private void CreateWallMesh(UpperString textureName, SectorPlane lowerPlane, SectorPlane upperPlane,
+            WallSection section)
         {
             Sector sector = Side.Sector;
             Line line = Side.Line;
@@ -56,13 +57,13 @@ namespace Helion.Core.Worlds.Geometry
 
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 
-            Vector3[] vertices = CreateVertices(line.Segment, lowerPlane, upperPlane);
+            Vector3[] vertices = CreateVertices(line.Segment, lowerPlane, upperPlane, section);
             Mesh mesh = new Mesh
             {
                 vertices = vertices,
                 triangles = new[] { 0, 2, 1, 1, 2, 3 },
                 normals = CalculateNormals(vertices[0], vertices[1]),
-                uv = CreateUVCoordinates(line, Side, line.Segment, height, texture),
+                uv = CreateUVCoordinates(line, Side, line.Segment, height, texture, section),
                 colors = CreateColors(sector.LightLevelNormalized)
             };
             meshFilter.sharedMesh = mesh;
@@ -76,7 +77,8 @@ namespace Helion.Core.Worlds.Geometry
             meshCollider.sharedMesh = mesh;
         }
 
-        private static Vector3[] CreateVertices(Line2 segment, SectorPlane lowerPlane, SectorPlane upperPlane)
+        private static Vector3[] CreateVertices(Line2 segment, SectorPlane lowerPlane, SectorPlane upperPlane,
+            WallSection section)
         {
             return new[]
             {
@@ -88,7 +90,7 @@ namespace Helion.Core.Worlds.Geometry
         }
 
         private static Vector2[] CreateUVCoordinates(Line line, Side side, Line2 segment, float height,
-            Texture texture)
+            Texture texture, WallSection section)
         {
             Vector2 offset = side.Offset;
             float invWidth = 1.0f / texture.width;

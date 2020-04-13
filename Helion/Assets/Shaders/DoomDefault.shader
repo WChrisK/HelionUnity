@@ -88,6 +88,17 @@ Shader "Doom/Default"
 			fixed4 frag(v2f IN) : SV_Target
 			{
 				fixed4 c = SampleSpriteTexture (IN.texcoord) * IN.color;
+
+				// For opaque textures that are missing a color, we do not
+				// want to draw it if it has any translucency. Due to some
+				// filtering we get bad blending, so this is the hacky
+				// workaround for not drawing transparent or blended pixels.
+				// It's not perfect, we can almost certainly do better later.
+				if (c.a <= 0.9)
+				{
+				    discard;
+				}
+
 				c.rgb *= c.a;
 				return c;
 			}
