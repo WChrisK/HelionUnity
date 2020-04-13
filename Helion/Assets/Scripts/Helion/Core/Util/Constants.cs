@@ -19,5 +19,15 @@
         /// A conversion factor of light level units to a normalized range.
         /// </summary>
         public const float InverseLightLevel = 1.0f / 255;
+
+        /// <summary>
+        /// The characters for a missing texture in a map.
+        /// </summary>
+        /// <remarks>
+        /// Intended to indicate a texture should not be drawn. For example, if
+        /// a middle two-sided texture is set to this, then we should not make
+        /// a wall for it.
+        /// </remarks>
+        public static readonly UpperString NoTexture = "-";
     }
 }

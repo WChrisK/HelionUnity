@@ -9,24 +9,28 @@ namespace Helion.Core.Worlds.Geometry
 {
     // TODO: Create parent sector transform, SetParent, then only move parent? Possible perf optimization!
 
+    /// <summary>
+    /// A clockwise convex subsector at the leaf of a BSP tree.
+    /// </summary>
     public class Subsector
     {
+        public readonly int Index;
         public readonly Sector Sector;
         private readonly GameObject floorGameObject;
         private readonly GameObject ceilingGameObject;
 
         public Subsector(GLSubsector subsector, Sector sector, GameObject parentGameObject)
         {
+            Index = subsector.Index;
             Sector = sector;
 
-            floorGameObject = CreateFlat(subsector, true);
-            ceilingGameObject = CreateFlat(subsector, false);
-
+            floorGameObject = CreateFlatObject(subsector, true);
             parentGameObject.SetChild(floorGameObject);
+            ceilingGameObject = CreateFlatObject(subsector, false);
             parentGameObject.SetChild(ceilingGameObject);
         }
 
-        private GameObject CreateFlat(GLSubsector glSubsector, bool isFloor)
+        private GameObject CreateFlatObject(GLSubsector glSubsector, bool isFloor)
         {
             string suffix = isFloor ? "Floor" : "Ceiling";
             GameObject gameObject = new GameObject($"Subsector{glSubsector.Index}_{suffix}");

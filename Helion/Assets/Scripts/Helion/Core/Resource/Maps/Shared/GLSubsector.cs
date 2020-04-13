@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Resource.Maps.Doom;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Maps.Shared
 {
@@ -34,6 +35,8 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <param name="segments">The subsector segments.</param>
         public GLSubsector(int index, IList<GLSegment> segments)
         {
+            Debug.Assert(segments.Count >= 3, "Degenerate subsector (2 or less edges)");
+
             Index = index;
             Segments = segments;
         }

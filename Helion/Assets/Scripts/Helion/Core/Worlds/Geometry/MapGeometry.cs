@@ -37,13 +37,14 @@ namespace Helion.Core.Worlds.Geometry
             geometryGameObject.SetChild(subsectorsGameObject);
         }
 
-        private void CreateGeometryFrom(IMap iMap)
+        private void CreateGeometryFrom(IMap map)
         {
-            // This will go away when we have a universal format.
-            DoomMap map = (DoomMap)iMap;
+            // This will go away when we have a universal format!
+            DoomMap doomMap = (DoomMap)map;
 
-            CreateSectors(map.Sectors);
-            CreateSubsectors(map.Subsectors);
+            CreateSectors(doomMap.Sectors);
+            CreateSubsectors(doomMap.Subsectors);
+            CreateLines(doomMap.Linedefs);
         }
 
         private void CreateSectors(IList<DoomSector> mapSectors)
@@ -59,7 +60,7 @@ namespace Helion.Core.Worlds.Geometry
                 SectorPlanes.Add(ceilingPlane);
 
                 int sectorIndex = Sectors.Count;
-                Sector sector = new Sector(sectorIndex, floorPlane, ceilingPlane);
+                Sector sector = new Sector(sectorIndex, floorPlane, ceilingPlane, sec.LightLevel);
                 Sectors.Add(sector);
             }
         }
@@ -73,6 +74,30 @@ namespace Helion.Core.Worlds.Geometry
                 Subsectors.Add(subsector);
                 sector.Subsectors.Add(subsector);
             }
+        }
+
+        private void CreateLines(IList<DoomLinedef> linedefs)
+        {
+            foreach (DoomLinedef linedef in linedefs)
+            {
+                Line line = new Line(linedef, Sectors, wallsGameObject);
+                Lines.Add(line);
+
+                TrackSideAndWalls(line.Front);
+                if (line.Back)
+                    TrackSideAndWalls(line.Back.Value);
+            }
+        }
+
+        private void TrackSideAndWalls(Side side)
+        {
+            Sides.Add(side);
+            if (side.Upper)
+                Walls.Add(side.Upper.Value);
+            if (side.Middle)
+                Walls.Add(side.Middle.Value);
+            if (side.Lower)
+                Walls.Add(side.Lower.Value);
         }
     }
 }
