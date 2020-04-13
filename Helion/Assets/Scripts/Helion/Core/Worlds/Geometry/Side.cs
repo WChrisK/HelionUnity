@@ -21,6 +21,7 @@ namespace Helion.Core.Worlds.Geometry
             Index = sidedef.Index;
             Line = line;
             Sector = sectors[sidedef.Sector.Index];
+            Offset = sidedef.Offset;
 
             if (linedef.OneSided)
             {

@@ -16,8 +16,8 @@ namespace Helion.Core.Resource.Maps.Doom
         public bool IsFront => ReferenceEquals(Line.Front, this);
         public bool IsBack => !IsFront;
 
-        public DoomSidedef(int index, Vector2 offset, UpperString upper, UpperString middle, UpperString lower,
-                           DoomSector sector)
+        public DoomSidedef(int index, Vector2 offset, UpperString upper, UpperString middle,
+            UpperString lower, DoomSector sector)
         {
             Index = index;
             Offset = offset;

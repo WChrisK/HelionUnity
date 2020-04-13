@@ -25,7 +25,7 @@ namespace Helion.Core.Resource.Textures
 
         public void Update(ResourceManager resources)
         {
-            Shader shader = Shader.Find("Sprites/Default");
+            Shader shader = Shader.Find("Doom/Default");
 
             try
             {
@@ -59,6 +59,16 @@ namespace Helion.Core.Resource.Textures
 
                     Material material = new Material(shader);
                     material.mainTexture = texture;
+                    //======
+                    // material.SetFloat("_Mode", 0f);
+                    // material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    // material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    // material.SetInt("_ZWrite", 1);
+                    // material.DisableKeyword("_ALPHATEST_ON");
+                    // material.DisableKeyword("_ALPHABLEND_ON");
+                    // material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    // material.renderQueue = -1;
+                    //======
                     Materials[textureName] = material;
                 }
 

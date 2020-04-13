@@ -20,8 +20,8 @@ namespace Helion.Unity
 
         private float cameraPitch;
         private float cameraYaw;
-        private float yawSensitivity = 2.0f;
-        private float pitchSensitivity = 1.0f;
+        private float yawSensitivity = 2.5f;
+        private float pitchSensitivity = 1.5f;
         private string fpsText;
         private float deltaTime;
         private World world;
@@ -44,6 +44,8 @@ namespace Helion.Unity
 
         void Start()
         {
+            // Shader.SetGlobalColor("_AMBIENTLIGHT", Color.white);
+
             // --------------------------------------------
             // The following is all temporary testing code.
             // --------------------------------------------
@@ -88,17 +90,17 @@ namespace Helion.Unity
             Transform cameraTransform = Camera.main.transform;
 
             if (Input.GetKey(KeyCode.W))
-                cameraTransform.Translate(new Vector3(0, 0, Constants.MapUnit));
+                cameraTransform.Translate(new Vector3(0, 0, Constants.MapUnit * 4));
             if (Input.GetKey(KeyCode.A))
-                cameraTransform.Translate(new Vector3(-Constants.MapUnit, 0, 0));
+                cameraTransform.Translate(new Vector3(-Constants.MapUnit * 4, 0, 0));
             if (Input.GetKey(KeyCode.S))
-                cameraTransform.Translate(new Vector3(0, 0, -Constants.MapUnit));
+                cameraTransform.Translate(new Vector3(0, 0, -Constants.MapUnit * 4));
             if (Input.GetKey(KeyCode.D))
-                cameraTransform.Translate(new Vector3(Constants.MapUnit, 0, 0));
+                cameraTransform.Translate(new Vector3(Constants.MapUnit * 4, 0, 0));
             if (Input.GetKey(KeyCode.Space))
-                cameraTransform.Translate(new Vector3(0, Constants.MapUnit, 0));
+                cameraTransform.Translate(new Vector3(0, Constants.MapUnit * 4, 0));
             if (Input.GetKey(KeyCode.C))
-                cameraTransform.Translate(new Vector3(0, -Constants.MapUnit, 0));
+                cameraTransform.Translate(new Vector3(0, -Constants.MapUnit * 4, 0));
 
             cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
             cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
