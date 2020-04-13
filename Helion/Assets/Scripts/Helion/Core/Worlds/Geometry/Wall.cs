@@ -67,8 +67,9 @@ namespace Helion.Core.Worlds.Geometry
             };
             meshFilter.sharedMesh = mesh;
             mesh.RecalculateBounds();
-            // TODO: mesh.RecalculateNormals()?
-            // TODO: mesh.RecalculateTangents()?
+
+            // TODO: Bake mesh in unity 2019.3 with: Physics.BakeMesh(mesh.instanceID(), ?)
+            // TODO: If eligible to move, mesh.MarkDynamic()?
 
             // TODO: Should only do this if the line is blocking.
             MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
