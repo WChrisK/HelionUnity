@@ -21,10 +21,13 @@ Shader "Doom/Default"
 //			"CanUseSpriteAtlas"="True"
 //		}
 
-		Tags{ "RenderType" = "Opaque" }
-		LOD 200
+		Tags
+		{
+		    "RenderType" = "Opaque"
+		}
 
-//		Cull Back
+		LOD 200
+		Cull Back
 //		Lighting Off
 //		ZWrite On
 //		Blend One OneMinusSrcAlpha
