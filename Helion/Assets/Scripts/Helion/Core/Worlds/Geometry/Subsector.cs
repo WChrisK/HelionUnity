@@ -49,6 +49,10 @@ namespace Helion.Core.Worlds.Geometry
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = mesh;
 
+            // TODO: Should only do this if the subsector is blocking.
+            MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = mesh;
+
             return gameObject;
         }
 

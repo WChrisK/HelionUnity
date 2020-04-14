@@ -44,7 +44,7 @@ namespace Helion.Unity
 
         void Start()
         {
-            // Shader.SetGlobalColor("_AMBIENTLIGHT", Color.white);
+            Cursor.lockState = CursorLockMode.Locked;
 
             // --------------------------------------------
             // The following is all temporary testing code.
@@ -64,6 +64,9 @@ namespace Helion.Unity
             }
 
             world = worldOpt.Value;
+
+            GameObject player = GameObject.Find("Player");
+            player.transform.position = new Vector3(-96, 100, 784) * Constants.MapUnit;
         }
 
         void Update()
@@ -74,6 +77,7 @@ namespace Helion.Unity
 
         void FixedUpdate()
         {
+            UpdatePlayerMovement();
         }
 
         void OnGUI()
@@ -85,23 +89,12 @@ namespace Helion.Unity
         }
 
         // TODO: This is temporary code
+
         private void UpdateCamera()
         {
             Transform cameraTransform = Camera.main.transform;
 
-            if (Input.GetKey(KeyCode.W))
-                cameraTransform.Translate(new Vector3(0, 0, Constants.MapUnit * 4));
-            if (Input.GetKey(KeyCode.A))
-                cameraTransform.Translate(new Vector3(-Constants.MapUnit * 4, 0, 0));
-            if (Input.GetKey(KeyCode.S))
-                cameraTransform.Translate(new Vector3(0, 0, -Constants.MapUnit * 4));
-            if (Input.GetKey(KeyCode.D))
-                cameraTransform.Translate(new Vector3(Constants.MapUnit * 4, 0, 0));
-            if (Input.GetKey(KeyCode.Space))
-                cameraTransform.Translate(new Vector3(0, Constants.MapUnit * 4, 0));
-            if (Input.GetKey(KeyCode.C))
-                cameraTransform.Translate(new Vector3(0, -Constants.MapUnit * 4, 0));
-
+            // TODO: Multiply by Time.deltaTime?
             cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
             cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
 
@@ -112,6 +105,27 @@ namespace Helion.Unity
                 cameraYaw -= 360;
 
             cameraTransform.eulerAngles = new Vector3(-cameraPitch, cameraYaw, 0f);
+        }
+
+        private void UpdatePlayerMovement()
+        {
+            const int MOVE_FACTOR = 6;
+
+            GameObject player = GameObject.Find("Player");
+            CharacterController controller = player.GetComponent<CharacterController>();
+
+            if (Input.GetKey(KeyCode.W))
+                controller.Move(new Vector3(0, 0, MOVE_FACTOR) * Constants.MapUnit);
+            if (Input.GetKey(KeyCode.A))
+                controller.Move(new Vector3(-MOVE_FACTOR, 0, 0) * Constants.MapUnit);
+            if (Input.GetKey(KeyCode.S))
+                controller.Move(new Vector3(0, 0, -MOVE_FACTOR) * Constants.MapUnit);
+            if (Input.GetKey(KeyCode.D))
+                controller.Move(new Vector3(MOVE_FACTOR, 0, 0) * Constants.MapUnit);
+            if (Input.GetKey(KeyCode.Space))
+                controller.Move(new Vector3(0, MOVE_FACTOR, 0) * Constants.MapUnit);
+            if (Input.GetKey(KeyCode.C))
+                controller.Move(new Vector3(0, -MOVE_FACTOR, 0) * Constants.MapUnit);
         }
 
         private void UpdateFPS()
