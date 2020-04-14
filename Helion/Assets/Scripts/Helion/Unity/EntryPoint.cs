@@ -1,4 +1,5 @@
-﻿using Helion.Core.Resource;
+﻿using System;
+using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Worlds;
@@ -98,7 +99,7 @@ namespace Helion.Unity
             cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
             cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
 
-            cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
+            cameraPitch = Mathf.Clamp(cameraPitch, -89.9f, 89.9f);
             while (cameraYaw < 0)
                 cameraYaw += 360;
             while (cameraYaw >= 360)
@@ -109,23 +110,26 @@ namespace Helion.Unity
 
         private void UpdatePlayerMovement()
         {
-            const int MOVE_FACTOR = 6;
+            const float MOVE_FACTOR = 12 * Constants.MapUnit;
+
+            Vector3 direction = new Vector3(Mathf.Sin(Mathf.Deg2Rad * cameraYaw), 0, Mathf.Cos(Mathf.Deg2Rad * cameraYaw));
+            Vector3 rightDirection = new Vector3(direction.z, 0, -direction.x);
 
             GameObject player = GameObject.Find("Player");
             CharacterController controller = player.GetComponent<CharacterController>();
 
             if (Input.GetKey(KeyCode.W))
-                controller.Move(new Vector3(0, 0, MOVE_FACTOR) * Constants.MapUnit);
+                controller.Move(direction * MOVE_FACTOR);
             if (Input.GetKey(KeyCode.A))
-                controller.Move(new Vector3(-MOVE_FACTOR, 0, 0) * Constants.MapUnit);
+                controller.Move(rightDirection * -MOVE_FACTOR);
             if (Input.GetKey(KeyCode.S))
-                controller.Move(new Vector3(0, 0, -MOVE_FACTOR) * Constants.MapUnit);
+                controller.Move(direction * -MOVE_FACTOR);
             if (Input.GetKey(KeyCode.D))
-                controller.Move(new Vector3(MOVE_FACTOR, 0, 0) * Constants.MapUnit);
+                controller.Move(rightDirection * MOVE_FACTOR);
             if (Input.GetKey(KeyCode.Space))
-                controller.Move(new Vector3(0, MOVE_FACTOR, 0) * Constants.MapUnit);
+                controller.Move(Vector3.up * MOVE_FACTOR);
             if (Input.GetKey(KeyCode.C))
-                controller.Move(new Vector3(0, -MOVE_FACTOR, 0) * Constants.MapUnit);
+                controller.Move(Vector3.down * MOVE_FACTOR);
         }
 
         private void UpdateFPS()
