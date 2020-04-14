@@ -14,8 +14,11 @@ namespace Helion.Core.Worlds.Geometry
         public readonly Optional<Wall> Middle;
         public readonly Optional<Wall> Lower;
         public Vector2 Offset;
+        public Optional<Side> PartnerSide = Optional<Side>.Empty();
 
-        public Side(Line line, DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors,
+        public bool IsFront => ReferenceEquals(this, Line.Front);
+
+        public Side(Line line, bool isFront, DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors,
             GameObject parentGameObject)
         {
             Index = sidedef.Index;
@@ -26,18 +29,18 @@ namespace Helion.Core.Worlds.Geometry
             if (linedef.OneSided)
             {
                 Lower = Optional<Wall>.Empty();
-                Middle = CreateOneSidedMiddle(this, linedef, sidedef, sectors, parentGameObject);
+                Middle = CreateOneSidedMiddle(this, line, linedef, sidedef, sectors, parentGameObject);
                 Upper = Optional<Wall>.Empty();
             }
             else
             {
-                Lower = CreateTwoSidedLower(this, linedef, sidedef, sectors, parentGameObject);
-                Middle = CreateTwoSidedMiddle(this, linedef, sidedef, sectors, parentGameObject);
-                Upper = CreateTwoSidedUpper(this, linedef, sidedef, sectors, parentGameObject);
+                Lower = CreateTwoSidedLower(this, line, isFront, linedef, sidedef, sectors, parentGameObject);
+                Middle = CreateTwoSidedMiddle(this, line, isFront, linedef, sidedef, sectors, parentGameObject);
+                Upper = CreateTwoSidedUpper(this, line, isFront, linedef, sidedef, sectors, parentGameObject);
             }
         }
 
-        private static Wall CreateOneSidedMiddle(Side side, DoomLinedef linedef,
+        private static Wall CreateOneSidedMiddle(Side side, Line line, DoomLinedef linedef,
             DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             Sector sector = sectors[sidedef.Sector.Index];
@@ -45,11 +48,11 @@ namespace Helion.Core.Worlds.Geometry
             SectorPlane upperPlane = sector.CeilingPlane;
             UpperString textureName = sidedef.MiddleTexture;
 
-            return new Wall(side, textureName, lowerPlane, upperPlane, WallSection.MiddleOneSided, parentGameObject);
+            return new Wall(side, line, true, textureName, lowerPlane, upperPlane, WallSection.MiddleOneSided, parentGameObject);
         }
 
-        private static Optional<Wall> CreateTwoSidedLower(Side side, DoomLinedef linedef,
-            DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
+        private static Optional<Wall> CreateTwoSidedLower(Side side, Line line, bool isFront,
+            DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             DoomSidedef partnerSide = linedef.PartnerSideOf(sidedef);
             Sector sector = sectors[sidedef.Sector.Index];
@@ -61,11 +64,11 @@ namespace Helion.Core.Worlds.Geometry
             if (lowerPlane.Height >= upperPlane.Height)
                 return Optional<Wall>.Empty();
 
-            return new Wall(side, textureName, lowerPlane, upperPlane, WallSection.Lower, parentGameObject);
+            return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.Lower, parentGameObject);
         }
 
-        private static Optional<Wall> CreateTwoSidedMiddle(Side side, DoomLinedef linedef,
-            DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
+        private static Optional<Wall> CreateTwoSidedMiddle(Side side, Line line, bool isFront,
+            DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             if (sidedef.MiddleTexture == Constants.NoTexture)
                 return Optional<Wall>.Empty();
@@ -84,11 +87,11 @@ namespace Helion.Core.Worlds.Geometry
             if (lowerPlane.Height >= upperPlane.Height)
                 return Optional<Wall>.Empty();
 
-            return new Wall(side, textureName, lowerPlane, upperPlane, WallSection.MiddleTwoSided, parentGameObject);
+            return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.MiddleTwoSided, parentGameObject);
         }
 
-        private static Optional<Wall> CreateTwoSidedUpper(Side side, DoomLinedef linedef,
-            DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
+        private static Optional<Wall> CreateTwoSidedUpper(Side side, Line line, bool isFront,
+            DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             DoomSidedef partnerSide = linedef.PartnerSideOf(sidedef);
             Sector sector = sectors[sidedef.Sector.Index];
@@ -100,7 +103,7 @@ namespace Helion.Core.Worlds.Geometry
             if (lowerPlane.Height >= upperPlane.Height)
                 return Optional<Wall>.Empty();
 
-            return new Wall(side, textureName, lowerPlane, upperPlane, WallSection.Upper, parentGameObject);
+            return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.Upper, parentGameObject);
         }
     }
 }

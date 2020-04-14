@@ -17,19 +17,14 @@ namespace Helion.Core.Worlds.Geometry
         {
             Index = linedef.Index;
             Segment = new Line2(linedef.Start.Vector, linedef.End.Vector);
-            Front = new Side(this, linedef, linedef.Front, sectors, parentGameObject);
-            if (linedef.TwoSided)
-                Back = new Side(this, linedef, linedef.Back.Value, sectors, parentGameObject);
-        }
+            Front = new Side(this, true, linedef, linedef.Front, sectors, parentGameObject);
 
-        /// <summary>
-        /// Gets the partner side. This should not be called on a one sided
-        /// line. For example, if we pass this the front, we get the back.
-        /// Likewise, if we pass in the back, we get the front side.
-        /// </summary>
-        /// <param name="side">The side that we want to get the partner of.
-        /// </param>
-        /// <returns>The partner side.</returns>
-        public Side PartnerSideOf(Side side) => ReferenceEquals(side, Front) ? Back.Value : Front;
+            if (linedef.TwoSided)
+            {
+                Back = new Side(this, false, linedef, linedef.Back.Value, sectors, parentGameObject);
+                Front.PartnerSide = Back.Value;
+                Back.Value.PartnerSide = Front;
+            }
+        }
     }
 }

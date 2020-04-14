@@ -23,6 +23,11 @@ namespace Helion.Core.Util.Geometry
         public float Length => (End - Start).magnitude;
 
         /// <summary>
+        /// Creates a new line that is the reversed version of this line.
+        /// </summary>
+        public Line2 Reverse => new Line2(End, Start);
+
+        /// <summary>
         /// Creates a line.
         /// </summary>
         /// <param name="start">The starting point.</param>
