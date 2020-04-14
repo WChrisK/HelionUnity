@@ -43,7 +43,7 @@ namespace Helion.Unity
 
         void Start()
         {
-            Application.targetFrameRate = 5000;
+            Application.targetFrameRate = int.MaxValue;
             QualitySettings.vSyncCount = 0;
 
             Cursor.lockState = CursorLockMode.Locked;

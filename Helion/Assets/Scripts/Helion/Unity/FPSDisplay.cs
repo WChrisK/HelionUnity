@@ -23,7 +23,7 @@ namespace Helion.Unity
             style.normal.textColor = Color.white;
             float msec = deltaTime * 1000.0f;
             float fps = 1.0f / deltaTime;
-            string text = $"{msec:0.0} ms ({fps:0.} fps) Target: {Application.targetFrameRate}, Vsync count: {QualitySettings.vSyncCount}";
+            string text = $"{msec:0.0} ms ({fps:0.} fps)";
             GUI.Label(rect, text, style);
         }
     }
