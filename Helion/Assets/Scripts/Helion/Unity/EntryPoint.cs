@@ -1,5 +1,4 @@
-﻿using System;
-using Helion.Core.Resource;
+﻿using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Worlds;
@@ -23,7 +22,6 @@ namespace Helion.Unity
         private float cameraYaw;
         private float yawSensitivity = 2.5f;
         private float pitchSensitivity = 1.5f;
-        private string fpsText;
         private float deltaTime;
         private World world;
 
@@ -45,6 +43,9 @@ namespace Helion.Unity
 
         void Start()
         {
+            Application.targetFrameRate = 5000;
+            QualitySettings.vSyncCount = 0;
+
             Cursor.lockState = CursorLockMode.Locked;
 
             // --------------------------------------------
@@ -73,23 +74,12 @@ namespace Helion.Unity
         void Update()
         {
             UpdateCamera();
-            UpdateFPS();
         }
 
         void FixedUpdate()
         {
             UpdatePlayerMovement();
         }
-
-        void OnGUI()
-        {
-            GUI.Label(new Rect(4, 4, 100, 25), $"FPS: {fpsText}");
-
-            // if (GUI.Button(new Rect(10, 10, 150, 100), "I am a button"))
-            //     print("You clicked the button!");
-        }
-
-        // TODO: This is temporary code
 
         private void UpdateCamera()
         {
@@ -130,13 +120,6 @@ namespace Helion.Unity
                 controller.Move(Vector3.up * MOVE_FACTOR);
             if (Input.GetKey(KeyCode.C))
                 controller.Move(Vector3.down * MOVE_FACTOR);
-        }
-
-        private void UpdateFPS()
-        {
-            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-            float fps = 1.0f / deltaTime;
-            fpsText = Mathf.Ceil(fps).ToString();
         }
     }
 }
