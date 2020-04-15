@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Helion.Core.Configs.Fields;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
@@ -48,37 +49,21 @@ namespace Helion.Unity
             LogManager.Register(new ConsoleGUITarget());
 
             Log.Info("Running ", Constants.ApplicationName, " v", Constants.ApplicationVersion);
+
+            LoadAndRegisterConfig();
         }
 
         void Start()
         {
+            RegisterConsoleCommands();
+
             if (!Data.Load(CommandLineArgs.ToArray()))
             {
                 Log.Error("Failure loading archive data, aborting!");
                 Application.Quit(1);
             }
 
-            // --------------------------------------------
-            // The following is all temporary testing code.
-            // --------------------------------------------
-            Optional<IMap> map = Data.FindMap("MAP01");
-            if (!map)
-            {
-                Debug.Log("Error loading MAP01");
-                return;
-            }
-
-            Optional<World> worldOpt = World.From(map.Value);
-            if (!worldOpt)
-            {
-                Debug.Log("Could not load world from MAP01");
-                return;
-            }
-
-            world = worldOpt.Value;
-
-            GameObject player = GameObject.Find("Player");
-            player.transform.position = new Vector3(-96, 100, 784) * Constants.MapUnit;
+            ConsoleCommandsRepository.Instance.ExecuteCommand("map", new[] { "map01" });
         }
 
         void Update()
@@ -93,6 +78,7 @@ namespace Helion.Unity
 
         void OnApplicationQuit()
         {
+            Data.Config.Save();
             LogManager.Dispose();
         }
 
@@ -100,7 +86,7 @@ namespace Helion.Unity
         {
             Transform cameraTransform = Camera.main.transform;
 
-            // TODO: Multiply by Time.deltaTime?
+            // TODO: Multiply by Time.deltaTime? Use non raw for buffering?
             cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
             cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
 
@@ -135,6 +121,67 @@ namespace Helion.Unity
                 controller.Move(Vector3.up * MOVE_FACTOR);
             if (Input.GetKey(KeyCode.C))
                 controller.Move(Vector3.down * MOVE_FACTOR);
+        }
+
+        private static void LoadAndRegisterConfig()
+        {
+            Data.LoadConfig();
+
+            var console = ConsoleCommandsRepository.Instance;
+            foreach (IConfigField configField in Data.Config.GetConfigFields())
+            {
+                console.RegisterCommand(configField.FullName, args =>
+                {
+                    if (args.Length == 0)
+                    {
+                        if (configField is StringConfigField)
+                            return $"{configField.FullName} is \"{configField.TextValue}\"";
+                        return $"{configField.FullName} is {configField.TextValue}";
+                    }
+
+                    bool setSuccess = configField.SetValue(args[0]);
+                    if (!setSuccess)
+                        return "Cannot set value, invalid type (ex: if it's a boolean, use 'true' or 'false')";
+
+                    return $"{configField.FullName} set to '{args[0]}'";
+                });
+            }
+        }
+
+        private void RegisterConsoleCommands()
+        {
+            var console = ConsoleCommandsRepository.Instance;
+
+            console.RegisterCommand("exit", args =>
+            {
+                Application.Quit(0);
+                return "Exiting application";
+            });
+
+            console.RegisterCommand("map", args =>
+            {
+                if (args.Length == 0)
+                    return "Usage: map <NAME>";
+
+                string mapName = args[0];
+                Optional<IMap> map = Data.FindMap(mapName);
+                if (!map)
+                    return $"Cannot find {mapName}";
+
+                Optional<World> worldOpt = World.From(map.Value);
+                if (!worldOpt)
+                    return $"Unable to load corrupt world data for {mapName}";
+
+                world = worldOpt.Value;
+
+                //=============================================================
+                // TODO: TEMPORARY CODE FOR NOW!
+                GameObject player = GameObject.Find("Player");
+                player.transform.position = new Vector3(-96, 100, 784) * Constants.MapUnit;
+                //=============================================================
+
+                return $"Loaded {mapName}";
+            });
         }
     }
 }

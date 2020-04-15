@@ -1,7 +1,9 @@
 # Helion specific
 
-.commandlineargs
 .idea/
+.commandlineargs
+helion.log
+helion.cfg
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #

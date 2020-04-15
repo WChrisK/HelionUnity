@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Helion.Core.Archives;
+using Helion.Core.Configs;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Textures;
@@ -14,9 +15,33 @@ namespace Helion.Core.Resource
     /// </summary>
     public static class Data
     {
+        public static Config Config = new Config();
         public static TextureManager Textures = new TextureManager();
         private static readonly Log Log = LogManager.Instance();
         private static List<IArchive> Archives = new List<IArchive>();
+
+        /// <summary>
+        /// Loads a config from either the path provided, or the default path.
+        /// </summary>
+        /// <param name="path">The path to use, or null if the default path
+        /// should be used.</param>
+        /// <returns>True if the load was successful, false if not.</returns>
+        public static bool LoadConfig(string path = null)
+        {
+            path = path ?? Constants.ConfigName;
+
+            Optional<Config> config = Config.FromFile(path);
+            if (!config)
+            {
+                Log.Error("Failed to load config from: ", path);
+                Log.Info("Creating empty config, will save on exit");
+                return false;
+            }
+
+            Log.Info("Loaded config from ", path);
+            Config = config.Value;
+            return true;
+        }
 
         /// <summary>
         /// Loads all of the archives at the file paths provided. If this fails
