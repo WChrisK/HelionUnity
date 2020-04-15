@@ -41,15 +41,17 @@ namespace Helion.Unity
             Application.targetFrameRate = int.MaxValue;
             QualitySettings.vSyncCount = 0;
             Cursor.lockState = CursorLockMode.Locked;
+
+#if UNITY_EDITOR
+            LogManager.Register(new UnityDebugConsoleTarget());
+#endif
+            LogManager.Register(new ConsoleGUITarget());
+
+            Log.Info("Running ", Constants.ApplicationName, " v", Constants.ApplicationVersion);
         }
 
         void Start()
         {
-            LogManager.Register(new UnityDebugConsoleTarget());
-            LogManager.Register(new ConsoleGUITarget());
-
-            Log.Info("Loaded ", Constants.ApplicationName, " v", Constants.ApplicationName);
-
             if (!Data.Load(CommandLineArgs.ToArray()))
             {
                 Log.Error("Failure loading archive data, aborting!");
