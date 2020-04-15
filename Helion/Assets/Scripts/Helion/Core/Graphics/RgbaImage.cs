@@ -67,6 +67,67 @@ namespace Helion.Core.Graphics
         }
 
         /// <summary>
+        /// Takes the image given and draws it on top of the current image.
+        /// Does not draw a pixel if the alpha is not fully opaque (as in
+        /// alpha must be >= 1.0f).
+        /// </summary>
+        /// <param name="image">The image to draw on top.</param>
+        /// <param name="topLeft">The top left corner to start drawing the
+        /// image from.</param>
+        /// <returns>True on success, false if it could not be written due to
+        /// bounding issues (ex: image would write outside the bounds).
+        /// </returns>
+        public bool DrawOnTop(RgbaImage image, Vec2I topLeft)
+        {
+            // TODO: Can we get a library to do this? This is slow and doesn't have alpha support.
+
+            // Check if we'll ever draw outside the bounds.
+            if (topLeft.X < 0 || topLeft.Y < 0 || topLeft.X + image.Width > Width || topLeft.Y + image.Height > Height)
+                return false;
+
+            RgbaImage src = image;
+            RgbaImage dest = this;
+            Vec2I destEnd = (image.Width + topLeft.X, image.Height + topLeft.Y);
+            Vec2I delta = destEnd - topLeft;
+
+            try
+            {
+                // We're always (for now) drawing from the top left corner of
+                // the inbound image. We start at the 'topLeft' for writing to
+                // the destination image.
+                int srcOffset = 0;
+                int destOffset = (topLeft.Y * dest.Width) + topLeft.X;
+
+                for (int y = 0; y < delta.Y; y++)
+                {
+                    int srcIndex = srcOffset;
+                    int destIndex = destOffset;
+
+                    for (int x = 0; x < delta.X; x++)
+                    {
+                        // For now, only draw the pixel if it is opaque. In the
+                        // future we can do alpha blending.
+                        Color srcColor = src.Pixels[srcIndex];
+                        if (srcColor.a >= 1.0f)
+                            dest.Pixels[destIndex] = srcColor;
+
+                        srcIndex++;
+                        destIndex++;
+                    }
+
+                    srcOffset += src.Width;
+                    destOffset += dest.Width;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Converts this into a 2D texture that can be used by Unity.
         /// </summary>
         /// <remarks>
