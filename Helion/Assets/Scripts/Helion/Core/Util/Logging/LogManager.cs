@@ -33,9 +33,8 @@ namespace Helion.Core.Util.Logging
         /// <summary>
         /// Creates a new logging instance.
         /// </summary>
-        /// <typeparam name="T">The class this is part of.</typeparam>
         /// <returns>A new logging instance for that class.</returns>
-        public static Log Instance<T>()
+        public static Log Instance()
         {
             return new Log();
         }

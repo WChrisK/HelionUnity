@@ -19,7 +19,7 @@ namespace Helion.Unity
         /// The runtime command line arguments.
         /// </summary>
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
-        private static readonly Log Log = LogManager.Instance<EntryPoint>();
+        private static readonly Log Log = LogManager.Instance();
 
         private float cameraPitch;
         private float cameraYaw;
