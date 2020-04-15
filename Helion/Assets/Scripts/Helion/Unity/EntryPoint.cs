@@ -1,6 +1,8 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
+using Helion.Core.Util.Logging;
+using Helion.Core.Util.Logging.Targets;
 using Helion.Core.Worlds;
 using UnityEngine;
 
@@ -17,6 +19,7 @@ namespace Helion.Unity
         /// The runtime command line arguments.
         /// </summary>
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
+        private static readonly Log Log = LogManager.Instance<EntryPoint>();
 
         private float cameraPitch;
         private float cameraYaw;
@@ -34,6 +37,8 @@ namespace Helion.Unity
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeGame()
         {
+            LogManager.Register(new UnityDebugConsoleTarget());
+
             if (!GameData.Load(CommandLineArgs))
             {
                 Debug.Log("Error loading archive data, aborting!");
@@ -79,6 +84,11 @@ namespace Helion.Unity
         void FixedUpdate()
         {
             UpdatePlayerMovement();
+        }
+
+        void OnApplicationQuit()
+        {
+            LogManager.Dispose();
         }
 
         private void UpdateCamera()
