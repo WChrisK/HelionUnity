@@ -92,6 +92,7 @@ namespace Helion.Core.Resource.Textures
 
         internal void FinishPostProcessingOrThrow()
         {
+            // TODO: Refactor me please...
             foreach ((PNames pnames, TextureX textureX) in vanillaTextureTracker)
             {
                 foreach (TextureXImage textureXImage in textureX)
