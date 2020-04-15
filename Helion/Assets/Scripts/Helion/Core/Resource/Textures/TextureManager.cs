@@ -60,7 +60,7 @@ namespace Helion.Core.Resource.Textures
 
         public void Dispose()
         {
-            // TODO
+            // TODO: Clean up all the materials.
         }
 
         internal void HandlePaletteOrThrow(IEntry entry)
@@ -128,7 +128,7 @@ namespace Helion.Core.Resource.Textures
                         // OPTIMIZE: If the definition is the exact same image at offset <0, 0>, don't bother.
                         bool success = image.DrawOntoThis(loadedImage, patch.Offset);
                         if (!success)
-                            Log.Error("Unable to draw patch ", name, " onto composite texture ", textureXImage.Name);
+                            Log.Error($"Unable to draw patch {name} onto composite texture {textureXImage.Name}");
                     }
 
                     loadedImages.Add(textureXImage.Name, ResourceNamespace.Textures, image);
@@ -167,7 +167,13 @@ namespace Helion.Core.Resource.Textures
         {
             Texture2D texture = image.ToTexture();
             Material material = new Material(defaultShader) { mainTexture = texture };
-            materials.Add(name, resourceNamespace, material);
+            Material existingMaterial = materials.Add(name, resourceNamespace, material);
+
+            if (existingMaterial != null)
+            {
+                // TODO: Destroy
+                Log.Error($"CRITICAL: Leaking material reference! Need to destroy {name}!");
+            }
 
             return material;
         }

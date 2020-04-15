@@ -13,6 +13,7 @@ namespace Helion.Core.Resource.Maps.Doom
         public readonly MapVertex End;
         public readonly DoomSidedef Front;
         public readonly Optional<DoomSidedef> Back;
+        public readonly ushort Flags;
 
         public bool OneSided => !TwoSided;
         public bool TwoSided => Back.HasValue;
@@ -26,6 +27,7 @@ namespace Helion.Core.Resource.Maps.Doom
             End = end;
             Front = front;
             Back = back;
+            Flags = flags;
         }
 
         /// <summary>

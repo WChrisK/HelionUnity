@@ -14,6 +14,18 @@ namespace Helion.Core.Resource
         private readonly Dictionary<UpperString, Dictionary<ResourceNamespace, T>> table = new Dictionary<UpperString, Dictionary<ResourceNamespace, T>>();
 
         /// <summary>
+        /// Checks if the key exists in the map.
+        /// </summary>
+        /// <param name="name">The name to look up.</param>
+        /// <param name="resourceNamespace">The resource namespace.</param>
+        /// <returns>True if a value exists, false if not.</returns>
+        public bool Contains(UpperString name, ResourceNamespace resourceNamespace)
+        {
+            return table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry) &&
+                   namespaceToEntry.ContainsKey(resourceNamespace);
+        }
+
+        /// <summary>
         /// Adds a new item to be tracked. Will overwrite old values, but will
         /// return the value that previously was there if overwriting occurs.
         /// Note: The return value may be null for optimization reasons.

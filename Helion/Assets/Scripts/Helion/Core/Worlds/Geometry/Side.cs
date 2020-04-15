@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
+using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry

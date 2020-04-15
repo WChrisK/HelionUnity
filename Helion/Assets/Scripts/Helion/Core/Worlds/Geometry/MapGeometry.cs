@@ -3,6 +3,7 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Maps.Shared;
 using Helion.Core.Util.Extensions;
+using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry

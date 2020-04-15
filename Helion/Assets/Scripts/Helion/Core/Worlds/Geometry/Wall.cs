@@ -3,6 +3,7 @@ using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
@@ -59,9 +60,9 @@ namespace Helion.Core.Worlds.Geometry
 
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 
-            Vector3[] vertices = CreateVertices(segment, lowerPlane, upperPlane, texture, section);
+            Vector3[] vertices = CreateVertices(line, segment, lowerPlane, upperPlane, texture, section);
             Vector3[] normals = CalculateNormals(vertices[0], vertices[1]);
-            Vector2[] uvCoords = CreateUVCoordinates(line, Side, segment, height, texture, section);
+            Vector2[] uvCoords = CreateUVCoordinates(line, Side, segment, height, upperPlane, lowerPlane, texture, section);
             Color[] colors = CreateColors(sector.LightLevelNormalized);
             Mesh mesh = new Mesh
             {
@@ -82,12 +83,28 @@ namespace Helion.Core.Worlds.Geometry
             meshCollider.sharedMesh = mesh;
         }
 
-        private static Vector3[] CreateVertices(Line2 segment, SectorPlane lowerPlane, SectorPlane upperPlane,
-            Texture texture, WallSection section)
+        private static Vector3[] CreateVertices(Line line, Line2 segment, SectorPlane lowerPlane,
+            SectorPlane upperPlane, Texture texture, WallSection section)
         {
+            // TODO: Need to clip the geometry to the opening.
             if (section == WallSection.MiddleTwoSided)
             {
+                if (line.Index == 335)
+                    Debug.Log("Hi");
+
                 float height = Math.Min(upperPlane.Height - lowerPlane.Height, texture.height);
+
+                if (line.Unpeg == Unpeg.Lower || line.Unpeg == Unpeg.LowerAndUpper)
+                {
+                    return new[]
+                    {
+                        new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y) * Constants.MapUnit,
+                        new Vector3(segment.End.x, lowerPlane.Height, segment.End.y) * Constants.MapUnit,
+                        new Vector3(segment.Start.x, lowerPlane.Height + height, segment.Start.y) * Constants.MapUnit,
+                        new Vector3(segment.End.x, lowerPlane.Height + height, segment.End.y) * Constants.MapUnit
+                    };
+                }
+
                 return new[]
                 {
                     new Vector3(segment.Start.x, upperPlane.Height - height, segment.Start.y) * Constants.MapUnit,
@@ -107,28 +124,162 @@ namespace Helion.Core.Worlds.Geometry
         }
 
         private static Vector2[] CreateUVCoordinates(Line line, Side side, Line2 segment, float height,
-            Texture texture, WallSection section)
+            SectorPlane upperPlane, SectorPlane lowerPlane, Texture texture, WallSection section)
         {
-            Vector2 span = new Vector2(segment.Length, height);
+            // An important note for all of the following functions:
+            // Remember that the texture was uploaded such that the
+            // 0.0 -> 1.0 coordinates look like:
+            //
+            // (0.0, 0.0)      (1.0, 0.0)
+            //         o--------o
+            //         |  Top   |
+            //         |        |
+            //         |        |
+            //         |        |
+            //         | Bottom |
+            //         o--------o
+            // (0.0, 1.0)      (1.0, 1.0)
+            //
+            // This means when we are drawing from the bottom up, we want to
+            // start out at the bottom UV and subtract the X/Y span and offsets
+            // to go upwards. Likewise if we are drawing from the top down, we
+            // want to start at the top two coordinates and add the span and
+            // offset to go down.
+            switch (section)
+            {
+            case WallSection.Lower:
+                return CreateUVCoordinatesTwoSidedLower(line, side, segment, height, lowerPlane, upperPlane, texture);
+            case WallSection.MiddleOneSided:
+                return CreateUVCoordinatesOneSidedMiddle(line, side, segment, height, texture);
+            case WallSection.MiddleTwoSided:
+                return CreateUVCoordinatesTwoSidedMiddle(line, side, segment, height, lowerPlane, upperPlane, texture);
+            case WallSection.Upper:
+                return CreateUVCoordinatesTwoSidedUpper(line, side, segment, height, lowerPlane, upperPlane, texture);
+            default:
+                throw new Exception($"Unexpected wall section type for UV coordinates: {section}");
+            }
+        }
+
+        private static Vector2[] CreateUVCoordinatesTwoSidedLower(Line line, Side side, Line2 segment,
+            float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
+        {
             Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
+            Vector2 spanUV = new Vector2(segment.Length, height) * invDimensions;
+            Vector2 offsetUV = side.Offset * invDimensions;
 
-            // This coordinate system assumes 0.0 is the bottom/left and 1.0 is
-            // the top right, as per OpenGL convention.
-            Vector2 origin = side.Offset * invDimensions; //new Vector2(offset.x * invWidth, offset.y * invHeight);
-            Vector2 end = (side.Offset + span) * invDimensions; //new Vector2((offset.x + length) * invWidth, (height + offset.y) * invHeight);
+            // If it's upper, it draws from the top of the ceiling sector down.
+            // TODO: This is NOT how it's done but I'll fix it later...
+            if (line.Unpeg == Unpeg.Lower || line.Unpeg == Unpeg.LowerAndUpper)
+            {
+                Vector2 bottomLeftUV = new Vector2(0.0f, 1.0f) + offsetUV;
+                Vector2 topRightUV = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
 
-            // We end up flipping the Y component because textures are created
-            // from the top left and grow downwards. Since this uses OpenGL
-            // coordinates, we need to start from the top and grow downward to
-            // reconcile the translation in coordinate systems. We also follow
-            // the vertices as described in the class documentation remarks
-            // section.
+                return new[]
+                {
+                    new Vector2(bottomLeftUV.x, bottomLeftUV.y),
+                    new Vector2(topRightUV.x, bottomLeftUV.y),
+                    new Vector2(bottomLeftUV.x, topRightUV.y),
+                    new Vector2(topRightUV.x, topRightUV.y),
+                };
+            }
+
+            // Otherwise, we draw from the bottom up.
+            Vector2 bottomLeft = offsetUV;
+            Vector2 topRight = offsetUV + spanUV;
+
             return new[]
             {
-                new Vector2(origin.x, end.y),
-                new Vector2(end.x, end.y),
-                new Vector2(origin.x, origin.y),
-                new Vector2(end.x, origin.y),
+                new Vector2(bottomLeft.x, topRight.y),
+                new Vector2(topRight.x, topRight.y),
+                new Vector2(bottomLeft.x, bottomLeft.y),
+                new Vector2(topRight.x, bottomLeft.y),
+            };
+        }
+
+        private static Vector2[] CreateUVCoordinatesOneSidedMiddle(Line line, Side side, Line2 segment,
+            float height, Texture texture)
+        {
+            Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
+            Vector2 spanUV = new Vector2(segment.Length, height) * invDimensions;
+            Vector2 offsetUV = side.Offset * invDimensions;
+
+            // If it's lower, it draws from the floor up.
+            if (line.Unpeg == Unpeg.Lower || line.Unpeg == Unpeg.LowerAndUpper)
+            {
+                Vector2 bottomLeftUV = new Vector2(0.0f, 1.0f) + offsetUV;
+                Vector2 topRightUV = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+
+                return new[]
+                {
+                    new Vector2(bottomLeftUV.x, bottomLeftUV.y),
+                    new Vector2(topRightUV.x, bottomLeftUV.y),
+                    new Vector2(bottomLeftUV.x, topRightUV.y),
+                    new Vector2(topRightUV.x, topRightUV.y),
+                };
+            }
+
+            // Otherwise, we draw from the top down.
+            Vector2 bottomLeft = offsetUV;
+            Vector2 topRight = offsetUV + spanUV;
+
+            return new[]
+            {
+                new Vector2(bottomLeft.x, topRight.y),
+                new Vector2(topRight.x, topRight.y),
+                new Vector2(bottomLeft.x, bottomLeft.y),
+                new Vector2(topRight.x, bottomLeft.y),
+            };
+        }
+
+        private static Vector2[] CreateUVCoordinatesTwoSidedMiddle(Line line, Side side, Line2 segment,
+            float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
+        {
+            Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
+            Vector2 spanUV = new Vector2(segment.Length, height) * invDimensions;
+            Vector2 offsetUV = side.Offset * invDimensions;
+
+            // TODO: Handle clipping and all that fun stuff later...
+            return new[]
+            {
+                new Vector2(offsetUV.x, 1),
+                new Vector2(spanUV.x + offsetUV.x, 1),
+                new Vector2(offsetUV.x, 0),
+                new Vector2(spanUV.x + offsetUV.x, 0)
+            };
+        }
+
+        private static Vector2[] CreateUVCoordinatesTwoSidedUpper(Line line, Side side, Line2 segment,
+            float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
+        {
+            Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
+            Vector2 spanUV = new Vector2(segment.Length, height) * invDimensions;
+            Vector2 offsetUV = side.Offset * invDimensions;
+
+            // If it's upper, it draws from the top down.
+            if (line.Unpeg == Unpeg.Upper || line.Unpeg == Unpeg.LowerAndUpper)
+            {
+                Vector2 bottomLeft = offsetUV;
+                Vector2 topRight = offsetUV + spanUV;
+
+                return new[]
+                {
+                    new Vector2(bottomLeft.x, topRight.y),
+                    new Vector2(topRight.x, topRight.y),
+                    new Vector2(bottomLeft.x, bottomLeft.y),
+                    new Vector2(topRight.x, bottomLeft.y),
+                };
+            }
+
+            // Otherwise, we draw from the top down.
+            Vector2 bottomLeftUV = new Vector2(0.0f, 1.0f) + offsetUV;
+            Vector2 topRightUV = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+
+            return new[]
+            {
+                new Vector2(bottomLeftUV.x, bottomLeftUV.y),
+                new Vector2(topRightUV.x, bottomLeftUV.y),
+                new Vector2(bottomLeftUV.x, topRightUV.y),
+                new Vector2(topRightUV.x, topRightUV.y),
             };
         }
 

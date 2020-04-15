@@ -161,7 +161,7 @@ namespace Helion.Core.Resource.Maps.Doom
                 DoomSidedef back = (leftSidedef != NoSidedef ? sidedefs[leftSidedef] : null);
 
                 DoomLinedef line = new DoomLinedef(index, startVertex, endVertex, front, back,
-                    flags, type, sectorTag);
+                    type, flags, sectorTag);
                 lines.Add(line);
 
                 front.Line = line;
