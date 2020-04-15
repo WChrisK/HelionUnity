@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Helion.Core.Util
 {
@@ -134,6 +135,84 @@ namespace Helion.Core.Util
         }
 
         public override int GetHashCode() => HasValue ? Value.GetHashCode() : 0;
+
+        public override string ToString() => $"{Value}";
+    }
+
+    /// <summary>
+    /// An optional that also contains an exception.
+    /// </summary>
+    /// <typeparam name="T">The maybe type.</typeparam>
+    /// <typeparam name="E">The exception if the value is null.</typeparam>
+    public class Optional<T, E> where T : class where E : Exception
+    {
+        /// <summary>
+        /// The value contained in the optional. This may be null, and usage
+        /// should be compared against <see cref="HasValue"/> before using.
+        /// </summary>
+        public T Value { get; }
+
+        /// <summary>
+        /// The exception present if the value is not.
+        /// </summary>
+        public E Exception { get; }
+
+        /// <summary>
+        /// True if the optional has a value and it is safe to extract the
+        /// <see cref="Value"/> object, or false if null and no object is
+        /// contained (and the Exception is available).
+        /// </summary>
+        public bool HasValue => Value != null;
+
+        private Optional(T value, E exception)
+        {
+            Value = Value;
+            Exception = Exception;
+        }
+
+        /// <summary>
+        /// Creates an optional from a value.
+        /// </summary>
+        /// <param name="value">The value to use. Should not be null.</param>
+        /// <returns>A new optional.</returns>
+        public static Optional<T, E> FromValue(T value)
+        {
+            Debug.Assert(value != null, "Cannot make an optional error with both being null");
+            return new Optional<T, E>(value, null);
+        }
+
+        /// <summary>
+        /// Creates an empty optional with an exception as a reason.
+        /// </summary>
+        /// <param name="exception">The exception to use for the empty
+        /// optional.</param>
+        /// <returns>A new optional from an exception.</returns>
+        public static Optional<T, E> FromException(E exception)
+        {
+            Debug.Assert(exception != null, "Cannot make an optional error with both being null");
+            return new Optional<T, E>(null, exception);
+        }
+
+        /// <summary>
+        /// Allows us to use this in boolean expressions.
+        /// </summary>
+        /// <param name="self">The optional value.</param>
+        /// <returns>True if it has a value, false if empty.</returns>
+        public static implicit operator bool(Optional<T, E> self) => self.HasValue;
+
+        /// <summary>
+        /// A conversion value from an object to an optional.
+        /// </summary>
+        /// <param name="value">The value to make an optional from.</param>
+        /// <returns>The optional for the value.</returns>
+        public static implicit operator Optional<T, E>(T value) => FromValue(value);
+
+        /// <summary>
+        /// A conversion an exception to an error optional.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>The error optional for the exception.</returns>
+        public static implicit operator Optional<T, E>(E exception) => FromException(exception);
 
         public override string ToString() => $"{Value}";
     }

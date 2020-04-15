@@ -51,7 +51,7 @@ namespace Helion.Core.Worlds.Geometry
             float height = upperPlane.Height - lowerPlane.Height;
             Line2 segment = isFront ? line.Segment : line.Segment.Reverse;
 
-            Material material = GameData.Resources.TextureManager.FindMaterial(textureName);
+            Material material = Data.Textures.Material(textureName, ResourceNamespace.Textures);
             Texture texture = material.mainTexture;
 
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();

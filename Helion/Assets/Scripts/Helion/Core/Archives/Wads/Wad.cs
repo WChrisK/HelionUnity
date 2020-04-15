@@ -7,7 +7,7 @@ using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 
-namespace Helion.Core.Archives.Wad
+namespace Helion.Core.Archives.Wads
 {
     /// <summary>
     /// The encapsulation of a Wad archive.

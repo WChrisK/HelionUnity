@@ -1,105 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using Helion.Core.Archives;
-using Helion.Core.Graphics;
-using Helion.Core.Resource.Textures.Definitions.Vanilla;
+using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Util;
-using Helion.Core.Util.Geometry;
 using UnityEngine;
 
 namespace Helion.Core.Resource.Textures
 {
-    public class TextureManager
+    /// <summary>
+    /// Manages all of the texture resources in the archive.
+    /// </summary>
+    public class TextureManager : IDisposable
     {
-        private Dictionary<UpperString, Material> Materials = new Dictionary<UpperString, Material>();
-        private Dictionary<UpperString, Texture2D> Textures = new Dictionary<UpperString, Texture2D>();
+        private static readonly Material NullMaterial = Resources.Load<Material>("Materials/null");
 
-        public Material FindMaterial(UpperString name)
+        public Palette Palette { get; private set; }
+        private readonly ResourceTracker<Material> materials = new ResourceTracker<Material>();
+        private readonly List<IEntry> textureDefinitionEntries = new List<IEntry>();
+
+        /// <summary>
+        /// Gets the material for the name/namespace provided.
+        /// </summary>
+        /// <param name="name">The material name.</param>
+        /// <param name="resourceNamespace">The namespace of the material.
+        /// </param>
+        /// <returns>The material, or a "null" texture material if it does not
+        /// exist but still can be rendered with.</returns>
+        public Material Material(UpperString name, ResourceNamespace resourceNamespace)
         {
-            if (Materials.TryGetValue(name, out Material material))
-                return material;
-
-            Debug.Log($"Cannot find material: {name}");
-            return Resources.Load<Material>("Materials/null");
+            return materials.TryGetValue(name, resourceNamespace, out Material material) ? material : NullMaterial;
         }
 
-        public void Update(ResourceManager resources)
+        /// <summary>
+        /// Gets the texture for the name/namespace provided. This should not
+        /// be called with <see cref="Material"/> since it will do two lookups
+        /// for the same data. You should instead access `mainTexture` from the
+        /// material.
+        /// </summary>
+        /// <param name="name">The texture name.</param>
+        /// <param name="resourceNamespace">The namespace of the texture.
+        /// </param>
+        /// <returns>The texture, or a "null" texture texture if it does not
+        /// exist but still can be rendered with.</returns>
+        public Texture Texture(UpperString name, ResourceNamespace resourceNamespace)
         {
-            Shader shader = Shader.Find("Doom/Default");
+            return Material(name, resourceNamespace).mainTexture;
+        }
 
-            try
-            {
-                // 1) Handle textures.
-                PNames pnames = resources.PNamesDefinitions[0];
-                foreach (TextureXImage textureXImage in resources.TextureXDefinitions[0])
-                {
-                    UpperString textureName = textureXImage.Name;
+        public void Dispose()
+        {
+            // TODO
+        }
 
-                    if (textureXImage.Patches.Count != 1)
-                        continue;
+        internal void HandlePaletteOrThrow(IEntry entry)
+        {
+            Optional<Palette> palette = Palette.From(entry.Data);
+            if (!palette)
+                throw new Exception("Palette is corrupt");
 
-                    TextureXPatch patch = textureXImage.Patches[0];
-                    if (patch.Offset != Vec2I.Zero)
-                        continue;
+            Palette = palette.Value;
+        }
 
-                    UpperString patchName = pnames[patch.PatchIndex];
-                    IEntry entry = GameData.Find(patchName).Value;
+        internal void TrackPNames(IEntry entry)
+        {
+            textureDefinitionEntries.Add(entry);
+        }
 
-                    Optional<PaletteImage> paletteImageOpt = PaletteImage.FromColumn(entry.Data, ResourceNamespace.Textures);
-                    if (!paletteImageOpt)
-                        continue;
+        internal void TrackTextureX(IEntry entry)
+        {
+            textureDefinitionEntries.Add(entry);
+        }
 
-                    PaletteImage paletteImage = paletteImageOpt.Value;
-                    if (paletteImage.Dimension != textureXImage.Dimension)
-                        continue;
-
-                    RgbaImage rgbaImage = paletteImage.ToColor(resources.Palette);
-                    Texture2D texture = rgbaImage.ToTexture();
-                    Textures[textureName] = texture;
-
-                    Material material = new Material(shader);
-                    material.mainTexture = texture;
-                    //======
-                    // material.SetFloat("_Mode", 0f);
-                    // material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                    // material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                    // material.SetInt("_ZWrite", 1);
-                    // material.DisableKeyword("_ALPHATEST_ON");
-                    // material.DisableKeyword("_ALPHABLEND_ON");
-                    // material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    // material.renderQueue = -1;
-                    //======
-                    Materials[textureName] = material;
-                }
-
-                // 2) Handle floors: TODO: Holy crap this is hacky garbage...
-                foreach (IArchive archive in GameData.Archives)
-                {
-                    foreach (IEntry entry in archive)
-                    {
-                        if (entry.Namespace != ResourceNamespace.Flats)
-                            continue;
-
-                        Optional<PaletteImage> paletteImageOpt = PaletteImage.FromFlat(entry.Data, ResourceNamespace.Textures);
-                        if (!paletteImageOpt)
-                            continue;
-
-                        UpperString flatName = entry.Name;
-                        PaletteImage paletteImage = paletteImageOpt.Value;
-                        RgbaImage rgbaImage = paletteImage.ToColor(resources.Palette);
-                        Texture2D texture = rgbaImage.ToTexture();
-                        Textures[flatName] = texture;
-
-                        Material material = new Material(shader);
-                        material.mainTexture = texture;
-                        Materials[flatName] = material;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"Unexpected texture processing error: {e.Message}");
-            }
+        internal void FinishPostProcessing()
+        {
+            // Note: This is not how Pnames/TextureX are resolved...
+            // TODO
         }
     }
 }

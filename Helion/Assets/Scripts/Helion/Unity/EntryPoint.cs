@@ -1,4 +1,5 @@
-﻿using Helion.Core.Resource;
+﻿using System.Linq;
+using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
@@ -39,7 +40,7 @@ namespace Helion.Unity
         {
             LogManager.Register(new UnityDebugConsoleTarget());
 
-            if (!GameData.Load(CommandLineArgs))
+            if (!Data.Load(CommandLineArgs.ToArray()))
             {
                 Debug.Log("Error loading archive data, aborting!");
                 Application.Quit(1);
@@ -50,13 +51,12 @@ namespace Helion.Unity
         {
             Application.targetFrameRate = int.MaxValue;
             QualitySettings.vSyncCount = 0;
-
             Cursor.lockState = CursorLockMode.Locked;
 
             // --------------------------------------------
             // The following is all temporary testing code.
             // --------------------------------------------
-            Optional<IMap> map = GameData.FindMap("MAP01");
+            Optional<IMap> map = Data.FindMap("MAP01");
             if (!map)
             {
                 Debug.Log("Error loading MAP01");

@@ -1,6 +1,6 @@
 ﻿using Helion.Core.Util;
 
-namespace Helion.Core.Archives.Wad
+namespace Helion.Core.Archives.Wads
 {
     /// <summary>
     /// An entry inside of the directory table of a wad.

@@ -38,7 +38,7 @@ namespace Helion.Core.Worlds.Geometry
             SectorPlane plane = isFloor ? Sector.FloorPlane : Sector.CeilingPlane;
 
             UpperString textureName = plane.TextureName;
-            Material material = GameData.Resources.TextureManager.FindMaterial(textureName);
+            Material material = Data.Textures.Material(textureName, ResourceNamespace.Flats);
             Texture texture = material.mainTexture;
 
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();

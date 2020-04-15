@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 
-namespace Helion.Core.Archives.Wad
+namespace Helion.Core.Archives.Wads
 {
     /// <summary>
     /// A map finding iterator for a wad archive.
