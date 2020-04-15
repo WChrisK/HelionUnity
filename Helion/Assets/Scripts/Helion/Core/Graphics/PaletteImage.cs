@@ -78,7 +78,7 @@ namespace Helion.Core.Graphics
                 int height = reader.Short();
                 Vec2I offset = (reader.Short(), reader.Short());
 
-                if (offset.X <= 0 || offset.Y <= 0)
+                if (offset.X < 0 || offset.Y < 0)
                     return Optional<PaletteImage>.Empty();
 
                 int[] offsets = new int[width];

@@ -178,7 +178,7 @@ namespace Helion.Core.Resource
                 }
             }
 
-            Textures.FinishPostProcessing();
+            Textures.FinishPostProcessingOrThrow();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Helion.Core.Archives;
+using Helion.Core.Graphics;
 using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;
@@ -14,10 +15,12 @@ namespace Helion.Core.Resource.Textures
     public class TextureManager : IDisposable
     {
         private static readonly Log Log = LogManager.Instance();
+        private static readonly Shader defaultShader = Shader.Find("Doom/Default");
         private static readonly Material NullMaterial = Resources.Load<Material>("Materials/null");
 
         public Palette Palette { get; private set; } = Palette.CreateDefault();
         private readonly ResourceTracker<Material> materials = new ResourceTracker<Material>();
+        private readonly ResourceTracker<RgbaImage> loadedImages = new ResourceTracker<RgbaImage>();
         private readonly VanillaTextureTracker vanillaTextureTracker = new VanillaTextureTracker();
 
         /// <summary>
@@ -30,7 +33,13 @@ namespace Helion.Core.Resource.Textures
         /// exist but still can be rendered with.</returns>
         public Material Material(UpperString name, ResourceNamespace resourceNamespace)
         {
-            return materials.TryGetValue(name, resourceNamespace, out Material material) ? material : NullMaterial;
+            if (materials.TryGetValue(name, resourceNamespace, out Material material))
+                return material;
+
+            if (TryCreateFromExistingImage(name, resourceNamespace, out material))
+                return material;
+
+            return NullMaterial;
         }
 
         /// <summary>
@@ -81,9 +90,85 @@ namespace Helion.Core.Resource.Textures
             vanillaTextureTracker.Track(textureX.Value, archive);
         }
 
-        internal void FinishPostProcessing()
+        internal void FinishPostProcessingOrThrow()
         {
-            // TODO
+            foreach ((PNames pnames, TextureX textureX) in vanillaTextureTracker)
+            {
+                foreach (TextureXImage textureXImage in textureX)
+                {
+                    int w = textureXImage.Dimension.Width;
+                    int h = textureXImage.Dimension.Height;
+                    Optional<RgbaImage> imageOpt = RgbaImage.From(w, h).Value;
+                    if (!imageOpt)
+                        throw new Exception($"Bad dimensions for TextureX image: {textureXImage.Name}");
+
+                    RgbaImage image = imageOpt.Value;
+
+                    foreach (TextureXPatch patch in textureXImage.Patches)
+                    {
+                        UpperString name = pnames[patch.PatchIndex];
+
+                        if (!loadedImages.TryGetValue(name, ResourceNamespace.Textures, out RgbaImage loadedImage))
+                        {
+                            // TODO: Search by namespace priority!
+                            Optional<IEntry> entry = Data.Find(name);
+                            if (!entry)
+                                throw new Exception($"Unable to find entry for texture resource {name}");
+
+                            Optional<PaletteImage> paletteImage = PaletteImage.FromColumn(entry.Value.Data, ResourceNamespace.Textures);
+                            if (!paletteImage)
+                                throw new Exception($"Corrupt palette image from texture resource {name}");
+
+                            RgbaImage convertedImage = paletteImage.Value.ToColor(Palette);
+                            loadedImages.Add(name, ResourceNamespace.Textures, convertedImage);
+                            loadedImage = convertedImage;
+                        }
+
+                        // OPTIMIZE: If the definition is the exact same image at offset <0, 0>, don't bother.
+                        bool success = image.DrawOntoThis(loadedImage, patch.Offset);
+                        if (!success)
+                            Log.Error("Unable to draw patch ", name, " onto composite texture ", textureXImage.Name);
+                    }
+
+                    loadedImages.Add(textureXImage.Name, ResourceNamespace.Textures, image);
+                }
+            }
+        }
+
+        private bool TryCreateFromExistingImage(UpperString name, ResourceNamespace resourceNamespace,
+            out Material material)
+        {
+            if (loadedImages.TryGetValue(name, resourceNamespace, out RgbaImage image))
+            {
+                material = ImageToMaterial(name, ResourceNamespace.Flats, image);
+                return true;
+            }
+
+            if (resourceNamespace == ResourceNamespace.Flats)
+            {
+                // TODO: Find by flat namespace only!
+                Optional<PaletteImage> flat = Data.Find(name).Map(entry => PaletteImage.FromFlat(entry.Data, resourceNamespace).Value);
+                if (flat)
+                {
+                    RgbaImage convertedImage = flat.Value.ToColor(Palette);
+                    loadedImages.Add(name, ResourceNamespace.Flats, convertedImage);
+
+                    material = ImageToMaterial(name, ResourceNamespace.Flats, convertedImage);
+                    return true;
+                }
+            }
+
+            material = null;
+            return false;
+        }
+
+        private Material ImageToMaterial(UpperString name, ResourceNamespace resourceNamespace, RgbaImage image)
+        {
+            Texture2D texture = image.ToTexture();
+            Material material = new Material(defaultShader) { mainTexture = texture };
+            materials.Add(name, resourceNamespace, material);
+
+            return material;
         }
     }
 }

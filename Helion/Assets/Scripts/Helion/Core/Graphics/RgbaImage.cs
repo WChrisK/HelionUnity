@@ -77,13 +77,9 @@ namespace Helion.Core.Graphics
         /// <returns>True on success, false if it could not be written due to
         /// bounding issues (ex: image would write outside the bounds).
         /// </returns>
-        public bool DrawOnTop(RgbaImage image, Vec2I topLeft)
+        public bool DrawOntoThis(RgbaImage image, Vec2I topLeft)
         {
             // TODO: Can we get a library to do this? This is slow and doesn't have alpha support.
-
-            // Check if we'll ever draw outside the bounds.
-            if (topLeft.X < 0 || topLeft.Y < 0 || topLeft.X + image.Width > Width || topLeft.Y + image.Height > Height)
-                return false;
 
             RgbaImage src = image;
             RgbaImage dest = this;
