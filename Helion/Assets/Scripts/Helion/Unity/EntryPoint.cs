@@ -38,20 +38,23 @@ namespace Helion.Unity
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeGame()
         {
-            LogManager.Register(new UnityDebugConsoleTarget());
-
-            if (!Data.Load(CommandLineArgs.ToArray()))
-            {
-                Debug.Log("Error loading archive data, aborting!");
-                Application.Quit(1);
-            }
+            Application.targetFrameRate = int.MaxValue;
+            QualitySettings.vSyncCount = 0;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         void Start()
         {
-            Application.targetFrameRate = int.MaxValue;
-            QualitySettings.vSyncCount = 0;
-            Cursor.lockState = CursorLockMode.Locked;
+            LogManager.Register(new UnityDebugConsoleTarget());
+            LogManager.Register(new ConsoleGUITarget());
+
+            Log.Info("Loaded ", Constants.ApplicationName, " v", Constants.ApplicationName);
+
+            if (!Data.Load(CommandLineArgs.ToArray()))
+            {
+                Log.Error("Failure loading archive data, aborting!");
+                Application.Quit(1);
+            }
 
             // --------------------------------------------
             // The following is all temporary testing code.

@@ -133,6 +133,8 @@ namespace Helion.Core.Resource
         {
             foreach (IArchive archive in Archives)
             {
+                Log.Info("Loading ", archive.Uri);
+
                 foreach (IEntry entry in archive)
                 {
                     switch (entry.Name.ToString())

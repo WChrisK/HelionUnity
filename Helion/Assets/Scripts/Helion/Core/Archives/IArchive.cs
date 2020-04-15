@@ -9,6 +9,11 @@ namespace Helion.Core.Archives
     public interface IArchive : IEnumerable<IEntry>
     {
         /// <summary>
+        /// The location for this archive.
+        /// </summary>
+        string Uri { get; }
+
+        /// <summary>
         /// Finds an entry by name. Does not consider extensions or namespaces.
         /// This will return the most recent entry, so if there are multiple
         /// entries with the same name, the latest entry is returned.

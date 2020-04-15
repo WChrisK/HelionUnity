@@ -14,11 +14,13 @@ namespace Helion.Core.Archives.Wads
     /// </summary>
     public class Wad : IArchive
     {
+        public string Uri { get; }
         private readonly List<WadEntry> entries = new List<WadEntry>();
         private readonly Dictionary<UpperString, List<WadEntry>> nameToEntry = new Dictionary<UpperString, List<WadEntry>>();
 
-        private Wad(List<WadEntry> wadEntries)
+        private Wad(string uri, List<WadEntry> wadEntries)
         {
+            Uri = uri;
             entries.AddRange(wadEntries);
 
             wadEntries.ForEach(entry =>
@@ -42,7 +44,7 @@ namespace Helion.Core.Archives.Wads
             {
                 byte[] data = File.ReadAllBytes(path);
                 List<WadEntry> entries = ReadEntriesOrThrow(data);
-                return new Wad(entries);
+                return new Wad(path, entries);
             }
             catch
             {

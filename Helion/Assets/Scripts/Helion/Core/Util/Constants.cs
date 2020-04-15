@@ -29,5 +29,15 @@
         /// a wall for it.
         /// </remarks>
         public static readonly UpperString NoTexture = "-";
+
+        /// <summary>
+        /// The name of the application.
+        /// </summary>
+        public static readonly string ApplicationName = "Helion";
+
+        /// <summary>
+        /// The application version.
+        /// </summary>
+        public static readonly string ApplicationVersion = "0.1";
     }
 }
