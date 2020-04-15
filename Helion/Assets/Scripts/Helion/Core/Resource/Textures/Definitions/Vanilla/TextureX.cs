@@ -1,16 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Helion.Core.Archives;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using MoreLinq;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Textures.Definitions.Vanilla
 {
     /// <summary>
     /// A processed version of a TEXTURE1/2/3 entry.
     /// </summary>
-    public class TextureX : IEnumerable<TextureXImage>
+    public class TextureX : IVanillaTextureDefinition, IEnumerable<TextureXImage>
     {
+        /// <summary>
+        /// The number of the X in the name, as in 1 for TEXTURE1 and 2 for
+        /// TEXTURE2.
+        /// </summary>
+        public readonly int TextureXNumber;
+
         /// <summary>
         /// The list of texture components.
         /// </summary>
@@ -21,19 +30,45 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
         /// </summary>
         public int Count => images.Count;
 
-        private TextureX(IEnumerable<TextureXImage> textureXImages)
+        private TextureX(int number, IEnumerable<TextureXImage> textureXImages)
         {
-            textureXImages.ForEach(img => images[img.Name] = img);
+            TextureXNumber = number;
+
+            // Apparently only the first one is taken. Compatibility sucks...
+            textureXImages.Reverse().ForEach(img => { images[img.Name] = img; });
         }
 
         /// <summary>
-        /// Reads a TEXTURE1/2/3 entry.
+        /// Reads a TEXTURE1/2 entry.
         /// </summary>
+        /// <param name="entry">The entry to read.</param>
+        /// <returns>All the processed texture definitions, or null if the
+        /// entry is corrupt.</returns>
+        public static Optional<TextureX> From(IEntry entry)
+        {
+            switch (entry.Name.ToString().LastOrDefault())
+            {
+            case '1':
+                return From(1, entry.Data);
+            case '2':
+                return From(2, entry.Data);
+            default:
+                return Optional<TextureX>.Empty();
+            }
+        }
+
+        /// <summary>
+        /// Reads a TEXTURE1/2 entry.
+        /// </summary>
+        /// <param name="number">The index of the X in the textureX. Should be
+        /// either 1 or 2.</param>
         /// <param name="data">The data to read.</param>
         /// <returns>All the processed texture definitions, or null if the
         /// entry is corrupt.</returns>
-        public static Optional<TextureX> From(byte[] data)
+        public static Optional<TextureX> From(int number, byte[] data)
         {
+            Debug.Assert(number == 1 || number == 2, "TEXTUREx should have only 1 or 2 as a number");
+
             try
             {
                 ByteReader reader = ByteReader.From(ByteOrder.Little, data);
@@ -61,7 +96,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
                         images[image.Name] = image;
                 }
 
-                return new TextureX(images.Values);
+                return new TextureX(number, images.Values);
             }
             catch
             {

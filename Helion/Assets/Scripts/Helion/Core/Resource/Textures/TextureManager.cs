@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Helion.Core.Archives;
 using Helion.Core.Resource.Colors.Palettes;
+using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;
+using Helion.Core.Util.Logging;
 using UnityEngine;
 
 namespace Helion.Core.Resource.Textures
@@ -12,11 +13,12 @@ namespace Helion.Core.Resource.Textures
     /// </summary>
     public class TextureManager : IDisposable
     {
+        private static readonly Log Log = LogManager.Instance();
         private static readonly Material NullMaterial = Resources.Load<Material>("Materials/null");
 
-        public Palette Palette { get; private set; }
+        public Palette Palette { get; private set; } = Palette.CreateDefault();
         private readonly ResourceTracker<Material> materials = new ResourceTracker<Material>();
-        private readonly List<IEntry> textureDefinitionEntries = new List<IEntry>();
+        private readonly VanillaTextureTracker vanillaTextureTracker = new VanillaTextureTracker();
 
         /// <summary>
         /// Gets the material for the name/namespace provided.
@@ -61,19 +63,26 @@ namespace Helion.Core.Resource.Textures
             Palette = palette.Value;
         }
 
-        internal void TrackPNames(IEntry entry)
+        internal void TrackPNamesOrThrow(IEntry entry, IArchive archive)
         {
-            textureDefinitionEntries.Add(entry);
+            Optional<PNames> pnames = PNames.From(entry.Data);
+            if (!pnames)
+                throw new Exception($"PNAMES is corrupt (at {entry.Path})");
+
+            vanillaTextureTracker.Track(pnames.Value, archive);
         }
 
-        internal void TrackTextureX(IEntry entry)
+        internal void TrackTextureXOrThrow(IEntry entry, IArchive archive)
         {
-            textureDefinitionEntries.Add(entry);
+            Optional<TextureX> textureX = TextureX.From(entry);
+            if (!textureX)
+                throw new Exception($"TEXTUREx is corrupt (at {entry.Path})");
+
+            vanillaTextureTracker.Track(textureX.Value, archive);
         }
 
         internal void FinishPostProcessing()
         {
-            // Note: This is not how Pnames/TextureX are resolved...
             // TODO
         }
     }

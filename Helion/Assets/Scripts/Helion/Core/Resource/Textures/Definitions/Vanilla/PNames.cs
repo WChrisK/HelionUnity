@@ -7,7 +7,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
     /// <summary>
     /// A collection of patch names from a pnames entry.
     /// </summary>
-    public class PNames
+    public class PNames : IVanillaTextureDefinition
     {
         /// <summary>
         /// The list of patch names.

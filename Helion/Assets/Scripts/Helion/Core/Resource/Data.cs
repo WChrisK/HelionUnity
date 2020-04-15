@@ -168,12 +168,11 @@ namespace Helion.Core.Resource
                         Textures.HandlePaletteOrThrow(entry);
                         continue;
                     case "PNAMES":
-                        Textures.TrackPNames(entry);
+                        Textures.TrackPNamesOrThrow(entry, archive);
                         continue;
                     case "TEXTURE1":
                     case "TEXTURE2":
-                    case "TEXTURE3":
-                        Textures.TrackTextureX(entry);
+                        Textures.TrackTextureXOrThrow(entry, archive);
                         continue;
                     }
                 }

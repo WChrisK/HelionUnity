@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Util;
 
@@ -47,6 +48,25 @@ namespace Helion.Core.Resource.Colors.Palettes
             }
 
             return new Palette(layers);
+        }
+
+        public static Palette CreateDefault()
+        {
+            byte[] data = new byte[PaletteLayer.BytesPerLayer];
+
+            int offset = 0;
+            for (int i = 0; i < PaletteLayer.ColorsPerLayer; i++)
+            {
+                data[offset++] = (byte)i;
+                data[offset++] = (byte)i;
+                data[offset++] = (byte)i;
+            }
+
+            Optional<Palette> palette = From(data);
+            if (!palette)
+                throw new Exception("Should never fail to make the default palette");
+
+            return palette.Value;
         }
     }
 }
