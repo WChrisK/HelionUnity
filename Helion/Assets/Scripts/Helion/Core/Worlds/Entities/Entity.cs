@@ -7,7 +7,7 @@ namespace Helion.Core.Worlds.Entities
     /// <summary>
     /// Holds data for the entity in a world.
     /// </summary>
-    public class Entity : MonoBehaviour, IDisposable
+    public class Entity : MonoBehaviour, ITickable, IDisposable
     {
         public Vector3 Velocity;
         internal LinkedListNode<Entity> entityNode;
@@ -20,6 +20,11 @@ namespace Helion.Core.Worlds.Entities
         }
 
         void FixedUpdate()
+        {
+            Tick();
+        }
+
+        public void Tick()
         {
             // TODO
         }

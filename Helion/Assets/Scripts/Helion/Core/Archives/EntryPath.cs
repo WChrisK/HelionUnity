@@ -71,7 +71,7 @@ namespace Helion.Core.Archives
         /// Creates an entry path from the path provided.
         /// </summary>
         /// <param name="path">The path for this entry.</param>
-        public EntryPath(UpperString path) : this(path.ToString())
+        public EntryPath(UpperString path) : this(path.String)
         {
         }
 

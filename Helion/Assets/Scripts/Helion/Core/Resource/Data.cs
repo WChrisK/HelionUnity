@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Helion.Core.Archives;
 using Helion.Core.Configs;
+using Helion.Core.Resource.Decorate;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Textures;
@@ -16,6 +17,7 @@ namespace Helion.Core.Resource
     public static class Data
     {
         public static Config Config = new Config();
+        public static DecorateManager Decorate = new DecorateManager();
         public static TextureManager Textures = new TextureManager();
         private static readonly Log Log = LogManager.Instance();
         private static List<IArchive> Archives = new List<IArchive>();
@@ -56,8 +58,15 @@ namespace Helion.Core.Resource
             {
                 Archives = ReadArchivesOrThrow(filePaths);
 
-                // TODO: Any cleaner way of doing this?
+                // Any game objects that need disposing must be done first,
+                // since we could leak valuable memory/resources if we do not
+                // dispose Unity things (as GC won't get them until an unload,
+                // or possibly never).
                 Textures.Dispose();
+
+                // Then initialize a clean slate, so if we call this multiple
+                // times we will load new resources cleanly each time.
+                Decorate = new DecorateManager();
                 Textures = new TextureManager();
 
                 ProcessArchivesOrThrow();
@@ -162,8 +171,11 @@ namespace Helion.Core.Resource
 
                 foreach (IEntry entry in archive)
                 {
-                    switch (entry.Name.ToString())
+                    switch (entry.Name.String)
                     {
+                    case "DECORATE":
+                        Decorate.HandleDefinitionsOrThrow(entry, archive);
+                        continue;
                     case "PLAYPAL":
                         Textures.HandlePaletteOrThrow(entry);
                         continue;

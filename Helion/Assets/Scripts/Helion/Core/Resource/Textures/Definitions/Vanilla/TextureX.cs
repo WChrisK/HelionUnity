@@ -46,7 +46,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
         /// entry is corrupt.</returns>
         public static Optional<TextureX> From(IEntry entry)
         {
-            switch (entry.Name.ToString().LastOrDefault())
+            switch (entry.Name.String.LastOrDefault())
             {
             case '1':
                 return From(1, entry.Data);

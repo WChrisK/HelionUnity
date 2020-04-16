@@ -20,6 +20,11 @@ namespace Helion.Core.Util
         private readonly string str;
 
         /// <summary>
+        /// Gets a reference to the underlying actual string.
+        /// </summary>
+        public string String => str;
+
+        /// <summary>
         /// The length of the string.
         /// </summary>
         public int Length => str.Length;

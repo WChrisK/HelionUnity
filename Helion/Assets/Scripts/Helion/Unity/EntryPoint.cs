@@ -5,8 +5,6 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Logging.Targets;
-using Helion.Core.Util.Parser;
-using Helion.Core.Util.Parser.Preprocessor;
 using Helion.Core.Worlds;
 using UnityEngine;
 
@@ -184,20 +182,6 @@ namespace Helion.Unity
 
                 return $"Loaded {mapName}";
             });
-        }
-    }
-
-    class TestParser : ParserBase
-    {
-        private static readonly Optional<string> result = new Optional<string>("a");
-
-        public TestParser() :
-            base(new IncludePreprocessor(path => result))
-        {
-        }
-
-        protected override void PerformParsing()
-        {
         }
     }
 }

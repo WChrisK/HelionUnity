@@ -1,0 +1,96 @@
+﻿using System.Collections.Generic;
+using System.Text;
+using Helion.Core.Archives;
+using Helion.Core.Resource.Decorate.Definitions;
+using Helion.Core.Util;
+using Helion.Core.Util.Logging;
+using Helion.Core.Util.Parser;
+using Helion.Core.Util.Parser.Preprocessor;
+
+namespace Helion.Core.Resource.Decorate.Parser
+{
+    /// <summary>
+    /// Parses decorate text into definitions.
+    /// </summary>
+    public partial class DecorateParser : ParserBase
+    {
+        private static readonly Log Log = LogManager.Instance();
+
+        public List<ActorDefinition> Definitions = new List<ActorDefinition>();
+        private ActorDefinition currentDefinition = new ActorDefinition("");
+        private Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
+
+        public DecorateParser(IArchive archive) : base(CreateIncludePreprocessorWith(archive))
+        {
+        }
+
+        protected override void PerformParsing()
+        {
+            while (!Done)
+            {
+                if (Peek("const"))
+                    ConsumeVariable();
+                else if (Peek("enum"))
+                    ConsumeEnum();
+                else
+                    ConsumeActorDefinition();
+            }
+        }
+
+        private static IncludePreprocessor CreateIncludePreprocessorWith(IArchive archive)
+        {
+            return new IncludePreprocessor(path =>
+            {
+                return archive.FindPath(path).Map(entry => Encoding.UTF8.GetString(entry.Data));
+            });
+        }
+
+        private void ConsumeVariable()
+        {
+            throw MakeException("Variables not supported in decorate currently");
+        }
+
+        private void ConsumeEnum()
+        {
+            throw MakeException("Enums not supported in decorate currently");
+        }
+
+        private void ConsumeActorDefinition()
+        {
+            Consume("actor");
+            ConsumeActorHeader();
+            Consume('{');
+            InvokeUntilAndConsume('}', ConsumeActorBodyComponent);
+
+            Definitions.Add(currentDefinition);
+            nameToDefinition[currentDefinition.Name] = currentDefinition;
+        }
+
+        private void ConsumeActorHeader()
+        {
+            UpperString name = ConsumeString();
+
+            UpperString parent = null;
+            if (ConsumeIf(':'))
+                parent = ConsumeString();
+
+            UpperString replacesName = null;
+            if (ConsumeIf("replaces"))
+                replacesName = ConsumeString();
+
+            int? editorId = ConsumeIfInt();
+
+            currentDefinition = new ActorDefinition(name, parent, replacesName, editorId);
+        }
+
+        private void ConsumeActorBodyComponent()
+        {
+            if (Peek('+') || Peek('-'))
+                ConsumeActorFlag();
+            else if (ConsumeIf("states"))
+                ConsumeActorStates();
+            else
+                ConsumeActorPropertyOrCombo();
+        }
+    }
+}
