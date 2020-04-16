@@ -5,6 +5,8 @@ using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
+using Helion.Unity;
+using MoreLinq;
 using UnityEngine;
 
 namespace Helion.Core.Resource.Textures
@@ -60,7 +62,7 @@ namespace Helion.Core.Resource.Textures
 
         public void Dispose()
         {
-            // TODO: Clean up all the materials.
+            materials.ForEach(DestroyMaterialAndTexture);
         }
 
         internal void HandlePaletteOrThrow(IEntry entry)
@@ -167,15 +169,21 @@ namespace Helion.Core.Resource.Textures
         {
             Texture2D texture = image.ToTexture();
             Material material = new Material(defaultShader) { mainTexture = texture };
+
             Material existingMaterial = materials.Add(name, resourceNamespace, material);
 
-            if (existingMaterial != null)
-            {
-                // TODO: Destroy
-                Log.Error($"CRITICAL: Leaking material reference! Need to destroy {name}!");
-            }
+            // TODO: Need to destroy the texture as well! But some textures are shared... :(
+            // if (existingMaterial != null)
+            //     DestroyMaterialAndTexture(existingMaterial);
 
             return material;
+        }
+
+        private void DestroyMaterialAndTexture(Material material)
+        {
+            if (material.mainTexture != null)
+                UnityHelper.Destroy(material.mainTexture);
+            UnityHelper.Destroy(material);
         }
     }
 }

@@ -39,6 +39,11 @@ namespace Helion.Unity
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeGame()
         {
+            // We want to set this first before anything so we have access to
+            // destruction abilities before we touch anything.
+            UnityHelper.destroyFunc = Destroy;
+
+            // Apparently Unity can override our settings...
             Application.targetFrameRate = int.MaxValue;
             QualitySettings.vSyncCount = 0;
             Cursor.lockState = CursorLockMode.Locked;
