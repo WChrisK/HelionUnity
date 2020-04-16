@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Maps.Shared;
+using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
+using Helion.Core.Worlds.Geometry.Bsp;
 using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
 
@@ -16,6 +19,7 @@ namespace Helion.Core.Worlds.Geometry
         public readonly List<Sector> Sectors = new List<Sector>();
         public readonly List<SectorPlane> SectorPlanes = new List<SectorPlane>();
         public readonly List<Subsector> Subsectors = new List<Subsector>();
+        public BspTree BspTree;
         private GameObject geometryGameObject;
         private GameObject wallsGameObject;
         private GameObject subsectorsGameObject;
@@ -46,6 +50,7 @@ namespace Helion.Core.Worlds.Geometry
             CreateSectors(doomMap.Sectors);
             CreateSubsectors(doomMap.Subsectors);
             CreateLines(doomMap.Linedefs);
+            CreateBspTree(doomMap.Nodes);
         }
 
         private void CreateSectors(IList<DoomSector> mapSectors)
@@ -99,6 +104,15 @@ namespace Helion.Core.Worlds.Geometry
                 if (side.Lower)
                     Walls.Add(side.Lower.Value);
             }
+        }
+
+        private void CreateBspTree(IList<GLNode> nodes)
+        {
+            Optional<BspTree> bspTree = BspTree.From(nodes, Subsectors);
+            if (!bspTree)
+                throw new Exception("Malformed/corrupt BSP tree");
+
+            BspTree = bspTree.Value;
         }
     }
 }

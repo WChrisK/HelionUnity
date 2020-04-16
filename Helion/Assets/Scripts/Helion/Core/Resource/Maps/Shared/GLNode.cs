@@ -10,6 +10,11 @@ namespace Helion.Core.Resource.Maps.Shared
     public class GLNode
     {
         /// <summary>
+        /// The index of the node in the list of nodes.
+        /// </summary>
+        public readonly int Index;
+
+        /// <summary>
         /// The partitioning line.
         /// </summary>
         public Line2 Partition;
@@ -44,8 +49,9 @@ namespace Helion.Core.Resource.Maps.Shared
         /// </summary>
         public Optional<GLSubsector> RightSubsector;
 
-        public GLNode(Line2 partition, Rect rightBox, Rect leftBox)
+        public GLNode(int index, Line2 partition, Rect rightBox, Rect leftBox)
         {
+            Index = index;
             Partition = partition;
             RightBox = rightBox;
             LeftBox = leftBox;

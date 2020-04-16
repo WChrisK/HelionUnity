@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics.Contracts;
+using UnityEngine;
 
 namespace Helion.Core.Util.Geometry
 {
@@ -16,6 +17,11 @@ namespace Helion.Core.Util.Geometry
         /// The ending point.
         /// </summary>
         public Vector2 End;
+
+        /// <summary>
+        /// The delta between the start and end.
+        /// </summary>
+        public Vector2 Delta;
 
         /// <summary>
         /// The length of the line.
@@ -36,6 +42,7 @@ namespace Helion.Core.Util.Geometry
         {
             Start = start;
             End = end;
+            Delta = end - start;
         }
 
         /// <summary>
@@ -49,6 +56,27 @@ namespace Helion.Core.Util.Geometry
             this(new Vector2(startX, startY), new Vector2(endX, endY))
         {
         }
+
+        /// <summary>
+        /// Calculates the perpendicular dot product. This also may be known as
+        /// the wedge product.
+        /// </summary>
+        /// <param name="point">The point to test against.</param>
+        /// <returns>The perpendicular dot product.</returns>
+        [Pure]
+        public float PerpDot(Vector2 point)
+        {
+            return (Delta.x * (point.y - Start.y)) - (Delta.y * (point.x - Start.x));
+        }
+
+        /// <summary>
+        /// Checks if a point is on the right side (or on the line).
+        /// </summary>
+        /// <param name="point">The point to check.</param>
+        /// <returns>True if it's on the right or on the line, false if it's on
+        /// the left.</returns>
+        [Pure]
+        public bool OnRight(Vector2 point) => PerpDot(point) <= 0;
 
         public override string ToString() => $"({Start}), ({End})";
     }

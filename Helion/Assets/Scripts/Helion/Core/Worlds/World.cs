@@ -19,7 +19,7 @@ namespace Helion.Core.Worlds
         {
             gameObject = new GameObject($"World ({map.Name})");
             geometry = new MapGeometry(gameObject, map);
-            entityManager = new EntityManager(gameObject, map);
+            entityManager = new EntityManager(gameObject, geometry, map);
         }
 
         /// <summary>

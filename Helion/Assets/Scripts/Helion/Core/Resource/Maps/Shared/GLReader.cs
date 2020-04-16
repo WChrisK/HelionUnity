@@ -142,7 +142,7 @@ namespace Helion.Core.Resource.Maps.Shared
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.GLNodes.Value.Data);
 
             int count = reader.Length / BytePerGLNodeV1;
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
                 short x = reader.Short();
                 short y = reader.Short();
@@ -156,7 +156,7 @@ namespace Helion.Core.Resource.Maps.Shared
                 NodeChildren childInfo = new NodeChildren(reader.UShort(), reader.UShort());
                 children.Add(childInfo);
 
-                GLNode node = new GLNode(partition, rightBox, leftBox);
+                GLNode node = new GLNode(index, partition, rightBox, leftBox);
                 nodes.Add(node);
             }
 
