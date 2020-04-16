@@ -6,6 +6,7 @@ using System.Linq;
 using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
+using Helion.Core.Util.Extensions;
 
 namespace Helion.Core.Archives.Wads
 {
@@ -52,6 +53,27 @@ namespace Helion.Core.Archives.Wads
             }
         }
 
+        /// <summary>
+        /// Reads a wad file from a path provided.
+        /// </summary>
+        /// <param name="uri">The resource identifier to apply to the wad if
+        /// created.</param>
+        /// <param name="data">The data for the wad.</param>
+        /// <returns>The wad file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<Wad> From(string uri, byte[] data)
+        {
+            try
+            {
+                List<WadEntry> entries = ReadEntriesOrThrow(data);
+                return new Wad(uri, entries);
+            }
+            catch
+            {
+                return Optional<Wad>.Empty();
+            }
+        }
+
         public Optional<IEntry> Find(UpperString name)
         {
             return nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries) ?
@@ -59,9 +81,20 @@ namespace Helion.Core.Archives.Wads
                 Optional<IEntry>.Empty();
         }
 
+        public Optional<IEntry> Find(UpperString name, ResourceNamespace type)
+        {
+            if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
+                foreach (WadEntry entry in existingEntries.Reversed())
+                    if (entry.Namespace == type)
+                        return entry;
+
+            return Optional<IEntry>.Empty();
+        }
+
+        public Optional<IEntry> FindPath(UpperString path) => Find(path);
+
         public IEnumerable<IEntry> FindAll(UpperString name)
         {
-            // Can't wait to use C# 8 again one day so this is simpler...
             if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
                 return existingEntries;
             return new List<IEntry>();

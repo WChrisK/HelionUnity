@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Helion.Core.Resource;
 using Helion.Core.Util;
 
 namespace Helion.Core.Archives
@@ -21,6 +22,26 @@ namespace Helion.Core.Archives
         /// <param name="name">The name to search.</param>
         /// <returns>The entry if it exists, or an empty optional.</returns>
         Optional<IEntry> Find(UpperString name);
+
+        /// <summary>
+        /// Finds an entry by name with the namespace provided. Does not look
+        /// at extensions. This will return the most recent entry, so if there
+        /// are multiple entries with the same name, the latest entry is
+        /// returned.
+        /// </summary>
+        /// <param name="name">The name to search.</param>
+        /// <param name="type">The namespace type.</param>
+        /// <returns>The entry if it exists, or an empty optional.</returns>
+        Optional<IEntry> Find(UpperString name, ResourceNamespace type);
+
+        /// <summary>
+        /// Finds the latest entry by path. Everything is taken into account,
+        /// meaning directory slashes, extensions, etc. It is case insensitive.
+        /// Namespaces are not taken into account.
+        /// </summary>
+        /// <param name="path">The path to search (ex: "flats/hi.mp3").</param>
+        /// <returns>The entry if it exists, or an empty optional.</returns>
+        Optional<IEntry> FindPath(UpperString path);
 
         /// <summary>
         /// Finds all of the entries with the matching name. Does not consider

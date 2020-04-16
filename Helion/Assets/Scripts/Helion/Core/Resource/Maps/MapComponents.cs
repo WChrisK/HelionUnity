@@ -8,7 +8,7 @@ namespace Helion.Core.Resource.Maps
     /// </summary>
     public class MapComponents
     {
-        public readonly UpperString Name;
+        public UpperString Name;
         public Optional<IEntry> Marker { get; private set; } = Optional<IEntry>.Empty();
         public Optional<IEntry> Vertices { get; private set; } = Optional<IEntry>.Empty();
         public Optional<IEntry> Sectors { get; private set; } = Optional<IEntry>.Empty();
