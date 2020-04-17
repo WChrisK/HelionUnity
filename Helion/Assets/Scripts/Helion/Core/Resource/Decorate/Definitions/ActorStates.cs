@@ -10,18 +10,21 @@ namespace Helion.Core.Resource.Decorate.Definitions
     /// </summary>
     public class ActorStates
     {
-        public readonly ActorStateLabels Labels;
-        public readonly List<ActorFrame> Frames;
+        public readonly ActorStateLabels Labels = new ActorStateLabels();
+        public readonly List<ActorFrame> Frames = new List<ActorFrame>();
 
         public ActorStates()
         {
-            Labels = new ActorStateLabels();
-            Frames = new List<ActorFrame>();
         }
 
         public ActorStates(ActorStates other, UpperString parentName)
         {
-            other.Frames.ForEach(frame => Frames.Add(new ActorFrame(frame)));
+            foreach (ActorFrame frame in other.Frames)
+            {
+                ActorFrame newFrame = new ActorFrame(frame);
+                Frames.Add(newFrame);
+            }
+
             Labels = new ActorStateLabels(other.Labels, parentName);
         }
     }

@@ -111,9 +111,9 @@ namespace Helion.Core.Util.Parser
                 HandleParserException(e, text);
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                PrintUnexpectedErrorMessage();
+                PrintUnexpectedErrorMessage(e);
                 return false;
             }
         }
@@ -666,20 +666,20 @@ namespace Helion.Core.Util.Parser
             // values in it. Don't know how the logging framework would
             // handle that correctly but I'll play it safe here by hoping
             // it doesn't recursively interpolate.
-            Log.Error("Parsing error: {0}", e.Message);
+            Log.Error("Parsing error: ", e.Message);
             foreach (string logMessage in e.LogToReadableMessage(text))
-                Log.Error("{0}", logMessage);
+                Log.Error(logMessage);
         }
 
-        private void PrintUnexpectedErrorMessage()
+        private void PrintUnexpectedErrorMessage(Exception e)
         {
             if (CurrentTokenIndex >= 0 && CurrentTokenIndex < Tokens.Count)
             {
                 Token token = Tokens[CurrentTokenIndex];
-                Log.Error("Critical parsing error occured at token {0} ({1}), report this to a developer!", CurrentTokenIndex, token);
+                Log.Error($"Critical parsing error occured at token {CurrentTokenIndex} ({token}), report this to a developer! [Reason: {e.Message}]");
             }
             else
-                Log.Error("Critical parsing error parsing text around character offset {0}, report this to a developer!)", CurrentTokenIndex);
+                Log.Error($"Critical parsing error parsing text around character offset {CurrentTokenIndex}, report this to a developer!)  [Reason: {e.Message}]");
         }
     }
 }

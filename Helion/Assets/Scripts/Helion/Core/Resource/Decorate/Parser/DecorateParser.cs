@@ -62,7 +62,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private Optional<ActorDefinition> LookupActor(UpperString name)
         {
             Optional<ActorDefinition> parsedActor = nameToDefinition.Find(name);
-            return parsedActor ? parsedActor : manager.LookupActor(name);
+            return parsedActor ? parsedActor : manager.Find(name);
         }
 
         private void ConsumeActorDefinition()
@@ -80,12 +80,14 @@ namespace Helion.Core.Resource.Decorate.Parser
         {
             UpperString name = ConsumeString();
 
-            Optional<ActorDefinition> parent = Optional<ActorDefinition>.Empty();
+            ActorDefinition parent = manager.BaseActorDefinition;
             if (ConsumeIf(':'))
             {
                 UpperString parentName = ConsumeString();
-                parent = LookupActor(parentName);
-                if (!parent)
+                Optional<ActorDefinition> parentOpt = LookupActor(parentName);
+                if (parentOpt)
+                    parent = parentOpt.Value;
+                else
                     throw MakeException($"Unable to find parent {parentName} for actor {name}");
             }
 

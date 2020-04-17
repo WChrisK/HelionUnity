@@ -19,8 +19,17 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
 
         public ActorFlowControl(ActorStateBranch branchType)
         {
-            Debug.Assert(branchType != ActorStateBranch.Goto, "Goto label requires a different constructor");
+            Debug.Assert(branchType != ActorStateBranch.Goto && branchType != ActorStateBranch.Loop, $"Using wrong branch type constructor ({branchType} should be not be Goto or Loop)");
+
             FlowType = branchType;
+        }
+
+        public ActorFlowControl(ActorStateBranch branchType, UpperString label)
+        {
+            Debug.Assert(branchType == ActorStateBranch.Loop, $"Using wrong branch type constructor ({branchType} should be only Loop)");
+
+            FlowType = branchType;
+            Label = label;
         }
 
         public ActorFlowControl(ActorStateBranch branchType, Optional<UpperString> parent,

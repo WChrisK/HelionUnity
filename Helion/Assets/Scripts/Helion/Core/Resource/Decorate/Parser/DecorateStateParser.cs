@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Helion.Core.Resource.Decorate.Definitions.States;
@@ -6,6 +7,7 @@ using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Decorate.Parser
 {
@@ -18,6 +20,7 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private int frameIndex;
         private UpperString justSeenLabelOrNull;
+        private UpperString lastSeenLabelOrNull;
 
         private static bool IsValidFrameLetter(char frame)
         {
@@ -61,6 +64,38 @@ namespace Helion.Core.Resource.Decorate.Parser
             return currentDefinition.States.Frames.Last();
         }
 
+        private int LabelToOffsetOrThrow(ActorFrame frame)
+        {
+            ActorFlowControl flowControl = frame.FlowControl;
+            Debug.Assert(flowControl.Label, "Expected label to exist on flow control");
+
+            int? index;
+            UpperString label = flowControl.Label.Value;
+
+            if (flowControl.FlowType == ActorStateBranch.Goto && flowControl.Parent)
+            {
+                UpperString parent = flowControl.Parent.Value;
+
+                if (parent == "SUPER")
+                    index = currentDefinition.States.Labels.Super(label);
+                else
+                    index = currentDefinition.States.Labels.Parent(parent, label);
+
+                if (index == null)
+                    throw MakeException($"Unable to find label: {parent}::{label}");
+            }
+            else
+            {
+                index = currentDefinition.States.Labels[label];
+                if (index == null)
+                    throw MakeException($"Unable to find label: {label}");
+            }
+
+            // The offset to the label is the delta from our current position,
+            // plus any extra offset that the flow control will have provided.
+            return index.Value - frame.FrameIndex + flowControl.Offset;
+        }
+
         private ActorFlowControl ReadGotoLabel()
         {
             Optional<UpperString> label = ConsumeIdentifier().AsUpper();
@@ -96,6 +131,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private void TrackNewLabel(UpperString label)
         {
             currentDefinition.States.Labels.Add(label, frameIndex);
+            lastSeenLabelOrNull = label;
             justSeenLabelOrNull = label;
         }
 
@@ -131,10 +167,20 @@ namespace Helion.Core.Resource.Decorate.Parser
             if (!TryGetStateBranch(text, out ActorStateBranch branchType))
                 return false;
 
-            if (branchType == ActorStateBranch.Goto)
+            switch (branchType)
+            {
+            case ActorStateBranch.Goto:
                 flowControl = ReadGotoLabel();
-            else
+                break;
+            case ActorStateBranch.Loop:
+                if (lastSeenLabelOrNull == null)
+                    throw MakeException("Cannot loop when no label has been defined yet");
+                flowControl = new ActorFlowControl(branchType, lastSeenLabelOrNull);
+                break;
+            default:
                 flowControl = new ActorFlowControl(branchType);
+                break;
+            }
 
             return true;
         }
@@ -291,7 +337,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 if (!IsValidFrameLetter(frame))
                     throw MakeException($"Invalid actor frame letter: {frame} (ascii ordinal {(int)frame})");
 
-                ActorFrame actorFrame = new ActorFrame(sprite + frame, ticks, properties, actionFunction);
+                ActorFrame actorFrame = new ActorFrame(frameIndex, sprite + frame, ticks, properties, actionFunction);
                 currentDefinition.States.Frames.Add(actorFrame);
                 frameIndex++;
             }
@@ -324,13 +370,43 @@ namespace Helion.Core.Resource.Decorate.Parser
             justSeenLabelOrNull = null;
         }
 
+        private void ApplyLabelOffsets()
+        {
+            foreach (ActorFrame frame in currentDefinition.States.Frames)
+            {
+                if (!frame.NeedsToSetStateOffset)
+                    continue;
+
+                switch (frame.FlowControl.FlowType)
+                {
+                case ActorStateBranch.Loop:
+                case ActorStateBranch.Goto:
+                    frame.NextStateOffset = LabelToOffsetOrThrow(frame);
+                    break;
+                case ActorStateBranch.Fail:
+                case ActorStateBranch.Stop:
+                case ActorStateBranch.Wait:
+                    frame.NextStateOffset = 0;
+                    break;
+                case ActorStateBranch.None:
+                    frame.NextStateOffset = 1;
+                    break;
+                default:
+                    throw new Exception("Unknown frame branch type");
+                }
+            }
+        }
+
         private void ConsumeActorStates()
         {
             frameIndex = currentDefinition.States.Frames.Count;
             justSeenLabelOrNull = null;
+            lastSeenLabelOrNull = null;
 
             Consume('{');
             InvokeUntilAndConsume('}', ConsumeActorStateElement);
+
+            ApplyLabelOffsets();
         }
     }
 }

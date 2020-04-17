@@ -15,6 +15,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
 
         public ActorFrameProperties()
         {
+            Light = new Optional<UpperString>();
         }
 
         public ActorFrameProperties(ActorFrameProperties other)

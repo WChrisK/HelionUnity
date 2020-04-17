@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Core.Archives;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Decorate.Parser;
@@ -10,8 +11,16 @@ namespace Helion.Core.Resource.Decorate
 {
     public class DecorateManager
     {
-        private readonly List<ActorDefinition> actors = new List<ActorDefinition>();
+        private readonly List<ActorDefinition> actors;
+        private readonly Dictionary<int, ActorDefinition> editorIDToDefinition = new Dictionary<int, ActorDefinition>();
         private readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
+
+        internal ActorDefinition BaseActorDefinition => actors.First();
+
+        public DecorateManager()
+        {
+            actors = new List<ActorDefinition> { DefaultDefinitionFactory.CreateDefinition() };
+        }
 
         public void HandleDefinitionsOrThrow(IEntry entry, IArchive archive)
         {
@@ -21,10 +30,28 @@ namespace Helion.Core.Resource.Decorate
             if (!success)
                 throw new Exception("Unable to parse decorate entries");
 
-            actors.AddRange(parser.Definitions);
-            parser.Definitions.ForEach(def => nameToDefinition[def.Name] = def);
+            foreach (ActorDefinition definition in parser.Definitions)
+            {
+                actors.Add(definition);
+                nameToDefinition[definition.Name] = definition;
+
+                if (definition.EditorNumber != null)
+                    editorIDToDefinition[definition.EditorNumber.Value] = definition;
+            }
         }
 
-        internal Optional<ActorDefinition> LookupActor(UpperString name) => nameToDefinition.Find(name);
+        /// <summary>
+        /// Looks up a definition by name.
+        /// </summary>
+        /// <param name="name">The name to look up.</param>
+        /// <returns>The definition if it exists, or an empty value.</returns>
+        public Optional<ActorDefinition> Find(UpperString name) => nameToDefinition.Find(name);
+
+        /// <summary>
+        /// Looks up a definition by editor ID.
+        /// </summary>
+        /// <param name="editorID">The ID to look up.</param>
+        /// <returns>The definition if it exists, or an empty value.</returns>
+        public Optional<ActorDefinition> Find(int editorID) => editorIDToDefinition.Find(editorID);
     }
 }
