@@ -1,4 +1,6 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.Flags;
+using Helion.Core.Resource.Decorate.Definitions.Properties;
+using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
 

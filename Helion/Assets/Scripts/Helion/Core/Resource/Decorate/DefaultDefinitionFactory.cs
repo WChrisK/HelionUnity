@@ -1,5 +1,8 @@
-﻿using Helion.Core.Resource.Decorate.Definitions;
+﻿using System.Collections.Generic;
+using Helion.Core.Resource.Decorate.Definitions;
+using Helion.Core.Resource.Decorate.Definitions.Flags;
 using Helion.Core.Resource.Decorate.Definitions.States;
+using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Decorate
@@ -9,19 +12,26 @@ namespace Helion.Core.Resource.Decorate
     /// </summary>
     public static class DefaultDefinitionFactory
     {
-        /// <summary>
-        /// Creates the default actor class that everything inherits from.
-        /// </summary>
-        /// <returns>A new base actor definition for all actors.</returns>
-        public static ActorDefinition CreateDefinition()
-        {
-            ActorFrameProperties MakeProperties() => new ActorFrameProperties();
-            Optional<ActorActionFunction> MakeNoAction() => Optional<ActorActionFunction>.Empty();
+        private static readonly ActorFlowControl stop = new ActorFlowControl(ActorStateBranch.Stop);
+        private static readonly ActorFlowControl wait = new ActorFlowControl(ActorStateBranch.Wait);
+        private static ActorFrameProperties MakeProperties() => new ActorFrameProperties();
+        private static Optional<ActorActionFunction> MakeNoAction() => Optional<ActorActionFunction>.Empty();
 
+        public static List<ActorDefinition> CreateAllDefaultDefinitions()
+        {
+            ActorDefinition actorBase = CreateBaseDefinition();
+
+            return new List<ActorDefinition>
+            {
+                actorBase,
+                CreateBaseSpawnPoint(actorBase)
+            };
+        }
+
+        private static ActorDefinition CreateBaseDefinition()
+        {
             Optional<ActorActionFunction> genericFreezeDeath = new ActorActionFunction("A_GenericFreezeDeath");
             Optional<ActorActionFunction> freezeDeathChunks = new ActorActionFunction("A_FreezeDeathChunks");
-            ActorFlowControl stop = new ActorFlowControl(ActorStateBranch.Stop);
-            ActorFlowControl wait = new ActorFlowControl(ActorStateBranch.Wait);
 
             ActorDefinition actor = new ActorDefinition("ACTOR", Optional<ActorDefinition>.Empty());
             actor.States.Labels.Add("SPAWN", 0);
@@ -35,6 +45,18 @@ namespace Helion.Core.Resource.Decorate
             actor.States.Frames.Add(new ActorFrame(4, "POL5A", -1, MakeProperties(), MakeNoAction(), stop, 0));
 
             return actor;
+        }
+
+        private static ActorDefinition CreateBaseSpawnPoint(ActorDefinition actorBase)
+        {
+            ActorDefinition spawnpoint = new ActorDefinition("SPAWNPOINT", actorBase);
+            spawnpoint.ActorType.Set(ActorType.SpawnPoint);
+            spawnpoint.Flags.Set(ActorFlagType.DontSplash, true);
+            spawnpoint.Flags.Set(ActorFlagType.Invisible, true);
+            spawnpoint.Flags.Set(ActorFlagType.NoBlockmap, true);
+            spawnpoint.Flags.Set(ActorFlagType.NoGravity, true);
+
+            return spawnpoint;
         }
     }
 }

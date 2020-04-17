@@ -17,6 +17,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Types
         public bool Inventory => bits[(int)ActorType.Inventory];
         public bool Powerup => bits[(int)ActorType.Powerup];
         public bool Projectile => bits[(int)ActorType.Projectile];
+        public bool SpawnPoint => bits[(int)ActorType.SpawnPoint];
         public bool TeleportDestination => bits[(int)ActorType.TeleportDestination];
         public bool Weapon => bits[(int)ActorType.Weapon];
 
@@ -30,9 +31,9 @@ namespace Helion.Core.Resource.Decorate.Definitions.Types
             bits = new BitArray(actorTypes.bits);
         }
 
-        public void Set(ActorType actorType, bool value)
+        public void Set(ActorType actorType)
         {
-            bits.Set((int)actorType, value);
+            bits.Set((int)actorType, true);
         }
     }
 }

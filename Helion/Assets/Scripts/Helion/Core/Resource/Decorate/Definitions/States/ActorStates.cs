@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Util;
 
-namespace Helion.Core.Resource.Decorate.Definitions
+namespace Helion.Core.Resource.Decorate.Definitions.States
 {
     /// <summary>
     /// All of the states for when an actor is ticked. Also contains rendering

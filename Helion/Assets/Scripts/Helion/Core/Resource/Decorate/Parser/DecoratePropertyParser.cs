@@ -1,65 +1,109 @@
-﻿using Helion.Core.Util;
+﻿using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
+using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
+using Helion.Core.Util;
+using Helion.Core.Util.Extensions;
 
 namespace Helion.Core.Resource.Decorate.Parser
 {
     public partial class DecorateParser
     {
-        private void ConsumeAmmoProperty()
+        private void ReadAmmoProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeArmorProperty()
+        private void ReadArmorProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeFakeInventoryProperty()
+        private void ReadFakeInventoryProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeHealthProperty()
+        private void ReadHealthProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeHealthPickupProperty()
+        private void ReadHealthPickupProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeInventoryProperty()
+        private void ReadInventoryProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeMorphProjectileProperty()
+        private void ReadMorphProjectileProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumePlayerProperty()
+        private void ReadPlayerProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumePowerupProperty()
+        private void ReadPowerupProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumePuzzleItemProperty()
+        private void ReadPuzzleItemProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeWeaponProperty()
+        private SpawnGameMode ReadSpawnType()
+        {
+            string spawnName = ConsumeString();
+
+            switch (spawnName.ToUpper())
+            {
+            case "COOPERATIVE":
+                return SpawnGameMode.Cooperative;
+            case "DEATHMATCH":
+                return SpawnGameMode.Deathmatch;
+            case "TEAM":
+                return SpawnGameMode.Team;
+            default:
+                throw MakeException($"Unknown spawn type: {spawnName}");
+            }
+        }
+
+        private void ReadSpawnInfoProperty()
+        {
+            if (!currentDefinition.Properties.SpawnInfo)
+                currentDefinition.Properties.SpawnInfo = new SpawnInfo();
+
+            SpawnInfo spawnInfo = currentDefinition.Properties.SpawnInfo.Value;
+            string name = ConsumeIdentifier();
+
+            switch (name.ToUpper())
+            {
+            case "MODE":
+                spawnInfo.Mode = ReadSpawnType();
+                break;
+            case "NUMBER":
+                spawnInfo.Number = ConsumeInteger();
+                break;
+            case "TEAM":
+                spawnInfo.Team = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unexpected SpawnInfo property type: {name}");
+            }
+        }
+
+        private void ReadWeaponProperty()
         {
             throw MakeException("Not supported currently");
         }
 
-        private void ConsumeWeaponPieceProperty()
+        private void ReadWeaponPieceProperty()
         {
             throw MakeException("Not supported currently");
         }
@@ -79,47 +123,50 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ConsumeActorPropertyOrCombo()
         {
-            UpperString property = ConsumeString();
+            UpperString property = ConsumeIdentifier();
 
             if (ConsumeIf('.'))
             {
                 switch (property.String)
                 {
                 case "AMMO":
-                    ConsumeAmmoProperty();
+                    ReadAmmoProperty();
                     break;
                 case "ARMOR":
-                    ConsumeArmorProperty();
+                    ReadArmorProperty();
                     break;
                 case "FAKEINVENTORY":
-                    ConsumeFakeInventoryProperty();
+                    ReadFakeInventoryProperty();
                     break;
                 case "HEALTH":
-                    ConsumeHealthProperty();
+                    ReadHealthProperty();
                     break;
                 case "HEALTHPICKUP":
-                    ConsumeHealthPickupProperty();
+                    ReadHealthPickupProperty();
                     break;
                 case "INVENTORY":
-                    ConsumeInventoryProperty();
+                    ReadInventoryProperty();
                     break;
                 case "MORPHPROJECTILE":
-                    ConsumeMorphProjectileProperty();
+                    ReadMorphProjectileProperty();
                     break;
                 case "PLAYER":
-                    ConsumePlayerProperty();
+                    ReadPlayerProperty();
                     break;
                 case "POWERUP":
-                    ConsumePowerupProperty();
+                    ReadPowerupProperty();
                     break;
                 case "PUZZLEITEM":
-                    ConsumePuzzleItemProperty();
+                    ReadPuzzleItemProperty();
+                    break;
+                case "SPAWNINFO":
+                    ReadSpawnInfoProperty();
                     break;
                 case "WEAPON":
-                    ConsumeWeaponProperty();
+                    ReadWeaponProperty();
                     break;
                 case "WEAPONPIECE":
-                    ConsumeWeaponPieceProperty();
+                    ReadWeaponPieceProperty();
                     break;
                 default:
                     throw MakeException($"Unknown prefix property '{property}' on actor '{currentDefinition.Name}'");

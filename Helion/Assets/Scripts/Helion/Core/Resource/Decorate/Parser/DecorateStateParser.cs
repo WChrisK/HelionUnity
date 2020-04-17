@@ -106,7 +106,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             {
                 Consume(':');
                 parent = label;
-                label = ConsumeString().AsUpper();
+                label = ConsumeIdentifier().AsUpper();
             }
 
             if (ConsumeIf('+'))
@@ -345,7 +345,8 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ConsumeActorStateElement()
         {
-            UpperString text = ConsumeString();
+            // TODO: This can fail if the next state is like `"####" "#"...` which can exist possibly...
+            UpperString text = ConsumeIdentifier();
 
             if (ConsumeIf('.'))
             {

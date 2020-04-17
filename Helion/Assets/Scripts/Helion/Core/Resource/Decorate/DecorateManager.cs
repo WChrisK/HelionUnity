@@ -11,7 +11,7 @@ namespace Helion.Core.Resource.Decorate
 {
     public class DecorateManager
     {
-        private readonly List<ActorDefinition> actors;
+        private readonly List<ActorDefinition> actors = new List<ActorDefinition>();
         private readonly Dictionary<int, ActorDefinition> editorIDToDefinition = new Dictionary<int, ActorDefinition>();
         private readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
 
@@ -19,7 +19,7 @@ namespace Helion.Core.Resource.Decorate
 
         public DecorateManager()
         {
-            actors = new List<ActorDefinition> { DefaultDefinitionFactory.CreateDefinition() };
+            AddDefinitions(DefaultDefinitionFactory.CreateAllDefaultDefinitions());
         }
 
         public void HandleDefinitionsOrThrow(IEntry entry, IArchive archive)
@@ -30,14 +30,7 @@ namespace Helion.Core.Resource.Decorate
             if (!success)
                 throw new Exception("Unable to parse decorate entries");
 
-            foreach (ActorDefinition definition in parser.Definitions)
-            {
-                actors.Add(definition);
-                nameToDefinition[definition.Name] = definition;
-
-                if (definition.EditorNumber != null)
-                    editorIDToDefinition[definition.EditorNumber.Value] = definition;
-            }
+            AddDefinitions(parser.Definitions);
         }
 
         /// <summary>
@@ -53,5 +46,17 @@ namespace Helion.Core.Resource.Decorate
         /// <param name="editorID">The ID to look up.</param>
         /// <returns>The definition if it exists, or an empty value.</returns>
         public Optional<ActorDefinition> Find(int editorID) => editorIDToDefinition.Find(editorID);
+
+        private void AddDefinitions(IEnumerable<ActorDefinition> definitions)
+        {
+            foreach (ActorDefinition definition in definitions)
+            {
+                actors.Add(definition);
+                nameToDefinition[definition.Name] = definition;
+
+                if (definition.EditorNumber != null)
+                    editorIDToDefinition[definition.EditorNumber.Value] = definition;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Helion.Core.Resource.Decorate.Definitions;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
@@ -9,6 +10,7 @@ namespace Helion.Core.Worlds.Entities
     /// </summary>
     public class Entity : MonoBehaviour, ITickable, IDisposable
     {
+        public ActorDefinition Definition { get; private set; }
         public Vector3 Velocity;
         internal LinkedListNode<Entity> entityNode;
 
@@ -33,6 +35,11 @@ namespace Helion.Core.Worlds.Entities
         {
             Destroy(EntityGameObject);
             entityNode.List.Remove(entityNode);
+        }
+
+        public void SetDefinition(ActorDefinition definition)
+        {
+            Definition = definition;
         }
     }
 }

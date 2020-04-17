@@ -11,6 +11,7 @@
         Inventory,
         Powerup,
         Projectile,
+        SpawnPoint,
         TeleportDestination,
         Weapon
     }
