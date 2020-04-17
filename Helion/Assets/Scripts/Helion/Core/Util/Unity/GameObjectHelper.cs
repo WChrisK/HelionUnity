@@ -1,9 +1,12 @@
 ﻿using System;
 using Object = UnityEngine.Object;
 
-namespace Helion.Unity
+namespace Helion.Core.Util.Unity
 {
-    public static class UnityHelper
+    /// <summary>
+    /// Helper functions for game objects.
+    /// </summary>
+    public class GameObjectHelper
     {
         internal static Action<Object> destroyFunc = obj => throw new Exception(errorMessage);
         private static string errorMessage = "CRITICAL ERROR: Did not set UnityHelper.Destroy!";

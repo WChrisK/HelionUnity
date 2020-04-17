@@ -5,6 +5,7 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Logging.Targets;
+using Helion.Core.Util.Unity;
 using Helion.Core.Worlds;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace Helion.Unity
         {
             // We want to set this first before anything so we have access to
             // destruction abilities before we touch anything.
-            UnityHelper.destroyFunc = Destroy;
+            GameObjectHelper.destroyFunc = Destroy;
 
             // Apparently Unity can override our settings...
             Application.targetFrameRate = int.MaxValue;

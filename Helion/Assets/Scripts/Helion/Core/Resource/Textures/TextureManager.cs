@@ -5,6 +5,7 @@ using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
+using Helion.Core.Util.Unity;
 using Helion.Unity;
 using MoreLinq;
 using UnityEngine;
@@ -183,8 +184,8 @@ namespace Helion.Core.Resource.Textures
         private void DestroyMaterialAndTexture(Material material)
         {
             if (material.mainTexture != null)
-                UnityHelper.Destroy(material.mainTexture);
-            UnityHelper.Destroy(material);
+                GameObjectHelper.Destroy(material.mainTexture);
+            GameObjectHelper.Destroy(material);
         }
     }
 }
