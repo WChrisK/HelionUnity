@@ -1,4 +1,5 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.Flags;
+using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Decorate.Definitions
@@ -14,6 +15,7 @@ namespace Helion.Core.Resource.Decorate.Definitions
         public readonly ActorFlags Flags = new ActorFlags();
         public readonly ActorProperties Properties = new ActorProperties();
         public readonly ActorStates States = new ActorStates();
+        public readonly ActorTypes ActorType = new ActorTypes();
 
         public ActorDefinition(UpperString name, Optional<ActorDefinition> parent, int? editorNumber = null)
         {
@@ -26,6 +28,7 @@ namespace Helion.Core.Resource.Decorate.Definitions
                 Flags = new ActorFlags(parent.Value.Flags);
                 Properties = new ActorProperties(parent.Value.Properties);
                 States = new ActorStates(parent.Value.States, parent.Value.Name);
+                ActorType = new ActorTypes(parent.Value.ActorType);
             }
         }
     }
