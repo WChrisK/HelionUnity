@@ -17,7 +17,7 @@ namespace Helion.Core.Resource.Decorate.Parser
     {
         private static readonly Log Log = LogManager.Instance();
 
-        public List<ActorDefinition> Definitions = new List<ActorDefinition>();
+        public readonly List<ActorDefinition> Definitions = new List<ActorDefinition>();
         private readonly DecorateManager manager;
         private readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
         private ActorDefinition currentDefinition = new ActorDefinition("", Optional<ActorDefinition>.Empty());
@@ -68,7 +68,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private void ConsumeActorDefinition()
         {
             Consume("actor");
-            ConsumeActorHeader();
+            currentDefinition = ConsumeActorHeader();
             Consume('{');
             InvokeUntilAndConsume('}', ConsumeActorBodyComponent);
 
@@ -76,7 +76,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             nameToDefinition[currentDefinition.Name] = currentDefinition;
         }
 
-        private void ConsumeActorHeader()
+        private ActorDefinition ConsumeActorHeader()
         {
             UpperString name = ConsumeString();
 
@@ -97,7 +97,7 @@ namespace Helion.Core.Resource.Decorate.Parser
 
             int? editorId = ConsumeIfInt();
 
-            currentDefinition = new ActorDefinition(name, parent, editorId);
+            return new ActorDefinition(name, parent, editorId);
         }
 
         private void ConsumeActorBodyComponent()

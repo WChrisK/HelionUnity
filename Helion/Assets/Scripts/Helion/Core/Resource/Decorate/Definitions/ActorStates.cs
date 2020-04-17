@@ -4,10 +4,25 @@ using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Decorate.Definitions
 {
+    /// <summary>
+    /// All of the states for when an actor is ticked. Also contains rendering
+    /// information for frames.
+    /// </summary>
     public class ActorStates
     {
-        public readonly Dictionary<UpperString, int> Labels = new Dictionary<UpperString, int>();
-        public readonly Dictionary<UpperString, ActorFlowOverride> FlowOverrides = new Dictionary<UpperString, ActorFlowOverride>();
-        public readonly List<ActorFrame> Frames = new List<ActorFrame>();
+        public readonly ActorStateLabels Labels;
+        public readonly List<ActorFrame> Frames;
+
+        public ActorStates()
+        {
+            Labels = new ActorStateLabels();
+            Frames = new List<ActorFrame>();
+        }
+
+        public ActorStates(ActorStates other, UpperString parentName)
+        {
+            other.Frames.ForEach(frame => Frames.Add(new ActorFrame(frame)));
+            Labels = new ActorStateLabels(other.Labels, parentName);
+        }
     }
 }

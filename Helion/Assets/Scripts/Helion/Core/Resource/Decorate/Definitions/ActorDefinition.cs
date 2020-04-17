@@ -3,6 +3,9 @@ using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Decorate.Definitions
 {
+    /// <summary>
+    /// The definition of an actor for use in a game world.
+    /// </summary>
     public class ActorDefinition
     {
         public readonly UpperString Name;
@@ -17,6 +20,13 @@ namespace Helion.Core.Resource.Decorate.Definitions
             Name = name;
             Parent = parent;
             EditorNumber = editorNumber;
+
+            if (parent)
+            {
+                Flags = new ActorFlags(parent.Value.Flags);
+                Properties = new ActorProperties(parent.Value.Properties);
+                States = new ActorStates(parent.Value.States, parent.Value.Name);
+            }
         }
     }
 }

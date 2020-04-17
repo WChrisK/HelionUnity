@@ -11,6 +11,11 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
             FunctionName = functionName;
         }
 
+        public ActorActionFunction(ActorActionFunction other)
+        {
+            FunctionName = other.FunctionName;
+        }
+
         public override string ToString() => FunctionName.String;
     }
 }

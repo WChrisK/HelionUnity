@@ -4,5 +4,15 @@
     {
         public int Height = 16;
         public int Radius = 20;
+
+        public ActorProperties()
+        {
+        }
+
+        public ActorProperties(ActorProperties other)
+        {
+            Height = other.Height;
+            Radius = other.Radius;
+        }
     }
 }

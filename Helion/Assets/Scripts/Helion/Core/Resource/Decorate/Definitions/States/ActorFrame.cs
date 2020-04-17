@@ -18,5 +18,14 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
             Properties = properties;
             ActionFunction = actionFunction;
         }
+
+        public ActorFrame(ActorFrame other)
+        {
+            Sprite = other.Sprite;
+            Ticks = other.Ticks;
+            Properties = new ActorFrameProperties(other.Properties);
+            ActionFunction = other.ActionFunction.Map(af => new ActorActionFunction(af));
+            FlowControl = new ActorFlowControl(other.FlowControl);
+        }
     }
 }

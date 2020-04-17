@@ -32,6 +32,14 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
             Offset = offset;
         }
 
+        public ActorFlowControl(ActorFlowControl other)
+        {
+            FlowType = other.FlowType;
+            Label = new Optional<UpperString>(other.Label.Value);
+            Parent = new Optional<UpperString>(other.Parent.Value);
+            Offset = other.Offset;
+        }
+
         public override string ToString() => $"{FlowType} (parent={Parent} label={Label} offset={Offset})";
     }
 }

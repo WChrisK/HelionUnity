@@ -87,7 +87,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             case ActorStateBranch.Goto:
                 throw MakeException("Goto flow control override not supported currently");
             case ActorStateBranch.Stop:
-                throw MakeException("Goto flow control override not supported currently");
+                throw MakeException("Stop flow control override not supported currently");
             default:
                 throw MakeException("Flow control override after a label must be either 'Stop' or 'Goto'");
             }
@@ -95,7 +95,7 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void TrackNewLabel(UpperString label)
         {
-            currentDefinition.States.Labels[label] = frameIndex;
+            currentDefinition.States.Labels.Add(label, frameIndex);
             justSeenLabelOrNull = label;
         }
 
