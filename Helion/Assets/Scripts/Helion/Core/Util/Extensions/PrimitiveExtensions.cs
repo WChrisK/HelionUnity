@@ -280,5 +280,49 @@ namespace Helion.Core.Util.Extensions
         /// <param name="bitmask">The bits to set.</param>
         /// <returns>The value with the bits in bitmask set.</returns>
         public static uint WithBits(this uint value, uint bitmask) => value | bitmask;
+
+        /// <summary>
+        /// Performs a min/max on the two numbers.
+        /// </summary>
+        /// <param name="value">The current number.</param>
+        /// <param name="other">The other number.</param>
+        /// <returns>An ordered tuple of the min, and max number.</returns>
+        public static (int min, int max) MinMax(this int value, int other)
+        {
+            return value < other ? (value, other) : (other, value);
+        }
+
+        /// <summary>
+        /// Performs a min/max on the two numbers.
+        /// </summary>
+        /// <param name="value">The current number.</param>
+        /// <param name="other">The other number.</param>
+        /// <returns>An ordered tuple of the min, and max number.</returns>
+        public static (uint min, uint max) MinMax(this uint value, uint other)
+        {
+            return value < other ? (value, other) : (other, value);
+        }
+
+        /// <summary>
+        /// Performs a min/max on the two numbers.
+        /// </summary>
+        /// <param name="value">The current number.</param>
+        /// <param name="other">The other number.</param>
+        /// <returns>An ordered tuple of the min, and max number.</returns>
+        public static (float min, float max) MinMax(this float value, float other)
+        {
+            return value < other ? (value, other) : (other, value);
+        }
+
+        /// <summary>
+        /// Performs a min/max on the two numbers.
+        /// </summary>
+        /// <param name="value">The current number.</param>
+        /// <param name="other">The other number.</param>
+        /// <returns>An ordered tuple of the min, and max number.</returns>
+        public static (double min, double max) MinMax(this double value, double other)
+        {
+            return value < other ? (value, other) : (other, value);
+        }
     }
 }

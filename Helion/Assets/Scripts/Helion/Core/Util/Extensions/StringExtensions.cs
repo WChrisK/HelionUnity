@@ -19,5 +19,15 @@ namespace Helion.Core.Util.Extensions
         /// <param name="str">The string to check.</param>
         /// <returns>True if it has characters, false if it has none.</returns>
         public static bool NotEmpty(this string str) => str.Length != 0;
+
+        /// <summary>
+        /// Gets this as an upper string.
+        /// </summary>
+        /// <remarks>
+        /// Useful for when assigning a string to an Optional of UpperString.
+        /// </remarks>
+        /// <param name="str">The string to convert to an upper string.</param>
+        /// <returns>The upper string version.</returns>
+        public static UpperString AsUpper(this string str) => str;
     }
 }

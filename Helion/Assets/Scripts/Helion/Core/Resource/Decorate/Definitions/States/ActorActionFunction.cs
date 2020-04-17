@@ -1,14 +1,16 @@
-﻿namespace Helion.Core.Resource.Decorate.Definitions.States
+﻿using Helion.Core.Util;
+
+namespace Helion.Core.Resource.Decorate.Definitions.States
 {
     public class ActorActionFunction
     {
-        public readonly string FunctionName;
+        public readonly UpperString FunctionName;
 
-        public ActorActionFunction(string functionName)
+        public ActorActionFunction(UpperString functionName)
         {
-            FunctionName = functionName.ToUpper();
+            FunctionName = functionName;
         }
 
-        public override string ToString() => FunctionName;
+        public override string ToString() => FunctionName.String;
     }
 }

@@ -6,62 +6,62 @@ namespace Helion.Core.Resource.Decorate.Parser
     {
         private void ConsumeAmmoProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeArmorProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeFakeInventoryProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeHealthProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeHealthPickupProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeInventoryProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeMorphProjectileProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumePlayerProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumePowerupProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumePuzzleItemProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeWeaponProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeWeaponPieceProperty()
         {
-            MakeException("Not supported currently");
+            throw MakeException("Not supported currently");
         }
 
         private void ConsumeTopLevelPropertyOrCombo(UpperString property)

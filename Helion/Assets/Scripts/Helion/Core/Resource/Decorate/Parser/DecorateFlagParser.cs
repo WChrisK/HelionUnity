@@ -1,4 +1,6 @@
-﻿namespace Helion.Core.Resource.Decorate.Parser
+﻿using Helion.Core.Resource.Decorate.Definitions.Flags;
+
+namespace Helion.Core.Resource.Decorate.Parser
 {
     /// <summary>
     /// Handles parsing the flag components of an actor.
@@ -43,85 +45,85 @@
             switch (nestedFlag.ToUpper())
             {
             case "ADDITIVETIME":
-                currentDefinition.Flags.InventoryAdditiveTime = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryAdditiveTime, flagValue);
                 break;
             case "ALWAYSPICKUP":
-                currentDefinition.Flags.InventoryAlwaysPickup = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryAlwaysPickup, flagValue);
                 break;
             case "ALWAYSRESPAWN":
-                currentDefinition.Flags.InventoryAlwaysRespawn = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryAlwaysRespawn, flagValue);
                 break;
             case "AUTOACTIVATE":
-                currentDefinition.Flags.InventoryAutoActivate = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryAutoActivate, flagValue);
                 break;
             case "BIGPOWERUP":
-                currentDefinition.Flags.InventoryBigPowerup = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryBigPowerup, flagValue);
                 break;
             case "FANCYPICKUPSOUND":
-                currentDefinition.Flags.InventoryFancyPickupSound = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryFancyPickupSound, flagValue);
                 break;
             case "HUBPOWER":
-                currentDefinition.Flags.InventoryHubPower = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryHubPower, flagValue);
                 break;
             case "IGNORESKILL":
-                currentDefinition.Flags.InventoryIgnoreSkill = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryIgnoreSkill, flagValue);
                 break;
             case "INTERHUBSTRIP":
-                currentDefinition.Flags.InventoryInterHubStrip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryInterHubStrip, flagValue);
                 break;
             case "INVBAR":
-                currentDefinition.Flags.InventoryInvbar = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryInvbar, flagValue);
                 break;
             case "ISARMOR":
-                currentDefinition.Flags.InventoryIsArmor = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryIsArmor, flagValue);
                 break;
             case "ISHEALTH":
-                currentDefinition.Flags.InventoryIsHealth = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryIsHealth, flagValue);
                 break;
             case "KEEPDEPLETED":
-                currentDefinition.Flags.InventoryKeepDepleted = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryKeepDepleted, flagValue);
                 break;
             case "NEVERRESPAWN":
-                currentDefinition.Flags.InventoryNeverRespawn = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryNeverRespawn, flagValue);
                 break;
             case "NOATTENPICKUPSOUND":
-                currentDefinition.Flags.InventoryNoAttenPickupSound = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryNoAttenPickupSound, flagValue);
                 break;
             case "NOSCREENBLINK":
-                currentDefinition.Flags.InventoryNoScreenBlink = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryNoScreenBlink, flagValue);
                 break;
             case "NOSCREENFLASH":
-                currentDefinition.Flags.InventoryNoScreenFlash = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryNoScreenFlash, flagValue);
                 break;
             case "NOTELEPORTFREEZE":
-                currentDefinition.Flags.InventoryNoTeleportFreeze = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryNoTeleportFreeze, flagValue);
                 break;
             case "PERSISTENTPOWER":
-                currentDefinition.Flags.InventoryPersistentPower = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryPersistentPower, flagValue);
                 break;
             case "PICKUPFLASH":
-                currentDefinition.Flags.InventoryPickupFlash = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryPickupFlash, flagValue);
                 break;
             case "QUIET":
-                currentDefinition.Flags.InventoryQuiet = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryQuiet, flagValue);
                 break;
             case "RESTRICTABSOLUTELY":
-                currentDefinition.Flags.InventoryRestrictAbsolutely = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryRestrictAbsolutely, flagValue);
                 break;
             case "TOSSED":
-                currentDefinition.Flags.InventoryTossed = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryTossed, flagValue);
                 break;
             case "TRANSFER":
-                currentDefinition.Flags.InventoryTransfer = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryTransfer, flagValue);
                 break;
             case "UNCLEARABLE":
-                currentDefinition.Flags.InventoryUnclearable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryUnclearable, flagValue);
                 break;
             case "UNDROPPABLE":
-                currentDefinition.Flags.InventoryUndroppable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryUndroppable, flagValue);
                 break;
             case "UNTOSSABLE":
-                currentDefinition.Flags.InventoryUntossable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InventoryUntossable, flagValue);
                 break;
             default:
                 Log.Warn("Unknown inventory flag suffix '{0}' for actor {1} (in particular, INVENTORY.{2})", nestedFlag, currentDefinition.Name);
@@ -135,13 +137,13 @@
             switch (nestedFlag.ToUpper())
             {
             case "CANSUPERMORPH":
-                currentDefinition.Flags.PlayerPawnCanSuperMorph = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PlayerPawnCanSuperMorph, flagValue);
                 break;
             case "CROUCHABLEMORPH":
-                currentDefinition.Flags.PlayerPawnCrouchableMorph = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PlayerPawnCrouchableMorph, flagValue);
                 break;
             case "NOTHRUSTWHENINVUL":
-                currentDefinition.Flags.PlayerPawnNoThrustWhenInvul = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PlayerPawnNoThrustWhenInvul, flagValue);
                 break;
             default:
                 Log.Warn("Unknown playerpawn flag suffix '{0}' for actor {1} (in particular, PLAYERPAWN.{2})", nestedFlag, currentDefinition.Name);
@@ -155,70 +157,70 @@
             switch (nestedFlag.ToUpper())
             {
             case "ALTAMMOOPTIONAL":
-                currentDefinition.Flags.WeaponAltAmmoOptional = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponAltAmmoOptional, flagValue);
                 break;
             case "ALTUSESBOTH":
-                currentDefinition.Flags.WeaponAltUsesBoth = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponAltUsesBoth, flagValue);
                 break;
             case "AMMOCHECKBOTH":
-                currentDefinition.Flags.WeaponAmmoCheckBoth = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponAmmoCheckBoth, flagValue);
                 break;
             case "AMMOOPTIONAL":
-                currentDefinition.Flags.WeaponAmmoOptional = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponAmmoOptional, flagValue);
                 break;
             case "AXEBLOOD":
-                currentDefinition.Flags.WeaponAxeBlood = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponAxeBlood, flagValue);
                 break;
             case "BFG":
-                currentDefinition.Flags.WeaponBfg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponBfg, flagValue);
                 break;
             case "CHEATNOTWEAPON":
-                currentDefinition.Flags.WeaponCheatNotWeapon = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponCheatNotWeapon, flagValue);
                 break;
             case "DONTBOB":
-                currentDefinition.Flags.WeaponDontBob = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponDontBob, flagValue);
                 break;
             case "EXPLOSIVE":
-                currentDefinition.Flags.WeaponExplosive = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponExplosive, flagValue);
                 break;
             case "MELEEWEAPON":
-                currentDefinition.Flags.WeaponMeleeWeapon = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponMeleeWeapon, flagValue);
                 break;
             case "NOALERT":
-                currentDefinition.Flags.WeaponNoAlert = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoAlert, flagValue);
                 break;
             case "NOAUTOAIM":
-                currentDefinition.Flags.WeaponNoAutoaim = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoAutoaim, flagValue);
                 break;
             case "NOAUTOFIRE":
-                currentDefinition.Flags.WeaponNoAutofire = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoAutofire, flagValue);
                 break;
             case "NODEATHDESELECT":
-                currentDefinition.Flags.WeaponNoDeathDeselect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoDeathDeselect, flagValue);
                 break;
             case "NODEATHINPUT":
-                currentDefinition.Flags.WeaponNoDeathInput = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoDeathInput, flagValue);
                 break;
             case "NOAUTOSWITCH":
-                currentDefinition.Flags.WeaponNoAutoSwitch = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponNoAutoSwitch, flagValue);
                 break;
             case "POWEREDUP":
-                currentDefinition.Flags.WeaponPoweredUp = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponPoweredUp, flagValue);
                 break;
             case "PRIMARYUSESBOTH":
-                currentDefinition.Flags.WeaponPrimaryUsesBoth = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponPrimaryUsesBoth, flagValue);
                 break;
             case "READYSNDHALF":
-                currentDefinition.Flags.WeaponReadySndHalf = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponReadySndHalf, flagValue);
                 break;
             case "STAFF2KICKBACK":
-                currentDefinition.Flags.WeaponStaff2Kickback = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponStaff2Kickback, flagValue);
                 break;
             case "SPAWN":
-                currentDefinition.Flags.WeaponSpawn = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponSpawn, flagValue);
                 break;
             case "WIMPY_WEAPON":
-                currentDefinition.Flags.WeaponWimpyWeapon = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WeaponWimpyWeapon, flagValue);
                 break;
             default:
                 Log.Warn("Unknown weapon flag suffix '{0}' for actor '{1}'", nestedFlag, currentDefinition.Name);
@@ -231,751 +233,751 @@
             switch (flagName.ToUpper())
             {
             case "ABSMASKANGLE":
-                currentDefinition.Flags.AbsMaskAngle = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AbsMaskAngle, flagValue);
                 break;
             case "ABSMASKPITCH":
-                currentDefinition.Flags.AbsMaskPitch = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AbsMaskPitch, flagValue);
                 break;
             case "ACTIVATEIMPACT":
-                currentDefinition.Flags.ActivateImpact = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ActivateImpact, flagValue);
                 break;
             case "ACTIVATEMCROSS":
-                currentDefinition.Flags.ActivateMCross = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ActivateMCross, flagValue);
                 break;
             case "ACTIVATEPCROSS":
-                currentDefinition.Flags.ActivatePCross = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ActivatePCross, flagValue);
                 break;
             case "ACTLIKEBRIDGE":
-                currentDefinition.Flags.ActLikeBridge = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ActLikeBridge, flagValue);
                 break;
             case "ADDITIVEPOISONDAMAGE":
-                currentDefinition.Flags.AdditivePoisonDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AdditivePoisonDamage, flagValue);
                 break;
             case "ADDITIVEPOISONDURATION":
-                currentDefinition.Flags.AdditivePoisonDuration = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AdditivePoisonDuration, flagValue);
                 break;
             case "AIMREFLECT":
-                currentDefinition.Flags.AimReflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AimReflect, flagValue);
                 break;
             case "ALLOWBOUNCEONACTORS":
-                currentDefinition.Flags.AllowBounceOnActors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AllowBounceOnActors, flagValue);
                 break;
             case "ALLOWPAIN":
-                currentDefinition.Flags.AllowPain = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AllowPain, flagValue);
                 break;
             case "ALLOWPARTICLES":
-                currentDefinition.Flags.AllowParticles = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AllowParticles, flagValue);
                 break;
             case "ALLOWTHRUFLAGS":
-                currentDefinition.Flags.AllowThruFlags = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AllowThruFlags, flagValue);
                 break;
             case "ALWAYSFAST":
-                currentDefinition.Flags.AlwaysFast = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AlwaysFast, flagValue);
                 break;
             case "ALWAYSPUFF":
-                currentDefinition.Flags.AlwaysPuff = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AlwaysPuff, flagValue);
                 break;
             case "ALWAYSRESPAWN":
-                currentDefinition.Flags.AlwaysRespawn = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AlwaysRespawn, flagValue);
                 break;
             case "ALWAYSTELEFRAG":
-                currentDefinition.Flags.AlwaysTelefrag = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AlwaysTelefrag, flagValue);
                 break;
             case "AMBUSH":
-                currentDefinition.Flags.Ambush = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Ambush, flagValue);
                 break;
             case "AVOIDMELEE":
-                currentDefinition.Flags.AvoidMelee = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.AvoidMelee, flagValue);
                 break;
             case "BLASTED":
-                currentDefinition.Flags.Blasted = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Blasted, flagValue);
                 break;
             case "BLOCKASPLAYER":
-                currentDefinition.Flags.BlockAsPlayer = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BlockAsPlayer, flagValue);
                 break;
             case "BLOCKEDBYSOLIDACTORS":
-                currentDefinition.Flags.BlockedBySolidActors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BlockedBySolidActors, flagValue);
                 break;
             case "BLOODLESSIMPACT":
-                currentDefinition.Flags.BloodlessImpact = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BloodlessImpact, flagValue);
                 break;
             case "BLOODSPLATTER":
-                currentDefinition.Flags.BloodSplatter = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BloodSplatter, flagValue);
                 break;
             case "BOSS":
-                currentDefinition.Flags.Boss = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Boss, flagValue);
                 break;
             case "BOSSDEATH":
-                currentDefinition.Flags.BossDeath = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BossDeath, flagValue);
                 break;
             case "BOUNCEAUTOOFF":
-                currentDefinition.Flags.BounceAutoOff = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceAutoOff, flagValue);
                 break;
             case "BOUNCEAUTOOFFFLOORONLY":
-                currentDefinition.Flags.BounceAutoOffFloorOnly = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceAutoOffFloorOnly, flagValue);
                 break;
             case "BOUNCELIKEHERETIC":
-                currentDefinition.Flags.BounceLikeHeretic = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceLikeHeretic, flagValue);
                 break;
             case "BOUNCEONACTORS":
-                currentDefinition.Flags.BounceOnActors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceOnActors, flagValue);
                 break;
             case "BOUNCEONCEILINGS":
-                currentDefinition.Flags.BounceOnCeilings = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceOnCeilings, flagValue);
                 break;
             case "BOUNCEONFLOORS":
-                currentDefinition.Flags.BounceOnFloors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceOnFloors, flagValue);
                 break;
             case "BOUNCEONUNRIPPABLES":
-                currentDefinition.Flags.BounceOnUnrippables = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceOnUnrippables, flagValue);
                 break;
             case "BOUNCEONWALLS":
-                currentDefinition.Flags.BounceOnWalls = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BounceOnWalls, flagValue);
                 break;
             case "BRIGHT":
-                currentDefinition.Flags.Bright = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Bright, flagValue);
                 break;
             case "BUDDHA":
-                currentDefinition.Flags.Buddha = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Buddha, flagValue);
                 break;
             case "BUMPSPECIAL":
-                currentDefinition.Flags.BumpSpecial = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.BumpSpecial, flagValue);
                 break;
             case "CANBLAST":
-                currentDefinition.Flags.CanBlast = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CanBlast, flagValue);
                 break;
             case "CANBOUNCEWATER":
-                currentDefinition.Flags.CanBounceWater = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CanBounceWater, flagValue);
                 break;
             case "CANNOTPUSH":
-                currentDefinition.Flags.CannotPush = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CannotPush, flagValue);
                 break;
             case "CANPASS":
-                currentDefinition.Flags.CanPass = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CanPass, flagValue);
                 break;
             case "CANPUSHWALLS":
-                currentDefinition.Flags.CanPushWalls = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CanPushWalls, flagValue);
                 break;
             case "CANTLEAVEFLOORPIC":
-                currentDefinition.Flags.CantLeaveFloorPic = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CantLeaveFloorPic, flagValue);
                 break;
             case "CANTSEEK":
-                currentDefinition.Flags.CantSeek = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CantSeek, flagValue);
                 break;
             case "CANUSEWALLS":
-                currentDefinition.Flags.CanUseWalls = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CanUseWalls, flagValue);
                 break;
             case "CAUSEPAIN":
-                currentDefinition.Flags.CausePain = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CausePain, flagValue);
                 break;
             case "CEILINGHUGGER":
-                currentDefinition.Flags.CeilingHugger = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CeilingHugger, flagValue);
                 break;
             case "CORPSE":
-                currentDefinition.Flags.Corpse = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Corpse, flagValue);
                 break;
             case "COUNTITEM":
-                currentDefinition.Flags.CountItem = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CountItem, flagValue);
                 break;
             case "COUNTKILL":
-                currentDefinition.Flags.CountKill = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CountKill, flagValue);
                 break;
             case "COUNTSECRET":
-                currentDefinition.Flags.CountSecret = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.CountSecret, flagValue);
                 break;
             case "DEFLECT":
-                currentDefinition.Flags.Deflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Deflect, flagValue);
                 break;
             case "DEHEXPLOSION":
-                currentDefinition.Flags.DehExplosion = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DehExplosion, flagValue);
                 break;
             case "DOHARMSPECIES":
-                currentDefinition.Flags.DoHarmSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DoHarmSpecies, flagValue);
                 break;
             case "DONTBLAST":
-                currentDefinition.Flags.DontBlast = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontBlast, flagValue);
                 break;
             case "DONTBOUNCEONSHOOTABLES":
-                currentDefinition.Flags.DontBounceOnShootables = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontBounceOnShootables, flagValue);
                 break;
             case "DONTBOUNCEONSKY":
-                currentDefinition.Flags.DontBounceOnSky = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontBounceOnSky, flagValue);
                 break;
             case "DONTCORPSE":
-                currentDefinition.Flags.DontCorpse = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontCorpse, flagValue);
                 break;
             case "DONTDRAIN":
-                currentDefinition.Flags.DontDrain = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontDrain, flagValue);
                 break;
             case "DONTFACETALKER":
-                currentDefinition.Flags.DontFaceTalker = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontFaceTalker, flagValue);
                 break;
             case "DONTFALL":
-                currentDefinition.Flags.DontFall = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontFall, flagValue);
                 break;
             case "DONTGIB":
-                currentDefinition.Flags.DontGib = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontGib, flagValue);
                 break;
             case "DONTHARMCLASS":
-                currentDefinition.Flags.DontHarmClass = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontHarmClass, flagValue);
                 break;
             case "DONTHARMSPECIES":
-                currentDefinition.Flags.DontHarmSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontHarmSpecies, flagValue);
                 break;
             case "DONTHURTSPECIES":
-                currentDefinition.Flags.DontHurtSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontHurtSpecies, flagValue);
                 break;
             case "DONTINTERPOLATE":
-                currentDefinition.Flags.DontInterpolate = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontInterpolate, flagValue);
                 break;
             case "DONTMORPH":
-                currentDefinition.Flags.DontMorph = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontMorph, flagValue);
                 break;
             case "DONTOVERLAP":
-                currentDefinition.Flags.DontOverlap = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontOverlap, flagValue);
                 break;
             case "DONTREFLECT":
-                currentDefinition.Flags.DontReflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontReflect, flagValue);
                 break;
             case "DONTRIP":
-                currentDefinition.Flags.DontRip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontRip, flagValue);
                 break;
             case "DONTSEEKINVISIBLE":
-                currentDefinition.Flags.DontSeekInvisible = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontSeekInvisible, flagValue);
                 break;
             case "DONTSPLASH":
-                currentDefinition.Flags.DontSplash = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontSplash, flagValue);
                 break;
             case "DONTSQUASH":
-                currentDefinition.Flags.DontSquash = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontSquash, flagValue);
                 break;
             case "DONTTHRUST":
-                currentDefinition.Flags.DontThrust = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontThrust, flagValue);
                 break;
             case "DONTTRANSLATE":
-                currentDefinition.Flags.DontTranslate = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DontTranslate, flagValue);
                 break;
             case "DOOMBOUNCE":
-                currentDefinition.Flags.DoomBounce = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.DoomBounce, flagValue);
                 break;
             case "DORMANT":
-                currentDefinition.Flags.Dormant = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Dormant, flagValue);
                 break;
             case "DROPOFF":
-                currentDefinition.Flags.Dropoff = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Dropoff, flagValue);
                 break;
             case "DROPPED":
-                currentDefinition.Flags.Dropped = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Dropped, flagValue);
                 break;
             case "EXPLOCOUNT":
-                currentDefinition.Flags.ExploCount = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ExploCount, flagValue);
                 break;
             case "EXPLODEONWATER":
-                currentDefinition.Flags.ExplodeOnWater = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ExplodeOnWater, flagValue);
                 break;
             case "EXTREMEDEATH":
-                currentDefinition.Flags.ExtremeDeath = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ExtremeDeath, flagValue);
                 break;
             case "FASTER":
-                currentDefinition.Flags.Faster = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Faster, flagValue);
                 break;
             case "FASTMELEE":
-                currentDefinition.Flags.FastMelee = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FastMelee, flagValue);
                 break;
             case "FIREDAMAGE":
-                currentDefinition.Flags.FireDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FireDamage, flagValue);
                 break;
             case "FIRERESIST":
-                currentDefinition.Flags.FireResist = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FireResist, flagValue);
                 break;
             case "FIXMAPTHINGPOS":
-                currentDefinition.Flags.FixMapThingPos = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FixMapThingPos, flagValue);
                 break;
             case "FLATSPRITE":
-                currentDefinition.Flags.FlatSprite = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FlatSprite, flagValue);
                 break;
             case "FLOAT":
-                currentDefinition.Flags.Float = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Float, flagValue);
                 break;
             case "FLOATBOB":
-                currentDefinition.Flags.FloatBob = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FloatBob, flagValue);
                 break;
             case "FLOORCLIP":
-                currentDefinition.Flags.FloorClip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FloorClip, flagValue);
                 break;
             case "FLOORHUGGER":
-                currentDefinition.Flags.FloorHugger = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FloorHugger, flagValue);
                 break;
             case "FOILBUDDHA":
-                currentDefinition.Flags.FoilBuddha = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FoilBuddha, flagValue);
                 break;
             case "FOILINVUL":
-                currentDefinition.Flags.FoilInvul = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FoilInvul, flagValue);
                 break;
             case "FORCEDECAL":
-                currentDefinition.Flags.ForceDecal = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceDecal, flagValue);
                 break;
             case "FORCEINFIGHTING":
-                currentDefinition.Flags.ForceInFighting = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceInFighting, flagValue);
                 break;
             case "FORCEPAIN":
-                currentDefinition.Flags.ForcePain = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForcePain, flagValue);
                 break;
             case "FORCERADIUSDMG":
-                currentDefinition.Flags.ForceRadiusDmg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceRadiusDmg, flagValue);
                 break;
             case "FORCEXYBILLBOARD":
-                currentDefinition.Flags.ForceXYBillboard = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceXYBillboard, flagValue);
                 break;
             case "FORCEYBILLBOARD":
-                currentDefinition.Flags.ForceYBillboard = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceYBillboard, flagValue);
                 break;
             case "FORCEZERORADIUSDMG":
-                currentDefinition.Flags.ForceZeroRadiusDmg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ForceZeroRadiusDmg, flagValue);
                 break;
             case "FRIENDLY":
-                currentDefinition.Flags.Friendly = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Friendly, flagValue);
                 break;
             case "FRIGHTENED":
-                currentDefinition.Flags.Frightened = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Frightened, flagValue);
                 break;
             case "FRIGHTENING":
-                currentDefinition.Flags.Frightening = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Frightening, flagValue);
                 break;
             case "FULLVOLACTIVE":
-                currentDefinition.Flags.FullVolActive = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FullVolActive, flagValue);
                 break;
             case "FULLVOLDEATH":
-                currentDefinition.Flags.FullVolDeath = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.FullVolDeath, flagValue);
                 break;
             case "GETOWNER":
-                currentDefinition.Flags.GetOwner = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.GetOwner, flagValue);
                 break;
             case "GHOST":
-                currentDefinition.Flags.Ghost = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Ghost, flagValue);
                 break;
             case "GRENADETRAIL":
-                currentDefinition.Flags.GrenadeTrail = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.GrenadeTrail, flagValue);
                 break;
             case "HARMFRIENDS":
-                currentDefinition.Flags.HarmFriends = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HarmFriends, flagValue);
                 break;
             case "HERETICBOUNCE":
-                currentDefinition.Flags.HereticBounce = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HereticBounce, flagValue);
                 break;
             case "HEXENBOUNCE":
-                currentDefinition.Flags.HexenBounce = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HexenBounce, flagValue);
                 break;
             case "HITMASTER":
-                currentDefinition.Flags.HitMaster = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HitMaster, flagValue);
                 break;
             case "HITOWNER":
-                currentDefinition.Flags.HitOwner = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HitOwner, flagValue);
                 break;
             case "HITTARGET":
-                currentDefinition.Flags.HitTarget = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HitTarget, flagValue);
                 break;
             case "HITTRACER":
-                currentDefinition.Flags.HitTracer = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.HitTracer, flagValue);
                 break;
             case "ICECORPSE":
-                currentDefinition.Flags.IceCorpse = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.IceCorpse, flagValue);
                 break;
             case "ICEDAMAGE":
-                currentDefinition.Flags.IceDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.IceDamage, flagValue);
                 break;
             case "ICESHATTER":
-                currentDefinition.Flags.IceShatter = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.IceShatter, flagValue);
                 break;
             case "INCOMBAT":
-                currentDefinition.Flags.InCombat = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InCombat, flagValue);
                 break;
             case "INTERPOLATEANGLES":
-                currentDefinition.Flags.InterpolateAngles = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.InterpolateAngles, flagValue);
                 break;
             case "INVISIBLE":
-                currentDefinition.Flags.Invisible = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Invisible, flagValue);
                 break;
             case "INVULNERABLE":
-                currentDefinition.Flags.Invulnerable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Invulnerable, flagValue);
                 break;
             case "ISMONSTER":
-                currentDefinition.Flags.IsMonster = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.IsMonster, flagValue);
                 break;
             case "ISTELEPORTSPOT":
-                currentDefinition.Flags.IsTeleportSpot = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.IsTeleportSpot, flagValue);
                 break;
             case "JUMPDOWN":
-                currentDefinition.Flags.JumpDown = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.JumpDown, flagValue);
                 break;
             case "JUSTATTACKED":
-                currentDefinition.Flags.JustAttacked = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.JustAttacked, flagValue);
                 break;
             case "JUSTHIT":
-                currentDefinition.Flags.JustHit = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.JustHit, flagValue);
                 break;
             case "LAXTELEFRAGDMG":
-                currentDefinition.Flags.LaxTeleFragDmg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.LaxTeleFragDmg, flagValue);
                 break;
             case "LONGMELEERANGE":
-                currentDefinition.Flags.LongMeleeRange = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.LongMeleeRange, flagValue);
                 break;
             case "LOOKALLAROUND":
-                currentDefinition.Flags.LookAllAround = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.LookAllAround, flagValue);
                 break;
             case "LOWGRAVITY":
-                currentDefinition.Flags.LowGravity = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.LowGravity, flagValue);
                 break;
             case "MASKROTATION":
-                currentDefinition.Flags.MaskRotation = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MaskRotation, flagValue);
                 break;
             case "MBFBOUNCER":
-                currentDefinition.Flags.MbfBouncer = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MbfBouncer, flagValue);
                 break;
             case "MIRRORREFLECT":
-                currentDefinition.Flags.MirrorReflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MirrorReflect, flagValue);
                 break;
             case "MISSILE":
-                currentDefinition.Flags.Missile = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Missile, flagValue);
                 break;
             case "MISSILEEVENMORE":
-                currentDefinition.Flags.MissileEvenMore = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MissileEvenMore, flagValue);
                 break;
             case "MISSILEMORE":
-                currentDefinition.Flags.MissileMore = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MissileMore, flagValue);
                 break;
             case "MONSTER":
-                currentDefinition.Flags.Monster = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Monster, flagValue);
                 break;
             case "MOVEWITHSECTOR":
-                currentDefinition.Flags.MoveWithSector = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MoveWithSector, flagValue);
                 break;
             case "MTHRUSPECIES":
-                currentDefinition.Flags.MThruSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.MThruSpecies, flagValue);
                 break;
             case "NEVERFAST":
-                currentDefinition.Flags.NeverFast = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NeverFast, flagValue);
                 break;
             case "NEVERRESPAWN":
-                currentDefinition.Flags.NeverRespawn = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NeverRespawn, flagValue);
                 break;
             case "NEVERTARGET":
-                currentDefinition.Flags.NeverTarget = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NeverTarget, flagValue);
                 break;
             case "NOBLOCKMAP":
-                currentDefinition.Flags.NoBlockmap = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBlockmap, flagValue);
                 break;
             case "NOBLOCKMONST":
-                currentDefinition.Flags.NoBlockMonst = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBlockMonst, flagValue);
                 break;
             case "NOBLOOD":
-                currentDefinition.Flags.NoBlood = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBlood, flagValue);
                 break;
             case "NOBLOODDECALS":
-                currentDefinition.Flags.NoBloodDecals = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBloodDecals, flagValue);
                 break;
             case "NOBOSSRIP":
-                currentDefinition.Flags.NoBossRip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBossRip, flagValue);
                 break;
             case "NOBOUNCESOUND":
-                currentDefinition.Flags.NoBounceSound = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoBounceSound, flagValue);
                 break;
             case "NOCLIP":
-                currentDefinition.Flags.NoClip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoClip, flagValue);
                 break;
             case "NODAMAGE":
-                currentDefinition.Flags.NoDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoDamage, flagValue);
                 break;
             case "NODAMAGETHRUST":
-                currentDefinition.Flags.NoDamageThrust = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoDamageThrust, flagValue);
                 break;
             case "NODECAL":
-                currentDefinition.Flags.NoDecal = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoDecal, flagValue);
                 break;
             case "NODROPOFF":
-                currentDefinition.Flags.NoDropoff = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoDropoff, flagValue);
                 break;
             case "NOEXPLODEFLOOR":
-                currentDefinition.Flags.NoExplodeFloor = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoExplodeFloor, flagValue);
                 break;
             case "NOEXTREMEDEATH":
-                currentDefinition.Flags.NoExtremeDeath = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoExtremeDeath, flagValue);
                 break;
             case "NOFEAR":
-                currentDefinition.Flags.NoFear = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoFear, flagValue);
                 break;
             case "NOFRICTION":
-                currentDefinition.Flags.NoFriction = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoFriction, flagValue);
                 break;
             case "NOFRICTIONBOUNCE":
-                currentDefinition.Flags.NoFrictionBounce = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoFrictionBounce, flagValue);
                 break;
             case "NOFORWARDFALL":
-                currentDefinition.Flags.NoForwardFall = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoForwardFall, flagValue);
                 break;
             case "NOGRAVITY":
-                currentDefinition.Flags.NoGravity = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoGravity, flagValue);
                 break;
             case "NOICEDEATH":
-                currentDefinition.Flags.NoIceDeath = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoIceDeath, flagValue);
                 break;
             case "NOINFIGHTING":
-                currentDefinition.Flags.NoInfighting = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoInfighting, flagValue);
                 break;
             case "NOINFIGHTSPECIES":
-                currentDefinition.Flags.NoInfightSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoInfightSpecies, flagValue);
                 break;
             case "NOINTERACTION":
-                currentDefinition.Flags.NoInteraction = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoInteraction, flagValue);
                 break;
             case "NOKILLSCRIPTS":
-                currentDefinition.Flags.NoKillScripts = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoKillScripts, flagValue);
                 break;
             case "NOLIFTDROP":
-                currentDefinition.Flags.NoLiftDrop = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoLiftDrop, flagValue);
                 break;
             case "NOMENU":
-                currentDefinition.Flags.NoMenu = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoMenu, flagValue);
                 break;
             case "NONSHOOTABLE":
-                currentDefinition.Flags.NonShootable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NonShootable, flagValue);
                 break;
             case "NOPAIN":
-                currentDefinition.Flags.NoPain = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoPain, flagValue);
                 break;
             case "NORADIUSDMG":
-                currentDefinition.Flags.NoRadiusDmg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoRadiusDmg, flagValue);
                 break;
             case "NOSECTOR":
-                currentDefinition.Flags.NoSector = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoSector, flagValue);
                 break;
             case "NOSKIN":
-                currentDefinition.Flags.NoSkin = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoSkin, flagValue);
                 break;
             case "NOSPLASHALERT":
-                currentDefinition.Flags.NoSplashAlert = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoSplashAlert, flagValue);
                 break;
             case "NOTARGET":
-                currentDefinition.Flags.NoTarget = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTarget, flagValue);
                 break;
             case "NOTARGETSWITCH":
-                currentDefinition.Flags.NoTargetSwitch = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTargetSwitch, flagValue);
                 break;
             case "NOTAUTOAIMED":
-                currentDefinition.Flags.NotAutoaimed = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NotAutoaimed, flagValue);
                 break;
             case "NOTDMATCH":
-                currentDefinition.Flags.NotDMatch = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NotDMatch, flagValue);
                 break;
             case "NOTELEFRAG":
-                currentDefinition.Flags.NoTelefrag = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTelefrag, flagValue);
                 break;
             case "NOTELEOTHER":
-                currentDefinition.Flags.NoTeleOther = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTeleOther, flagValue);
                 break;
             case "NOTELEPORT":
-                currentDefinition.Flags.NoTeleport = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTeleport, flagValue);
                 break;
             case "NOTELESTOMP":
-                currentDefinition.Flags.NoTelestomp = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTelestomp, flagValue);
                 break;
             case "NOTIMEFREEZE":
-                currentDefinition.Flags.NoTimeFreeze = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTimeFreeze, flagValue);
                 break;
             case "NOTONAUTOMAP":
-                currentDefinition.Flags.NotOnAutomap = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NotOnAutomap, flagValue);
                 break;
             case "NOTRIGGER":
-                currentDefinition.Flags.NoTrigger = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoTrigger, flagValue);
                 break;
             case "NOVERTICALMELEERANGE":
-                currentDefinition.Flags.NoVerticalMeleeRange = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoVerticalMeleeRange, flagValue);
                 break;
             case "NOWALLBOUNCESND":
-                currentDefinition.Flags.NoWallBounceSnd = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.NoWallBounceSnd, flagValue);
                 break;
             case "OLDRADIUSDMG":
-                currentDefinition.Flags.OldRadiusDmg = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.OldRadiusDmg, flagValue);
                 break;
             case "PAINLESS":
-                currentDefinition.Flags.Painless = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Painless, flagValue);
                 break;
             case "PICKUP":
-                currentDefinition.Flags.Pickup = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Pickup, flagValue);
                 break;
             case "PIERCEARMOR":
-                currentDefinition.Flags.PierceArmor = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PierceArmor, flagValue);
                 break;
             case "POISONALWAYS":
-                currentDefinition.Flags.PoisonAlways = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PoisonAlways, flagValue);
                 break;
             case "PROJECTILE":
-                currentDefinition.Flags.Projectile = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Projectile, flagValue);
                 break;
             case "PUFFGETSOWNER":
-                currentDefinition.Flags.PuffGetsOwner = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PuffGetsOwner, flagValue);
                 break;
             case "PUFFONACTORS":
-                currentDefinition.Flags.PuffOnActors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.PuffOnActors, flagValue);
                 break;
             case "PUSHABLE":
-                currentDefinition.Flags.Pushable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Pushable, flagValue);
                 break;
             case "QUARTERGRAVITY":
-                currentDefinition.Flags.QuarterGravity = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.QuarterGravity, flagValue);
                 break;
             case "QUICKTORETALIATE":
-                currentDefinition.Flags.QuickToRetaliate = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.QuickToRetaliate, flagValue);
                 break;
             case "RANDOMIZE":
-                currentDefinition.Flags.Randomize = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Randomize, flagValue);
                 break;
             case "REFLECTIVE":
-                currentDefinition.Flags.Reflective = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Reflective, flagValue);
                 break;
             case "RELATIVETOFLOOR":
-                currentDefinition.Flags.RelativeToFloor = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.RelativeToFloor, flagValue);
                 break;
             case "RIPPER":
-                currentDefinition.Flags.Ripper = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Ripper, flagValue);
                 break;
             case "ROCKETTRAIL":
-                currentDefinition.Flags.RocketTrail = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.RocketTrail, flagValue);
                 break;
             case "ROLLCENTER":
-                currentDefinition.Flags.RollCenter = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.RollCenter, flagValue);
                 break;
             case "ROLLSPRITE":
-                currentDefinition.Flags.RollSprite = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.RollSprite, flagValue);
                 break;
             case "SCREENSEEKER":
-                currentDefinition.Flags.ScreenSeeker = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ScreenSeeker, flagValue);
                 break;
             case "SEEINVISIBLE":
-                currentDefinition.Flags.SeeInvisible = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SeeInvisible, flagValue);
                 break;
             case "SEEKERMISSILE":
-                currentDefinition.Flags.SeekerMissile = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SeekerMissile, flagValue);
                 break;
             case "SEESDAGGERS":
-                currentDefinition.Flags.SeesDaggers = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SeesDaggers, flagValue);
                 break;
             case "SHADOW":
-                currentDefinition.Flags.Shadow = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Shadow, flagValue);
                 break;
             case "SHIELDREFLECT":
-                currentDefinition.Flags.ShieldReflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ShieldReflect, flagValue);
                 break;
             case "SHOOTABLE":
-                currentDefinition.Flags.Shootable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Shootable, flagValue);
                 break;
             case "SHORTMISSILERANGE":
-                currentDefinition.Flags.ShortMissileRange = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ShortMissileRange, flagValue);
                 break;
             case "SKULLFLY":
-                currentDefinition.Flags.Skullfly = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Skullfly, flagValue);
                 break;
             case "SKYEXPLODE":
-                currentDefinition.Flags.SkyExplode = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SkyExplode, flagValue);
                 break;
             case "SLIDESONWALLS":
-                currentDefinition.Flags.SlidesOnWalls = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SlidesOnWalls, flagValue);
                 break;
             case "SOLID":
-                currentDefinition.Flags.Solid = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Solid, flagValue);
                 break;
             case "SPAWNCEILING":
-                currentDefinition.Flags.SpawnCeiling = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpawnCeiling, flagValue);
                 break;
             case "SPAWNFLOAT":
-                currentDefinition.Flags.SpawnFloat = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpawnFloat, flagValue);
                 break;
             case "SPAWNSOUNDSOURCE":
-                currentDefinition.Flags.SpawnSoundSource = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpawnSoundSource, flagValue);
                 break;
             case "SPECIAL":
-                currentDefinition.Flags.Special = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Special, flagValue);
                 break;
             case "SPECIALFIREDAMAGE":
-                currentDefinition.Flags.SpecialFireDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpecialFireDamage, flagValue);
                 break;
             case "SPECIALFLOORCLIP":
-                currentDefinition.Flags.SpecialFloorClip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpecialFloorClip, flagValue);
                 break;
             case "SPECTRAL":
-                currentDefinition.Flags.Spectral = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Spectral, flagValue);
                 break;
             case "SPRITEANGLE":
-                currentDefinition.Flags.SpriteAngle = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpriteAngle, flagValue);
                 break;
             case "SPRITEFLIP":
-                currentDefinition.Flags.SpriteFlip = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SpriteFlip, flagValue);
                 break;
             case "STANDSTILL":
-                currentDefinition.Flags.StandStill = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.StandStill, flagValue);
                 break;
             case "STAYMORPHED":
-                currentDefinition.Flags.StayMorphed = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.StayMorphed, flagValue);
                 break;
             case "STEALTH":
-                currentDefinition.Flags.Stealth = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Stealth, flagValue);
                 break;
             case "STEPMISSILE":
-                currentDefinition.Flags.StepMissile = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.StepMissile, flagValue);
                 break;
             case "STRIFEDAMAGE":
-                currentDefinition.Flags.StrifeDamage = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.StrifeDamage, flagValue);
                 break;
             case "SUMMONEDMONSTER":
-                currentDefinition.Flags.SummonedMonster = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.SummonedMonster, flagValue);
                 break;
             case "SYNCHRONIZED":
-                currentDefinition.Flags.Synchronized = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Synchronized, flagValue);
                 break;
             case "TELEPORT":
-                currentDefinition.Flags.Teleport = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Teleport, flagValue);
                 break;
             case "TELESTOMP":
-                currentDefinition.Flags.Telestomp = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Telestomp, flagValue);
                 break;
             case "THRUACTORS":
-                currentDefinition.Flags.ThruActors = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ThruActors, flagValue);
                 break;
             case "THRUGHOST":
-                currentDefinition.Flags.ThruGhost = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ThruGhost, flagValue);
                 break;
             case "THRUREFLECT":
-                currentDefinition.Flags.ThruReflect = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ThruReflect, flagValue);
                 break;
             case "THRUSPECIES":
-                currentDefinition.Flags.ThruSpecies = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ThruSpecies, flagValue);
                 break;
             case "TOUCHY":
-                currentDefinition.Flags.Touchy = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Touchy, flagValue);
                 break;
             case "USEBOUNCESTATE":
-                currentDefinition.Flags.UseBounceState = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.UseBounceState, flagValue);
                 break;
             case "USEKILLSCRIPTS":
-                currentDefinition.Flags.UseKillScripts = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.UseKillScripts, flagValue);
                 break;
             case "USESPECIAL":
-                currentDefinition.Flags.UseSpecial = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.UseSpecial, flagValue);
                 break;
             case "VISIBILITYPULSE":
-                currentDefinition.Flags.VisibilityPulse = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.VisibilityPulse, flagValue);
                 break;
             case "VULNERABLE":
-                currentDefinition.Flags.Vulnerable = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.Vulnerable, flagValue);
                 break;
             case "WALLSPRITE":
-                currentDefinition.Flags.WallSprite = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WallSprite, flagValue);
                 break;
             case "WINDTHRUST":
-                currentDefinition.Flags.WindThrust = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.WindThrust, flagValue);
                 break;
             case "ZDOOMTRANS":
-                currentDefinition.Flags.ZdoomTrans = flagValue;
+                currentDefinition.Flags.Set(ActorFlagType.ZdoomTrans, flagValue);
                 break;
             default:
                 Log.Warn("Unknown flag '{0}' for actor {1}", flagName, currentDefinition.Name);

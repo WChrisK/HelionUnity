@@ -167,6 +167,7 @@ namespace Helion.Core.Resource.Textures
 
         private Material ImageToMaterial(UpperString name, ResourceNamespace resourceNamespace, RgbaImage image)
         {
+            // TODO: If we already made a texture, we should share it instead of making a new one!
             Texture2D texture = image.ToTexture();
             Material material = new Material(defaultShader) { mainTexture = texture };
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Helion.Core.Util.Extensions;
 
@@ -58,6 +59,30 @@ namespace Helion.Core.Util
         public char this[int index] => str[index];
 
         /// <summary>
+        /// Concatenates a character to an upper string and converts it to an
+        /// upper string.
+        /// </summary>
+        /// <param name="current">The current string.</param>
+        /// <param name="c">The character.</param>
+        /// <returns></returns>
+        public static UpperString operator+ (UpperString current, char c)
+        {
+            return new UpperString(current.str + char.ToUpper(c));
+        }
+
+        /// <summary>
+        /// Concatenates a character to an upper string and converts it to an
+        /// upper string.
+        /// </summary>
+        /// <param name="c">The character.</param>
+        /// <param name="current">The current string.</param>
+        /// <returns></returns>
+        public static UpperString operator+ (char c, UpperString current)
+        {
+            return new UpperString(char.ToUpper(c) + current.str);
+        }
+
+        /// <summary>
         /// Checks if two upper strings are equal. Handles null as well.
         /// </summary>
         /// <param name="current">The current string.</param>
@@ -82,6 +107,34 @@ namespace Helion.Core.Util
         {
             return !(current == other);
         }
+
+        /// <summary>
+        /// Checks if the string starts with the text provided.
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>True if so, false otherwise.</returns>
+        public bool StartsWith(string text) => str.StartsWith(text, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Checks if the string starts with the text provided.
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>True if so, false otherwise.</returns>
+        public bool StartsWith(UpperString text) => StartsWith(text.str);
+
+        /// <summary>
+        /// Checks if the string ends with the text provided.
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>True if so, false otherwise.</returns>
+        public bool EndsWith(string text) => str.EndsWith(text, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Checks if the string ends with the text provided.
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>True if so, false otherwise.</returns>
+        public bool EndsWith(UpperString text) => EndsWith(text.str);
 
         public override bool Equals(object obj)
         {
