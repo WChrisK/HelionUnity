@@ -11,15 +11,15 @@ namespace Helion.Core.Worlds
     /// </summary>
     public class World
     {
+        public readonly MapGeometry Geometry;
+        public readonly EntityManager Entities;
         private readonly GameObject gameObject;
-        private readonly MapGeometry geometry;
-        private readonly EntityManager entityManager;
 
         private World(IMap map)
         {
             gameObject = new GameObject($"World ({map.Name})");
-            geometry = new MapGeometry(gameObject, map);
-            entityManager = new EntityManager(gameObject, geometry, map);
+            Geometry = new MapGeometry(gameObject, map);
+            Entities = new EntityManager(gameObject, Geometry, map);
         }
 
         /// <summary>

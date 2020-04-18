@@ -3,6 +3,7 @@ using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
 
@@ -89,37 +90,34 @@ namespace Helion.Core.Worlds.Geometry
             // TODO: Need to clip the geometry to the opening.
             if (section == WallSection.MiddleTwoSided)
             {
-                if (line.Index == 335)
-                    Debug.Log("Hi");
-
                 float height = Math.Min(upperPlane.Height - lowerPlane.Height, texture.height);
 
                 if (line.Unpeg == Unpeg.Lower || line.Unpeg == Unpeg.LowerAndUpper)
                 {
                     return new[]
                     {
-                        new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y) * Constants.MapUnit,
-                        new Vector3(segment.End.x, lowerPlane.Height, segment.End.y) * Constants.MapUnit,
-                        new Vector3(segment.Start.x, lowerPlane.Height + height, segment.Start.y) * Constants.MapUnit,
-                        new Vector3(segment.End.x, lowerPlane.Height + height, segment.End.y) * Constants.MapUnit
+                        new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y).MapUnit(),
+                        new Vector3(segment.End.x, lowerPlane.Height, segment.End.y).MapUnit(),
+                        new Vector3(segment.Start.x, lowerPlane.Height + height, segment.Start.y).MapUnit(),
+                        new Vector3(segment.End.x, lowerPlane.Height + height, segment.End.y).MapUnit()
                     };
                 }
 
                 return new[]
                 {
-                    new Vector3(segment.Start.x, upperPlane.Height - height, segment.Start.y) * Constants.MapUnit,
-                    new Vector3(segment.End.x, upperPlane.Height - height, segment.End.y) * Constants.MapUnit,
-                    new Vector3(segment.Start.x, upperPlane.Height, segment.Start.y) * Constants.MapUnit,
-                    new Vector3(segment.End.x, upperPlane.Height, segment.End.y) * Constants.MapUnit
+                    new Vector3(segment.Start.x, upperPlane.Height - height, segment.Start.y).MapUnit(),
+                    new Vector3(segment.End.x, upperPlane.Height - height, segment.End.y).MapUnit(),
+                    new Vector3(segment.Start.x, upperPlane.Height, segment.Start.y).MapUnit(),
+                    new Vector3(segment.End.x, upperPlane.Height, segment.End.y).MapUnit()
                 };
             }
 
             return new[]
             {
-                new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y) * Constants.MapUnit,
-                new Vector3(segment.End.x, lowerPlane.Height, segment.End.y) * Constants.MapUnit,
-                new Vector3(segment.Start.x, upperPlane.Height, segment.Start.y) * Constants.MapUnit,
-                new Vector3(segment.End.x, upperPlane.Height, segment.End.y) * Constants.MapUnit
+                new Vector3(segment.Start.x, lowerPlane.Height, segment.Start.y).MapUnit(),
+                new Vector3(segment.End.x, lowerPlane.Height, segment.End.y).MapUnit(),
+                new Vector3(segment.Start.x, upperPlane.Height, segment.Start.y).MapUnit(),
+                new Vector3(segment.End.x, upperPlane.Height, segment.End.y).MapUnit()
             };
         }
 

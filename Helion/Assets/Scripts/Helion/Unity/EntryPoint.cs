@@ -7,6 +7,7 @@ using Helion.Core.Util.Logging;
 using Helion.Core.Util.Logging.Targets;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds;
+using Helion.Core.Worlds.Entities;
 using UnityEngine;
 
 namespace Helion.Unity
@@ -24,12 +25,8 @@ namespace Helion.Unity
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
         private static readonly Log Log = LogManager.Instance();
 
-        private float cameraPitch;
-        private float cameraYaw;
-        private float yawSensitivity = 2.5f;
-        private float pitchSensitivity = 1.5f;
-        private float deltaTime;
         private World world;
+        private Entity player;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -74,12 +71,13 @@ namespace Helion.Unity
 
         void Update()
         {
+            Camera.main.transform.position = player.Position.MapUnit();
             UpdateCamera();
         }
 
         void FixedUpdate()
         {
-            UpdatePlayerMovement();
+            // UpdatePlayerMovement();
         }
 
         void OnApplicationQuit()
@@ -90,44 +88,47 @@ namespace Helion.Unity
 
         private void UpdateCamera()
         {
-            Transform cameraTransform = Camera.main.transform;
-
-            // TODO: Multiply by Time.deltaTime? Use non raw for buffering?
-            cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
-            cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
-
-            cameraPitch = Mathf.Clamp(cameraPitch, -89.9f, 89.9f);
-            while (cameraYaw < 0)
-                cameraYaw += 360;
-            while (cameraYaw >= 360)
-                cameraYaw -= 360;
-
-            cameraTransform.eulerAngles = new Vector3(-cameraPitch, cameraYaw, 0f);
+            // Transform cameraTransform = Camera.main.transform;
+            //
+            // // TODO: Multiply by Time.deltaTime? Use non raw for buffering?
+            // cameraYaw += Input.GetAxisRaw("Mouse X") * yawSensitivity;
+            // cameraPitch += Input.GetAxisRaw("Mouse Y") * pitchSensitivity;
+            //
+            // cameraPitch = Mathf.Clamp(cameraPitch, -89.9f, 89.9f);
+            // while (cameraYaw < 0)
+            //     cameraYaw += 360;
+            // while (cameraYaw >= 360)
+            //     cameraYaw -= 360;
+            //
+            // cameraTransform.eulerAngles = new Vector3(-cameraPitch, cameraYaw, 0f);
         }
 
-        private void UpdatePlayerMovement()
-        {
-            const float MOVE_FACTOR = 12 * Constants.MapUnit;
-
-            Vector3 direction = new Vector3(Mathf.Sin(Mathf.Deg2Rad * cameraYaw), 0, Mathf.Cos(Mathf.Deg2Rad * cameraYaw));
-            Vector3 rightDirection = new Vector3(direction.z, 0, -direction.x);
-
-            GameObject player = GameObject.Find("Player");
-            CharacterController controller = player.GetComponent<CharacterController>();
-
-            if (Input.GetKey(KeyCode.W))
-                controller.Move(direction * MOVE_FACTOR);
-            if (Input.GetKey(KeyCode.A))
-                controller.Move(rightDirection * -MOVE_FACTOR);
-            if (Input.GetKey(KeyCode.S))
-                controller.Move(direction * -MOVE_FACTOR);
-            if (Input.GetKey(KeyCode.D))
-                controller.Move(rightDirection * MOVE_FACTOR);
-            if (Input.GetKey(KeyCode.Space))
-                controller.Move(Vector3.up * MOVE_FACTOR);
-            if (Input.GetKey(KeyCode.C))
-                controller.Move(Vector3.down * MOVE_FACTOR);
-        }
+        // private void UpdatePlayerMovement()
+        // {
+        //     GameObject playerObj = GameObject.Find("Player");
+        //     if (!playerObj)
+        //         return;
+        //
+        //     const float MOVE_FACTOR = 12 * Constants.MapUnit;
+        //
+        //     Vector3 direction = new Vector3(Mathf.Sin(Mathf.Deg2Rad * cameraYaw), 0, Mathf.Cos(Mathf.Deg2Rad * cameraYaw));
+        //     Vector3 rightDirection = new Vector3(direction.z, 0, -direction.x);
+        //
+        //     CharacterController controller = playerObj.GetComponent<CharacterController>();
+        //
+        //     if (Input.GetKey(KeyCode.W))
+        //         controller.Move(direction * MOVE_FACTOR);
+        //     if (Input.GetKey(KeyCode.A))
+        //         controller.Move(rightDirection * -MOVE_FACTOR);
+        //     if (Input.GetKey(KeyCode.S))
+        //         controller.Move(direction * -MOVE_FACTOR);
+        //     if (Input.GetKey(KeyCode.D))
+        //         controller.Move(rightDirection * MOVE_FACTOR);
+        //     if (Input.GetKey(KeyCode.Space))
+        //         controller.Move(Vector3.up * MOVE_FACTOR);
+        //     if (Input.GetKey(KeyCode.C))
+        //         controller.Move(Vector3.down * MOVE_FACTOR);
+        // }
 
         private static void LoadAndRegisterConfig()
         {
@@ -179,12 +180,7 @@ namespace Helion.Unity
                     return $"Unable to load corrupt world data for {mapName}";
 
                 world = worldOpt.Value;
-
-                //=============================================================
-                // TODO: TEMPORARY CODE FOR NOW!
-                GameObject player = GameObject.Find("Player");
-                player.transform.position = new Vector3(-96, 100, 784) * Constants.MapUnit;
-                //=============================================================
+                player = world.Entities.SpawnPlayer(1).Value;
 
                 return $"Loaded {mapName}";
             });

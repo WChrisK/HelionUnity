@@ -3,6 +3,7 @@ using Helion.Core.Resource;
 using Helion.Core.Resource.Maps.Shared;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
+using Helion.Core.Util.Unity;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
@@ -85,7 +86,7 @@ namespace Helion.Core.Worlds.Geometry
             for (int i = 0; i < vertexCount; i++)
             {
                 Vector2 vertex = glSubsector.Segments[i].Segment.Start;
-                vertices[i] = new Vector3(vertex.x, plane.Height, vertex.y) * Constants.MapUnit;
+                vertices[i] = new Vector3(vertex.x, plane.Height, vertex.y).MapUnit();
                 uvCoords[i] = new Vector2(vertex.x / texture.width, vertex.y / texture.height);
             }
 

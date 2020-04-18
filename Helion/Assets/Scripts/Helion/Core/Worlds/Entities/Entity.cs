@@ -10,11 +10,24 @@ namespace Helion.Core.Worlds.Entities
     /// </summary>
     public class Entity : MonoBehaviour, ITickable, IDisposable
     {
+        /// <summary>
+        /// The definition that makes up this entity.
+        /// </summary>
         public ActorDefinition Definition { get; private set; }
+
+        /// <summary>
+        /// This is the position in world coordinates (not Unity coordinates).
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        /// The velocity in world coordinates (not Unity coordinates).
+        /// </summary>
         public Vector3 Velocity;
+
         internal LinkedListNode<Entity> entityNode;
 
-        public GameObject EntityGameObject => transform.parent.gameObject;
+        public GameObject GameObject => transform.parent.gameObject;
 
         void Update()
         {
@@ -33,7 +46,7 @@ namespace Helion.Core.Worlds.Entities
 
         public void Dispose()
         {
-            Destroy(EntityGameObject);
+            Destroy(GameObject);
             entityNode.List.Remove(entityNode);
         }
 

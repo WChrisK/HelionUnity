@@ -17,6 +17,11 @@ namespace Helion.Core.Resource.Decorate
         private static ActorFrameProperties MakeProperties() => new ActorFrameProperties();
         private static Optional<ActorActionFunction> MakeNoAction() => Optional<ActorActionFunction>.Empty();
 
+        /// <summary>
+        /// Creates a list of new default definitions that are critical to the
+        /// functioning of the game.
+        /// </summary>
+        /// <returns>A list of newly created default definitions.</returns>
         public static List<ActorDefinition> CreateAllDefaultDefinitions()
         {
             ActorDefinition actorBase = CreateBaseDefinition();
@@ -24,7 +29,8 @@ namespace Helion.Core.Resource.Decorate
             return new List<ActorDefinition>
             {
                 actorBase,
-                CreateBaseSpawnPoint(actorBase)
+                CreateBaseSpawnPoint(actorBase),
+                CreatePlayerPawn(actorBase)
             };
         }
 
@@ -57,6 +63,33 @@ namespace Helion.Core.Resource.Decorate
             spawnpoint.Flags.Set(ActorFlagType.NoGravity, true);
 
             return spawnpoint;
+        }
+
+        private static ActorDefinition CreatePlayerPawn(ActorDefinition actorBase)
+        {
+            ActorDefinition playerPawn = new ActorDefinition("PLAYERPAWN", actorBase);
+            playerPawn.ActorType.Set(ActorType.Player);
+            playerPawn.Flags.Set(ActorFlagType.CanPass, true);
+            playerPawn.Flags.Set(ActorFlagType.CanPushWalls, true);
+            playerPawn.Flags.Set(ActorFlagType.Dropoff, true);
+            playerPawn.Flags.Set(ActorFlagType.FloorClip, true);
+            playerPawn.Flags.Set(ActorFlagType.Friendly, true);
+            playerPawn.Flags.Set(ActorFlagType.NoBlockMonst, true);
+            playerPawn.Flags.Set(ActorFlagType.NotDMatch, true);
+            playerPawn.Flags.Set(ActorFlagType.Pickup, true);
+            playerPawn.Flags.Set(ActorFlagType.Shootable, true);
+            playerPawn.Flags.Set(ActorFlagType.SlidesOnWalls, true);
+            playerPawn.Flags.Set(ActorFlagType.Solid, true);
+            playerPawn.Flags.Set(ActorFlagType.Telestomp, true);
+            playerPawn.Flags.Set(ActorFlagType.WindThrust, true);
+            playerPawn.Properties.Health = 100;
+            playerPawn.Properties.Height = 56;
+            playerPawn.Properties.Mass = 100;
+            playerPawn.Properties.PainChance = 255;
+            playerPawn.Properties.Radius = 16;
+            playerPawn.Properties.Speed = 1;
+
+            return playerPawn;
         }
     }
 }

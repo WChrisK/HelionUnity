@@ -15,6 +15,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Types
 
         public bool Ammo => bits[(int)ActorType.Ammo];
         public bool Inventory => bits[(int)ActorType.Inventory];
+        public bool Player => bits[(int)ActorType.Player];
         public bool Powerup => bits[(int)ActorType.Powerup];
         public bool Projectile => bits[(int)ActorType.Projectile];
         public bool SpawnPoint => bits[(int)ActorType.SpawnPoint];

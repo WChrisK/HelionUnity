@@ -324,5 +324,21 @@ namespace Helion.Core.Util.Extensions
         {
             return value < other ? (value, other) : (other, value);
         }
+
+        /// <summary>
+        /// Converts the number into map units by scaling it to the Unity
+        /// world dimensions.
+        /// </summary>
+        /// <param name="number">The number to scale.</param>
+        /// <returns>The scaled number.</returns>
+        public static float MapUnit(this int number) => number * Constants.MapUnit;
+
+        /// <summary>
+        /// Converts the number into map units by scaling it to the Unity
+        /// world dimensions.
+        /// </summary>
+        /// <param name="number">The number to scale.</param>
+        /// <returns>The scaled number.</returns>
+        public static float MapUnit(this float number) => number * Constants.MapUnit;
     }
 }

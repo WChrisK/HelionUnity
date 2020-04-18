@@ -30,6 +30,21 @@ namespace Helion.Core.Worlds.Geometry
             CreateGeometryFrom(map);
         }
 
+        /// <summary>
+        /// A shortcut to get the floor height for some position.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <returns>The floor height.</returns>
+        public float FloorHeight(Vector2 position) => BspTree.Sector(position).FloorPlane.Height;
+
+        /// <summary>
+        /// A shortcut to get the floor height for some position.
+        /// </summary>
+        /// <param name="position">The position (the Y component is ignored).
+        /// </param>
+        /// <returns>The floor height.</returns>
+        public float FloorHeight(Vector3 position) => BspTree.Sector(position).FloorPlane.Height;
+
         private void CreateGameObjects(GameObject parentObject)
         {
             geometryGameObject = new GameObject("Geometry");

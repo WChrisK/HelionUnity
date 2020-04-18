@@ -9,6 +9,7 @@
     {
         Ammo,
         Inventory,
+        Player,
         Powerup,
         Projectile,
         SpawnPoint,
