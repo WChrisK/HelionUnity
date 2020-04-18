@@ -7,7 +7,7 @@ namespace Helion.Core.Worlds.Entities
 {
     public class Player : MonoBehaviour
     {
-        private const float MOVE_FACTOR = 12 * Constants.MapUnit;
+        private const float MOVE_FACTOR = 10 * Constants.MapUnit;
 
         public int PlayerNumber;
         public float Pitch;

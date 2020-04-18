@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using Helion.Core.Configs;
 using Helion.Core.Configs.Fields;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Maps;
@@ -60,13 +60,11 @@ namespace Helion.Unity
         {
             RegisterConsoleCommands();
 
-            if (!Data.Load(CommandLineArgs.ToArray()))
+            if (!Data.Load(CommandLineArgs.FullFilePaths))
             {
                 Log.Error("Failure loading archive data, aborting!");
                 Application.Quit(1);
             }
-
-            ConsoleCommandsRepository.Instance.ExecuteCommand("map", new[] { "map01" });
         }
 
         void Update()
@@ -84,13 +82,13 @@ namespace Helion.Unity
 
         void OnApplicationQuit()
         {
-            Data.Config.Save();
+            Data.Config.Save($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}");
             LogManager.Dispose();
         }
 
         private static void LoadAndRegisterConfig()
         {
-            Data.LoadConfig();
+            Data.LoadConfig($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}");
 
             var console = ConsoleCommandsRepository.Instance;
             foreach (IConfigField configField in Data.Config.GetConfigFields())
@@ -136,6 +134,8 @@ namespace Helion.Unity
                 Optional<World> worldOpt = World.From(map.Value);
                 if (!worldOpt)
                     return $"Unable to load corrupt world data for {mapName}";
+
+                world?.Dispose();
 
                 world = worldOpt.Value;
                 player = world.Entities.SpawnPlayer(1).Value;

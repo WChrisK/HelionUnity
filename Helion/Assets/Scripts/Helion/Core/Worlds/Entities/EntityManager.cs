@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Maps;
@@ -16,7 +18,7 @@ namespace Helion.Core.Worlds.Entities
     /// <summary>
     /// Manages all of the entities in a world.
     /// </summary>
-    public class EntityManager : IEnumerable<Entity>
+    public class EntityManager : IEnumerable<Entity>, IDisposable
     {
         private static readonly Log Log = LogManager.Instance();
 
@@ -63,6 +65,17 @@ namespace Helion.Core.Worlds.Entities
 
             return entity;
         }
+
+        public void Dispose()
+        {
+            // Have to clone the list because the entity will unlink itself,
+            // and doing that during iteration is probably really bad.
+            entities.ToList().ForEach(entity => entity.Dispose());
+        }
+
+        public IEnumerator<Entity> GetEnumerator() => entities.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private void CreateEntities(IEnumerable<DoomThing> things)
         {
@@ -128,9 +141,5 @@ namespace Helion.Core.Worlds.Entities
                 lineRenderer.SetPositions(points);
             }
         }
-
-        public IEnumerator<Entity> GetEnumerator() => entities.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

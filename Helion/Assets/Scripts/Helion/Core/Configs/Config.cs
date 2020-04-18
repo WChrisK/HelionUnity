@@ -17,6 +17,11 @@ namespace Helion.Core.Configs
     /// </summary>
     public class Config
     {
+        /// <summary>
+        /// The name of the config file.
+        /// </summary>
+        public static readonly string DefaultConfigName = "helion.cfg";
+
         private static readonly Dictionary<Type, ConfigFieldFunc> PrimitiveToActionMap = new Dictionary<Type, ConfigFieldFunc>
         {
             [typeof(bool)] = (obj, fieldInfo, path) => new BoolConfigField(obj, fieldInfo, path),
@@ -75,7 +80,7 @@ namespace Helion.Core.Configs
         /// <returns>True on success, false on failure.</returns>
         public bool Save(string path = null)
         {
-            path = path ?? Constants.ConfigName;
+            path = path ?? DefaultConfigName;
 
             try
             {

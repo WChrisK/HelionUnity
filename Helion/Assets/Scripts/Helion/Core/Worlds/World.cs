@@ -1,6 +1,8 @@
-﻿using Helion.Core.Resource.Maps;
+﻿using System;
+using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Timing;
+using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
 using MoreLinq;
@@ -11,7 +13,7 @@ namespace Helion.Core.Worlds
     /// <summary>
     /// A world that runs a simulation.
     /// </summary>
-    public class World : ITickable
+    public class World : ITickable, IDisposable
     {
         public int GameTick { get; private set; }
         public readonly MapGeometry Geometry;
@@ -59,6 +61,12 @@ namespace Helion.Core.Worlds
 
             GameTick++;
             timer.Restart();
+        }
+
+        public void Dispose()
+        {
+            Entities.Dispose();
+            GameObjectHelper.Destroy(gameObject);
         }
     }
 }

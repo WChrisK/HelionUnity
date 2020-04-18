@@ -30,7 +30,7 @@ namespace Helion.Core.Resource
         /// <returns>True if the load was successful, false if not.</returns>
         public static bool LoadConfig(string path = null)
         {
-            path = path ?? Constants.ConfigName;
+            path = path ?? Config.DefaultConfigName;
 
             Optional<Config> config = Config.FromFile(path);
             if (!config)

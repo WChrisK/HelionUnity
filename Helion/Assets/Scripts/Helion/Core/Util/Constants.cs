@@ -44,10 +44,5 @@
         /// The application version.
         /// </summary>
         public static readonly string ApplicationVersion = "0.1";
-
-        /// <summary>
-        /// The name of the config file.
-        /// </summary>
-        public static readonly string ConfigName = "helion.cfg";
     }
 }
