@@ -136,7 +136,6 @@ namespace Helion.Unity
                     return $"Unable to load corrupt world data for {mapName}";
 
                 world?.Dispose();
-
                 world = worldOpt.Value;
                 player = world.Entities.SpawnPlayer(1).Value;
 
