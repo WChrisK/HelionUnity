@@ -67,6 +67,14 @@ namespace Helion.Core.Util
         public static implicit operator Optional<T>(T value) => new Optional<T>(value);
 
         /// <summary>
+        /// Returns a new optional that is a shallow copy of the old one. This
+        /// means if the value is present in this, the reference is copied. If
+        /// not, then an empty optional is returned.
+        /// </summary>
+        /// <returns>An optional with a shallow copy of the value.</returns>
+        public Optional<T> Copy() => new Optional<T>(Value);
+
+        /// <summary>
         /// Calls the function with the value if present, otherwise the
         /// function is not called.
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Decorate.Definitions.Flags;
+using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
 using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
@@ -86,7 +87,7 @@ namespace Helion.Core.Resource.Decorate
             playerPawn.Properties.Health = 100;
             playerPawn.Properties.Height = 56;
             playerPawn.Properties.Mass = 100;
-            playerPawn.Properties.PainChance = 255;
+            playerPawn.Properties.PainChance.Value = 255;
             playerPawn.Properties.Radius = 16;
             playerPawn.Properties.Speed = 1;
 

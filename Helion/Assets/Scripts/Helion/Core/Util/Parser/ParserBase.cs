@@ -481,10 +481,10 @@ namespace Helion.Core.Util.Parser
         /// <exception cref="ParserException">If there is no match or we ran
         /// out of tokens or there was a parsing error with the float.
         /// </exception>
-        protected double ConsumeFloat()
+        protected float ConsumeFloat()
         {
             if (PeekFloat() && double.TryParse(Tokens[CurrentTokenIndex++].Text, out double number))
-                return number;
+                return (float)number;
 
             Token token = Tokens[CurrentTokenIndex];
             throw new ParserException(token, $"Expected a decimal number, got a '{token.Type}' instead (which was \"{token.Text}\")");
@@ -497,17 +497,17 @@ namespace Helion.Core.Util.Parser
         /// <exception cref="ParserException">If there is no match or we ran
         /// out of tokens or there was a parsing error with the float.
         /// </exception>
-        protected double ConsumeSignedFloat()
+        protected float ConsumeSignedFloat()
         {
             if (PeekSignedFloat())
             {
                 if (Tokens[CurrentTokenIndex].Type == TokenType.FloatingPoint)
-                    return ConsumeFloat();
+                    return (float)ConsumeFloat();
                 if (Tokens[CurrentTokenIndex].Type == TokenType.Integer)
                     return ConsumeInteger();
 
                 Consume(TokenType.Minus);
-                return -ConsumeFloat();
+                return -(float)ConsumeFloat();
             }
 
             Token token = Tokens[CurrentTokenIndex];
