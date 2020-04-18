@@ -1,7 +1,9 @@
 ﻿using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
+using Helion.Core.Util.Timing;
 using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
+using MoreLinq;
 using UnityEngine;
 
 namespace Helion.Core.Worlds
@@ -9,17 +11,28 @@ namespace Helion.Core.Worlds
     /// <summary>
     /// A world that runs a simulation.
     /// </summary>
-    public class World
+    public class World : ITickable
     {
+        public int GameTick { get; private set; }
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
         private readonly GameObject gameObject;
+        private readonly Ticker timer = new Ticker(Constants.TickRateMillis);
+
+        /// <summary>
+        /// A normalized value of the gametick. For example, if each tick is
+        /// 28ms and the world has run for 14ms, then this returns 0.5f. This
+        /// can go over 1.0f.
+        /// </summary>
+        public float GameTickFraction => timer.TickFraction;
 
         private World(IMap map)
         {
             gameObject = new GameObject($"World ({map.Name})");
             Geometry = new MapGeometry(gameObject, map);
-            Entities = new EntityManager(gameObject, Geometry, map);
+            Entities = new EntityManager(this, gameObject, Geometry, map);
+
+            timer.Start();
         }
 
         /// <summary>
@@ -38,6 +51,14 @@ namespace Helion.Core.Worlds
             {
                 return Optional<World>.Empty();
             }
+        }
+
+        public void Tick()
+        {
+            Entities.ForEach(entity => entity.Tick());
+
+            GameTick++;
+            timer.Restart();
         }
     }
 }

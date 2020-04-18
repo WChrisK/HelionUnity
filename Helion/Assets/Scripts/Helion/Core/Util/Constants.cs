@@ -16,6 +16,11 @@
         public const float MapUnit = 1.0f / MeterToMapUnits;
 
         /// <summary>
+        /// How many milliseconds each tick takes.
+        /// </summary>
+        public const float TickRateMillis = 28;
+
+        /// <summary>
         /// A conversion factor of light level units to a normalized range.
         /// </summary>
         public const float InverseLightLevel = 1.0f / 255;

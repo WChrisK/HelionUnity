@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Maps;
@@ -15,17 +16,20 @@ namespace Helion.Core.Worlds.Entities
     /// <summary>
     /// Manages all of the entities in a world.
     /// </summary>
-    public class EntityManager
+    public class EntityManager : IEnumerable<Entity>
     {
         private static readonly Log Log = LogManager.Instance();
 
-        public readonly LinkedList<Entity> Entities = new LinkedList<Entity>();
         public readonly SpawnPoints SpawnPoints = new SpawnPoints();
         private readonly GameObject entityCollectorGameObject;
+        private readonly World world;
         private readonly MapGeometry geometry;
+        private readonly LinkedList<Entity> entities = new LinkedList<Entity>();
+        private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
 
-        public EntityManager(GameObject parentObject, MapGeometry mapGeometry, IMap map)
+        public EntityManager(World owningWorld, GameObject parentObject, MapGeometry mapGeometry, IMap map)
         {
+            world = owningWorld;
             geometry = mapGeometry;
 
             entityCollectorGameObject = new GameObject("Entities");
@@ -36,6 +40,12 @@ namespace Helion.Core.Worlds.Entities
 
         public Optional<Entity> SpawnPlayer(int playerNumber)
         {
+            if (players.ContainsKey(playerNumber))
+            {
+                Log.Warn("Trying to create multiple players for player ", playerNumber);
+                return Optional<Entity>.Empty();
+            }
+
             Optional<ActorDefinition> actorDefinition = Data.Decorate.Find("DOOMPLAYER");
             if (!actorDefinition)
                 return Optional<Entity>.Empty();
@@ -46,11 +56,10 @@ namespace Helion.Core.Worlds.Entities
 
             Entity entity = CreateEntity(actorDefinition.Value, position.Value);
 
-            CharacterController charController = entity.GameObject.AddComponent<CharacterController>();
-            charController.height = entity.Definition.Properties.Height;
-            charController.radius = entity.Definition.Properties.Radius;
-            charController.center = entity.Position + new Vector3(0, entity.Definition.Properties.Height - 16, 0);
-            charController.stepOffset = 24.MapUnit();
+            Player player = entity.gameObject.AddComponent<Player>();
+            player.PlayerNumber = playerNumber;
+            player.Attach(entity);
+            players[playerNumber] = player;
 
             return entity;
         }
@@ -86,18 +95,20 @@ namespace Helion.Core.Worlds.Entities
             // as other code relies on it. We should consider restructuring
             // this so the dependency is not required.
             Entity entity = entityObject.AddComponent<Entity>();
-            entity.SetDefinition(definition);
-            entity.entityNode = Entities.AddLast(entity);
+            entity.Definition = definition;
+            entity.world = world;
+            entity.entityNode = entities.AddLast(entity);
 
-            // TODO: Does spawning this cause collision detection if it ends up at the origin?
             float height = entity.Definition.Properties.Height;
-            float diameter = entity.Definition.Properties.Radius * 2;
             float y = geometry.FloorHeight(position);
             Vector3 worldPos = new Vector3(position.x, y, position.y);
+            entity.transform.position = worldPos.MapUnit();
             entity.Position = worldPos;
+            entity.PrevPosition = worldPos;
 
+            float diameter = entity.Definition.Properties.Radius * 2;
             BoxCollider collider = entityObject.AddComponent<BoxCollider>();
-            collider.center = new Vector3(worldPos.x, worldPos.y + (height / 2), worldPos.z).MapUnit();
+            collider.center = new Vector3(0, height / 2, 0).MapUnit();
             collider.size = new Vector3(diameter, height, diameter).MapUnit();
             AddLineRendererIfDebug(collider);
 
@@ -117,5 +128,9 @@ namespace Helion.Core.Worlds.Entities
                 lineRenderer.SetPositions(points);
             }
         }
+
+        public IEnumerator<Entity> GetEnumerator() => entities.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

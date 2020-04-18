@@ -30,7 +30,8 @@ namespace Helion.Core.Resource.Decorate
             {
                 actorBase,
                 CreateBaseSpawnPoint(actorBase),
-                CreatePlayerPawn(actorBase)
+                CreatePlayerPawn(actorBase),
+                CreateTeleportDestination(actorBase)
             };
         }
 
@@ -90,6 +91,16 @@ namespace Helion.Core.Resource.Decorate
             playerPawn.Properties.Speed = 1;
 
             return playerPawn;
+        }
+
+        private static ActorDefinition CreateTeleportDestination(ActorDefinition actorBase)
+        {
+            ActorDefinition teleportDest = new ActorDefinition("TELEPORTDEST", actorBase, 14);
+            teleportDest.ActorType.Set(ActorType.TeleportDestination);
+            teleportDest.Flags.Set(ActorFlagType.DontSplash, true);
+            teleportDest.Flags.Set(ActorFlagType.NoBlockmap, true);
+
+            return teleportDest;
         }
     }
 }
