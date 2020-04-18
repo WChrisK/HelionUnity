@@ -1,7 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Helion.Core.Graphics;
+using Helion.Core.Resource.Decorate.Definitions.Flags;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
+using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using UnityEngine;
@@ -11,6 +14,17 @@ namespace Helion.Core.Resource.Decorate.Parser
     public partial class DecorateParser
     {
         #region Helper Functions
+
+        public SpecialArgs ReadArgs()
+        {
+            List<int> args = new List<int> { ConsumeInteger() };
+
+            for (int i = 0; i < SpecialArgs.NumArgs - 1; i++)
+                if (ConsumeIf(','))
+                    args.Add(ConsumeInteger());
+
+            return new SpecialArgs(args);
+        }
 
         private Color ReadColor()
         {
@@ -39,6 +53,24 @@ namespace Helion.Core.Resource.Decorate.Parser
                 throw MakeException($"Cannot parse red component from 'rr gg bb' format for a color in actor '{currentDefinition.Name}");
 
             return new Color(r / 255.0f, g / 255.0f, b / 255.0f);
+        }
+
+        private DecorateRange<int> ReadSignedIntRange()
+        {
+            int min = ConsumeSignedInteger();
+            Consume(',');
+            int max = ConsumeSignedInteger();
+
+            return new DecorateRange<int>(min, max);
+        }
+
+        private List<UpperString> ReadStringList()
+        {
+            List<UpperString> list = new List<UpperString> { ConsumeString() };
+            while (ConsumeIf(','))
+                list.Add(ConsumeString());
+
+            return list;
         }
 
         #endregion
@@ -198,45 +230,6 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         #region Top Level Property Readers
 
-        private void ReadBloodType()
-        {
-            currentDefinition.Properties.BloodType.Add(ConsumeString());
-
-            if (ConsumeIf(','))
-                currentDefinition.Properties.BloodType.Add(ConsumeString());
-
-            if (ConsumeIf(','))
-                currentDefinition.Properties.BloodType.Add(ConsumeString());
-        }
-
-        private BounceType ReadBounceType()
-        {
-            string text = ConsumeString();
-            switch (text.ToUpper())
-            {
-            case "NONE":
-                return BounceType.None;
-            case "DOOM":
-                return BounceType.Doom;
-            case "HERETIC":
-                return BounceType.Heretic;
-            case "HEXEN":
-                return BounceType.Hexen;
-            case "CLASSIC":
-                return BounceType.Classic;
-            case "GRENADE":
-                return BounceType.Grenade;
-            case "DOOMCOMPAT":
-                return BounceType.DoomCompat;
-            case "HERETICCOMPAT":
-                return BounceType.HereticCompat;
-            case "HEXENCOMPAT":
-                return BounceType.HexenCompat;
-            default:
-                throw MakeException($"Unknown activation type '{text}' on actor '{currentDefinition.Name}'");
-            }
-        }
-
         private ThingSpecialActivationType ReadActivation()
         {
             UpperString activation = ConsumeString();
@@ -280,6 +273,45 @@ namespace Helion.Core.Resource.Decorate.Parser
             }
         }
 
+        private void ReadBloodType()
+        {
+            currentDefinition.Properties.BloodType.Add(ConsumeString());
+
+            if (ConsumeIf(','))
+                currentDefinition.Properties.BloodType.Add(ConsumeString());
+
+            if (ConsumeIf(','))
+                currentDefinition.Properties.BloodType.Add(ConsumeString());
+        }
+
+        private BounceType ReadBounceType()
+        {
+            string text = ConsumeString();
+            switch (text.ToUpper())
+            {
+            case "NONE":
+                return BounceType.None;
+            case "DOOM":
+                return BounceType.Doom;
+            case "HERETIC":
+                return BounceType.Heretic;
+            case "HEXEN":
+                return BounceType.Hexen;
+            case "CLASSIC":
+                return BounceType.Classic;
+            case "GRENADE":
+                return BounceType.Grenade;
+            case "DOOMCOMPAT":
+                return BounceType.DoomCompat;
+            case "HERETICCOMPAT":
+                return BounceType.HereticCompat;
+            case "HEXENCOMPAT":
+                return BounceType.HexenCompat;
+            default:
+                throw MakeException($"Unknown activation type '{text}' on actor '{currentDefinition.Name}'");
+            }
+        }
+
         private void ReadDamageFactor()
         {
             if (PeekFloat())
@@ -290,6 +322,20 @@ namespace Helion.Core.Resource.Decorate.Parser
 
             UpperString name = ConsumeString();
             currentDefinition.Properties.DamageFactor.Types[name] = ConsumeFloat();
+        }
+
+        private DropItem ReadDropItem()
+        {
+            UpperString name = ConsumeString();
+            int? probability = null;
+            int? amount = null;
+
+            if (ConsumeIf(','))
+                probability = ConsumeInteger();
+            if (ConsumeIf(','))
+                amount = ConsumeInteger();
+
+            return new DropItem(name, probability, amount);
         }
 
         private void ReadPainChance()
@@ -399,6 +445,9 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "ALPHA":
                 currentDefinition.Properties.Alpha = ConsumeFloat();
                 break;
+            case "ARGS":
+                currentDefinition.Properties.Args = ReadArgs();
+                break;
             case "ATTACKSOUND":
                 currentDefinition.Properties.AttackSound = ConsumeString().AsUpper();
                 break;
@@ -438,11 +487,17 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "DAMAGEFACTOR":
                 ReadDamageFactor();
                 break;
+            case "DAMAGETYPE":
+                currentDefinition.Properties.DamageType = ConsumeString().AsUpper();
+                break;
             case "DEATHHEIGHT":
                 currentDefinition.Properties.DeathHeight = ConsumeInteger();
                 break;
             case "DEATHSOUND":
                 currentDefinition.Properties.DeathSound = ConsumeString().AsUpper();
+                break;
+            case "DEATHTYPE":
+                currentDefinition.Properties.DeathType = ConsumeString().AsUpper();
                 break;
             case "DECAL":
                 currentDefinition.Properties.Decal = ConsumeString().AsUpper();
@@ -455,6 +510,9 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "DISTANCECHECK":
                 currentDefinition.Properties.DistanceCheck = ConsumeString().AsUpper();
+                break;
+            case "DROPITEM":
+                currentDefinition.Properties.DropItem.Add(ReadDropItem());
                 break;
             case "FASTSPEED":
                 currentDefinition.Properties.FastSpeed = ConsumeFloat();
@@ -474,6 +532,12 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "FRIENDLYSEEBLOCKS":
                 currentDefinition.Properties.FriendlySeeBlocks = ConsumeInteger();
                 break;
+            case "EXPLOSIONDAMAGE":
+                currentDefinition.Properties.ExplosionDamage = ConsumeInteger();
+                break;
+            case "EXPLOSIONRADIUS":
+                currentDefinition.Properties.ExplosionRadius = ConsumeInteger();
+                break;
             case "GAME":
                 // Note: We do not support multiple games by only checking one.
                 currentDefinition.Properties.Game.Add(ConsumeString());
@@ -490,6 +554,9 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "HEIGHT":
                 currentDefinition.Properties.Height = ConsumeInteger();
                 break;
+            case "HITOBITUARY":
+                currentDefinition.Properties.HitObituary = ConsumeString();
+                break;
             case "HOWLSOUND":
                 currentDefinition.Properties.HowlSound = ConsumeString().AsUpper();
                 break;
@@ -502,11 +569,41 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "MAXDROPOFFHEIGHT":
                 currentDefinition.Properties.MaxDropOffHeight = ConsumeInteger();
                 break;
+            case "MAXTARGETRANGE":
+                currentDefinition.Properties.MaxTargetRange = ConsumeInteger();
+                break;
+            case "MELEEDAMAGE":
+                currentDefinition.Properties.MeleeDamage = ConsumeInteger();
+                break;
+            case "MELEERANGE":
+                currentDefinition.Properties.MeleeRange = ConsumeInteger();
+                break;
+            case "MELEESOUND":
+                currentDefinition.Properties.MeleeSound = ConsumeString().AsUpper();
+                break;
+            case "MELEETHRESHOLD":
+                currentDefinition.Properties.MeleeThreshold = ConsumeInteger();
+                break;
+            case "MINMISSILECHANCE":
+                currentDefinition.Properties.MinMissileChance = ConsumeInteger();
+                break;
+            case "MISSILEHEIGHT":
+                currentDefinition.Properties.MissileHeight = ConsumeInteger();
+                break;
+            case "MISSILETYPE":
+                currentDefinition.Properties.MissileType = ConsumeString().AsUpper();
+                break;
+            case "OBITUARY":
+                currentDefinition.Properties.Obituary = ConsumeString();
+                break;
             case "PAINCHANCE":
                 ReadPainChance();
                 break;
             case "PAINTHRESHOLD":
                 currentDefinition.Properties.PainThreshold = ConsumeInteger();
+                break;
+            case "PAINTYPE":
+                currentDefinition.Properties.PainType = ConsumeString().AsUpper();
                 break;
             case "POISONDAMAGE":
                 ReadPoisonDamage();
@@ -531,6 +628,9 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "REACTIONTIME":
                 currentDefinition.Properties.ReactionTime = ConsumeInteger();
+                break;
+            case "RENDERRADIUS":
+                currentDefinition.Properties.RenderRadius = ConsumeSignedFloat();
                 break;
             case "RENDERSTYLE":
                 currentDefinition.Properties.RenderStyle = ReadRenderStyle();
@@ -588,6 +688,18 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "TRANSLATION":
                 ReadTranslation();
+                break;
+            case "VISIBLEANGLES":
+                currentDefinition.Properties.VisibleAngles = ReadSignedIntRange();
+                break;
+            case "VISIBLEPITCH":
+                currentDefinition.Properties.VisiblePitch = ReadSignedIntRange();
+                break;
+            case "VISIBLETOPLAYERCLASS":
+                currentDefinition.Properties.VisibleToPlayerClass = ReadStringList();
+                break;
+            case "VISIBLETOTEAM":
+                currentDefinition.Properties.VisibleToTeam = ConsumeInteger();
                 break;
             case "VSPEED":
                 currentDefinition.Properties.VSpeed = ConsumeFloat();
@@ -671,7 +783,41 @@ namespace Helion.Core.Resource.Decorate.Parser
                 }
             }
             else
-                ConsumeTopLevelPropertyOrCombo(property);
+            {
+                switch (property.String)
+                {
+                case "DEFAULTALPHA":
+                    // Note: This is not accurate, it depends on the game, and
+                    // it also can be overridden by a definition later on. We
+                    // are doing it wrong for Heretic here.
+                    currentDefinition.Properties.Alpha = 0.6f;
+                    break;
+                case "CLEARFLAGS":
+                    currentDefinition.Flags.ClearAll();
+                    break;
+                case "MONSTER":
+                    currentDefinition.Flags.Set(ActorFlagType.ActivateMCross, true);
+                    currentDefinition.Flags.Set(ActorFlagType.CanPass, true);
+                    currentDefinition.Flags.Set(ActorFlagType.CanPushWalls, true);
+                    currentDefinition.Flags.Set(ActorFlagType.CanUseWalls, true);
+                    currentDefinition.Flags.Set(ActorFlagType.CountKill, true);
+                    currentDefinition.Flags.Set(ActorFlagType.IsMonster, true);
+                    currentDefinition.Flags.Set(ActorFlagType.Shootable, true);
+                    currentDefinition.Flags.Set(ActorFlagType.Solid, true);
+                    break;
+                case "PROJECTILE":
+                    currentDefinition.Flags.Set(ActorFlagType.ActivateImpact, true);
+                    currentDefinition.Flags.Set(ActorFlagType.ActivatePCross, true);
+                    currentDefinition.Flags.Set(ActorFlagType.Dropoff, true);
+                    currentDefinition.Flags.Set(ActorFlagType.NoBlockmap, true);
+                    currentDefinition.Flags.Set(ActorFlagType.NoGravity, true);
+                    currentDefinition.Flags.Set(ActorFlagType.Missile, true);
+                    currentDefinition.Flags.Set(ActorFlagType.NoTeleport, true);
+                    break;
+                default:
+                    throw MakeException($"Unknown property/field on actor {currentDefinition.Name}: {property}");
+                }
+            }
         }
     }
 }

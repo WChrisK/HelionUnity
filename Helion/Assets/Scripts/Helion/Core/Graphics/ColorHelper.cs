@@ -7,6 +7,20 @@ namespace Helion.Core.Graphics
     /// </summary>
     public static class ColorHelper
     {
+        private const float InvScale = 1.0f / 255.0f;
+
+        /// <summary>
+        /// Turns RGB colors into a color with max alpha.
+        /// </summary>
+        /// <param name="r">The red color.</param>
+        /// <param name="g">The green color.</param>
+        /// <param name="b">The blue color.</param>
+        /// <returns>The color.</returns>
+        public static Color FromRGB(byte r, byte g, byte b)
+        {
+            return new Color(r * InvScale, g * InvScale, b * InvScale);
+        }
+
         /// <summary>
         /// Takes a string and converts it to a known color.
         /// </summary>
@@ -23,41 +37,41 @@ namespace Helion.Core.Graphics
             case "BLUE":
                 return Color.blue;
             case "BRICK":
-                return Color.Firebrick;
+                return FromRGB(200, 50, 50);
             case "BROWN":
-                return Color.brown;
+                return FromRGB(150, 100, 50);
             case "CREAM":
-                return Color.PeachPuff;
+                return FromRGB(255, 200, 150);
             case "CYAN":
                 return Color.cyan;
             case "DARKBROWN":
-                return new Color(0.25f, 0.0625f, 0.0625f);
+                return FromRGB(64, 16, 16);
             case "DARKGRAY":
             case "DARKGREY":
-                return Color.DarkGray;
+                return FromRGB(128, 128, 128);
             case "DARKGREEN":
-                return Color.DarkGreen;
+                return FromRGB(0, 140, 0);
             case "DARKRED":
-                return Color.DarkRed;
+                return FromRGB(128, 0, 0);
             case "GOLD":
-                return Color.Gold;
+                return FromRGB(255, 200, 50);
             case "GRAY":
             case "GREY":
                 return Color.gray;
             case "GREEN":
                 return Color.green;
             case "LIGHTBLUE":
-                return Color.LightBlue;
+                return FromRGB(50, 255, 255);
             case "OLIVE":
-                return Color.Olive;
+                return FromRGB(200, 200, 170);
             case "ORANGE":
-                return Color.Orange;
+                return FromRGB(255, 170, 0);
             case "PURPLE":
-                return Color.Purple;
+                return FromRGB(150, 100, 200);
             case "RED":
                 return Color.red;
             case "TAN":
-                return Color.Tan;
+                return FromRGB(210, 180, 140);
             case "WHITE":
                 return Color.white;
             case "YELLOW":

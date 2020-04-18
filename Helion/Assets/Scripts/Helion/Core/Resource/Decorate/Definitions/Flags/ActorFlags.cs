@@ -337,5 +337,13 @@ namespace Helion.Core.Resource.Decorate.Definitions.Flags
         {
             bits.Set((int)flag, value);
         }
+
+        /// <summary>
+        /// Clears all the flags.
+        /// </summary>
+        public void ClearAll()
+        {
+            bits.SetAll(false);
+        }
     }
 }
