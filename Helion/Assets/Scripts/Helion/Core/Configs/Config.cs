@@ -30,9 +30,9 @@ namespace Helion.Core.Configs
             [typeof(string)] = (obj, fieldInfo, path) => new StringConfigField(obj, fieldInfo, path)
         };
 
-        public readonly ConfigDebug Debug = new ConfigDebug();
-        public readonly ConfigMouse Mouse = new ConfigMouse();
-        public readonly ConfigResources Resources = new ConfigResources();
+        public ConfigDebug Debug = new ConfigDebug();
+        public ConfigMouse Mouse = new ConfigMouse();
+        public ConfigResources Resources = new ConfigResources();
 
         /// <summary>
         /// Tries to read a config file at the path provided.

@@ -1,28 +1,36 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
-using UnityEditorInternal;
-using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
 {
-    public class DecorateStateTracker : ITickable
+    /// <summary>
+    /// A tracker around the entity frame state. This is used to determine what
+    /// the current actor's frame is, and all advancing over the entity frames
+    /// is done through this object.
+    /// </summary>
+    public class FrameTracker : ITickable
     {
         private static readonly Log Log = LogManager.Instance();
         private static readonly UpperString SpawnLabel = "SPAWN";
 
         public ActorFrame Frame { get; private set; }
+        private readonly Entity entity;
         private int offset;
         private int ticksInFrame;
-        private readonly Entity entity;
 
-        public DecorateStateTracker(Entity entity)
+        public FrameTracker(Entity entity)
         {
             this.entity = entity;
 
             SetupInitialOffset();
         }
 
+        /// <summary>
+        /// Jumps the actor to a label if it exists.
+        /// </summary>
+        /// <param name="label">The label to go to.</param>
+        /// <returns>True if the jump succeeded, false otherwise.</returns>
         public bool GoToLabel(UpperString label)
         {
             int? labelIndex = entity.Definition.States.Labels[label];

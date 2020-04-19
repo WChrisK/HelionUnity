@@ -35,12 +35,7 @@ namespace Helion.Core.Worlds.Entities
         // TODO: The following sucks, we may need to extract this out so we can get a constructor...
         internal LinkedListNode<Entity> entityNode;
         internal World world;
-        internal DecorateStateTracker decorateStateTracker;
-
-        void Update()
-        {
-            // TODO
-        }
+        internal FrameTracker frameTracker;
 
         void FixedUpdate()
         {
@@ -62,7 +57,7 @@ namespace Helion.Core.Worlds.Entities
         {
             PrevPosition = Position;
 
-            decorateStateTracker.Tick();
+            frameTracker.Tick();
         }
 
         public void Dispose()
