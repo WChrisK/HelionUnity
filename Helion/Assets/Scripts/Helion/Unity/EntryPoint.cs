@@ -72,7 +72,9 @@ namespace Helion.Unity
             if (world == null || Camera.main == null)
                 return;
 
-            Camera.main.transform.position = player.InterpolatedPosition(world.GameTickFraction).MapUnit();
+            Vector3 pos = player.InterpolatedPosition(world.GameTickFraction);
+            pos.y += player.Definition.Properties.PlayerViewHeight;
+            Camera.main.transform.position = pos.MapUnit();
         }
 
         void FixedUpdate()

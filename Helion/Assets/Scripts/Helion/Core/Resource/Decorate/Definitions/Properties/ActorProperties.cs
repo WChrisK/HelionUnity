@@ -130,7 +130,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public float PlayerUseRange = 64.0f; // Unimplemented!
         public readonly Dictionary<int, List<UpperString>> PlayerWeaponSlot = new Dictionary<int, List<UpperString>>(); // Unimplemented!
         public float PlayerViewBob = 1.0f; // Unimplemented!
-        public float PlayerViewHeight = 41.0f; // Unimplemented!
+        public float PlayerViewHeight = 41.0f;
         public PoisonDamage? PoisonDamage; // Unimplemented!
         public Optional<UpperString> PoisonDamageType = Optional<UpperString>.Empty(); // Unimplemented!
         public PowerupColor? PowerupColor; // Unimplemented!

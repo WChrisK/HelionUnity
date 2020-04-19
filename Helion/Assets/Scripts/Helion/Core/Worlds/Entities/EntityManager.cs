@@ -110,6 +110,7 @@ namespace Helion.Core.Worlds.Entities
             Entity entity = entityObject.AddComponent<Entity>();
             entity.Definition = definition;
             entity.world = world;
+            entity.decorateStateTracker = new DecorateStateTracker(entity);
             entity.entityNode = entities.AddLast(entity);
 
             float height = entity.Definition.Properties.Height;

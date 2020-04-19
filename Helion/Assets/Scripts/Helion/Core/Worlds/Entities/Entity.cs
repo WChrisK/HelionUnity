@@ -32,8 +32,10 @@ namespace Helion.Core.Worlds.Entities
         /// </summary>
         public Vector3 Velocity;
 
+        // TODO: The following sucks, we may need to extract this out so we can get a constructor...
         internal LinkedListNode<Entity> entityNode;
         internal World world;
+        internal DecorateStateTracker decorateStateTracker;
 
         void Update()
         {
@@ -47,9 +49,7 @@ namespace Helion.Core.Worlds.Entities
 
         public Vector3 InterpolatedPosition(float fraction)
         {
-            Vector3 pos = Vector3.Lerp(PrevPosition, Position, fraction);
-            pos.y += 42; // TODO: View height here!
-            return pos;
+            return Vector3.Lerp(PrevPosition, Position, fraction);
         }
 
         public void SetPosition(Vector3 position)
@@ -61,6 +61,8 @@ namespace Helion.Core.Worlds.Entities
         public void Tick()
         {
             PrevPosition = Position;
+
+            decorateStateTracker.Tick();
         }
 
         public void Dispose()

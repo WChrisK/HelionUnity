@@ -15,6 +15,12 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         public const int OffsetNotSet = int.MinValue;
 
         /// <summary>
+        /// A constant value used to indicate an infinite frame when a Stop
+        /// label is reached.
+        /// </summary>
+        public const int InfiniteFrame = -1;
+
+        /// <summary>
         /// The absolute frame index in the list of frames.
         /// </summary>
         /// <remarks>
@@ -68,6 +74,12 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         /// if it has been post-processed and is ready to go.
         /// </summary>
         public bool NeedsToSetStateOffset => NextStateOffset == int.MinValue;
+
+        /// <summary>
+        /// True if this is a frame that is to loop forever, false if not.
+        /// </summary>
+        public bool IsInfiniteStopFrame => FlowControl.FlowType == ActorStateBranch.Stop &&
+                                           Ticks == ActorFrame.InfiniteFrame;
 
         public ActorFrame(int frameIndex, UpperString sprite, int ticks, ActorFrameProperties properties,
             Optional<ActorActionFunction> actionFunction, ActorFlowControl flowControl = null,
