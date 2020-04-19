@@ -1,6 +1,8 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
+using UnityEditorInternal;
+using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
 {
@@ -11,6 +13,7 @@ namespace Helion.Core.Worlds.Entities
 
         public ActorFrame Frame { get; private set; }
         private int offset;
+        private int ticksInFrame;
         private readonly Entity entity;
 
         public DecorateStateTracker(Entity entity)
@@ -20,14 +23,33 @@ namespace Helion.Core.Worlds.Entities
             SetupInitialOffset();
         }
 
+        public bool GoToLabel(UpperString label)
+        {
+            int? labelIndex = entity.Definition.States.Labels[label];
+            if (labelIndex == null)
+                return false;
+
+            GoToFrame(labelIndex.Value);
+            return true;
+        }
+
         public void Tick()
         {
             if (Frame.IsInfiniteStopFrame)
                 return;
 
+            if (ticksInFrame == 0 && Frame.ActionFunction)
+                Frame.ActionFunction.Value.Execute();
+
+            ticksInFrame++;
+            if (ticksInFrame < Frame.Ticks)
+                return;
+
+            // TODO: Need to loop if the next frames are all zero.
+            // TODO: Need to kill actor if it has an infinite loop.
+
             // TODO: Eventually we will drop the addition when it becomes an index.
-            offset += Frame.NextStateOffset;
-            Frame = entity.Definition.States.Frames[offset];
+            GoToFrame(offset + Frame.NextStateOffset);
         }
 
         private void SetupInitialOffset()
@@ -41,6 +63,13 @@ namespace Helion.Core.Worlds.Entities
                 offset = spawnOffset.Value;
 
             Frame = states.Frames[offset];
+        }
+
+        private void GoToFrame(int index)
+        {
+            ticksInFrame = 0;
+            offset = index;
+            Frame = entity.Definition.States.Frames[offset];
         }
     }
 }

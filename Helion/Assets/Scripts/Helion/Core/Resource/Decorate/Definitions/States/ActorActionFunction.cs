@@ -16,6 +16,14 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
             FunctionName = other.FunctionName;
         }
 
+        /// <summary>
+        /// Calls the action function.
+        /// </summary>
+        public void Execute()
+        {
+            // TODO
+        }
+
         public override string ToString() => FunctionName.String;
     }
 }
