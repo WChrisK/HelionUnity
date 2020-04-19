@@ -9,6 +9,10 @@ using Helion.Core.Util.Extensions;
 
 namespace Helion.Core.Resource.Decorate
 {
+    /// <summary>
+    /// Manages all of the decorate actors. All decorate text files should pass
+    /// through this object so it can collect and link all the definitions.
+    /// </summary>
     public class DecorateManager
     {
         private readonly List<ActorDefinition> actors = new List<ActorDefinition>();
