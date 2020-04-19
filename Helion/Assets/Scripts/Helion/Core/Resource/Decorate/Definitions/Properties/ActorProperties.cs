@@ -37,7 +37,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int? CameraHeight; // Unimplemented!
         public int ConversationID; // Unimplemented!
         public Optional<UpperString> CrushPainSound = Optional<UpperString>.Empty(); // Unimplemented!
-        public int Damage; // Unimplemented!
+        public Damage? Damage; // Unimplemented!
         public readonly DamageFactor DamageFactor = new DamageFactor(); // Unimplemented!
         public Optional<UpperString> DamageType = Optional<UpperString>.Empty(); // Unimplemented!
         public int? DeathHeight; // Unimplemented!
@@ -99,6 +99,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public Optional<UpperString> MorphProjectileUnMorphFlash = Optional<UpperString>.Empty(); // Unimplemented!
         public Optional<string> Obituary = Optional<string>.Empty(); // Unimplemented!
         public readonly PainChance PainChance = new PainChance(); // Unimplemented!
+        public Optional<UpperString> PainSound = Optional<UpperString>.Empty(); // Unimplemented!
         public int PainThreshold; // Unimplemented!
         public Optional<UpperString> PainType = Optional<UpperString>.Empty(); // Unimplemented!
         public float PlayerAirCapacity = 1.0f; // Unimplemented!
@@ -153,6 +154,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int RipLevelMin; // Unimplemented!
         public int? RipperLevel; // Unimplemented!
         public float Scale = 1.0f; // Unimplemented!
+        public Optional<UpperString> SeeSound = Optional<UpperString>.Empty(); // Unimplemented!
         public float SelfDamageFactor = 1.0f; // Unimplemented!
         public int SpawnID; // Unimplemented!
         public Optional<SpawnInfo> SpawnInfo = Optional<SpawnInfo>.Empty(); // Unimplemented!
@@ -174,12 +176,16 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int? VisibleToTeam; // Unimplemented!
         public float? VSpeed; // Unimplemented!
         public float WallBounceFactor = 0.7f; // Unimplemented!
+        public Optional<UpperString> WallBounceSound = Optional<UpperString>.Empty(); // Unimplemented!
         public int? WeaponAmmoGive; // Unimplemented!
         public int? WeaponAmmoGive1; // Unimplemented!
         public int? WeaponAmmoGive2; // Unimplemented!
         public Optional<UpperString> WeaponAmmoType = Optional<UpperString>.Empty(); // Unimplemented!
         public Optional<UpperString> WeaponAmmoType1 = Optional<UpperString>.Empty(); // Unimplemented!
         public Optional<UpperString> WeaponAmmoType2 = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? WeaponAmmoUse; // Unimplemented!
+        public int? WeaponAmmoUse1; // Unimplemented!
+        public int? WeaponAmmoUse2; // Unimplemented!
         public float WeaponBobRangeX = 1.0f; // Unimplemented!
         public float WeaponBobRangeY = 1.0f; // Unimplemented!
         public float WeaponBobSpeed = 1.0f; // Unimplemented!
@@ -298,6 +304,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
             MorphProjectileUnMorphFlash = other.MorphProjectileUnMorphFlash.Copy();
             Obituary = other.Obituary.Copy();
             PainChance = new PainChance(other.PainChance);
+            PainSound = other.PainSound.Copy();
             PainThreshold = other.PainThreshold;
             PainType = other.PainType.Copy();
             PlayerAirCapacity = other.PlayerAirCapacity;
@@ -352,6 +359,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
             RipLevelMin = other.RipLevelMin;
             RipperLevel = other.RipperLevel;
             Scale = other.Scale;
+            SeeSound = other.SeeSound.Copy();
             SelfDamageFactor = other.SelfDamageFactor;
             SpawnID = other.SpawnID;
             SpawnInfo = other.SpawnInfo.Map(si => new SpawnInfo(si));
@@ -373,12 +381,16 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
             VisibleToTeam = other.VisibleToTeam;
             VSpeed = other.VSpeed;
             WallBounceFactor = other.WallBounceFactor;
+            WallBounceSound = other.WallBounceSound.Copy();
             WeaponAmmoGive = other.WeaponAmmoGive;
             WeaponAmmoGive1 = other.WeaponAmmoGive1;
             WeaponAmmoGive2 = other.WeaponAmmoGive2;
             WeaponAmmoType = other.WeaponAmmoType.Copy();
             WeaponAmmoType1 = other.WeaponAmmoType1.Copy();
             WeaponAmmoType2 = other.WeaponAmmoType2.Copy();
+            WeaponAmmoUse = other.WeaponAmmoUse;
+            WeaponAmmoUse1 = other.WeaponAmmoUse1;
+            WeaponAmmoUse2 = other.WeaponAmmoUse2;
             WeaponBobRangeX = other.WeaponBobRangeX;
             WeaponBobRangeY = other.WeaponBobRangeY;
             WeaponBobSpeed = other.WeaponBobSpeed;

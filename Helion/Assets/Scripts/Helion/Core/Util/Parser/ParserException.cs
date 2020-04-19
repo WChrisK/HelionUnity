@@ -1,135 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Parser.Tokens;
 
 namespace Helion.Core.Util.Parser
 {
     /// <summary>
-    /// An exception thrown by the parser.
+    /// An exception for when parsing fails.
     /// </summary>
     public class ParserException : Exception
     {
         /// <summary>
-        /// The line number in the source file that the parsing error occurred
-        /// at. This starts at 1 (should never be zero).
+        /// The token that the parser errored out at, if applicable. Can be
+        /// null if it happened out of range of any tokens.
         /// </summary>
-        public readonly int LineNumber;
+        public Token? Token;
 
         /// <summary>
-        /// The offset in characters from the start of the line. This starts
-        /// from zero.
+        /// The line that triggered the problem.
         /// </summary>
-        public readonly int LineCharOffset;
+        public string OffendingLine { get; private set; }
 
         /// <summary>
-        /// The offset in characters from the beginning of the text stream
-        /// before it was tokenized. This starts from zero.
+        /// A caret offset that can be printed under the offending line to help
+        /// visually see what the offending token was.
         /// </summary>
-        public readonly int CharOffset;
+        public string CaretVisualizer { get; private set; }
 
-        /// <summary>
-        /// Creates a parser exception at some point in a text stream.
-        /// </summary>
-        /// <param name="lineNumber">The line number.</param>
-        /// <param name="lineCharOffset">The character offset at the line.
-        /// </param>
-        /// <param name="charOffset">The character offset from the character
-        /// stream.</param>
-        /// <param name="message">The error message.</param>
-        public ParserException(int lineNumber, int lineCharOffset, int charOffset, string message) : base(message)
+        public ParserException(int tokenIndex, List<Token> tokens, string message) :
+            base(message)
         {
-            LineNumber = lineNumber;
-            LineCharOffset = lineCharOffset;
-            CharOffset = charOffset;
-        }
-
-        /// <summary>
-        /// Creates an exception at a provided token.
-        /// </summary>
-        /// <param name="token">The token that caused the problem.</param>
-        /// <param name="message">The error message.</param>
-        public ParserException(Token token, string message) : this(token.LineNumber, token.LineCharOffset, token.CharOffset, message)
-        {
-        }
-
-        /// <summary>
-        /// Takes the parsed text and the exception and logs a human readable
-        /// error message.
-        /// </summary>
-        /// <param name="text">The entire parsed text.</param>
-        /// <returns>Readable log messages for the error.</returns>
-        public IEnumerable<string> LogToReadableMessage(string text)
-        {
-            if (text.Empty())
-                return new List<string> { "Cannot parse text when there are no tokens to read" };
-
-            if (CharOffset < 0)
-                return new List<string> { "Unexpected character offset, cannot generate error message (report to a developer)" };
-
-            if (CharOffset >= text.Length)
-                return new List<string> { "Error occurred past end of file, cannot generate error message (report to a developer)" };
-
-            List<string> errorMessages = new List<string> { $"Error parsing text on line {LineNumber}, offset {LineCharOffset}:" };
-            LogContextualInformation(text, errorMessages);
-
-            return errorMessages;
-        }
-
-        private static int CalculateLeftIndex(string text, int originalIndex)
-        {
-            int startIndex = originalIndex;
-            for (; startIndex > 0; startIndex--)
-            {
-                if (text[startIndex] == '\n')
-                {
-                    startIndex++;
-                    break;
-                }
-            }
-
-            // This keeps us in some reasonable range. We also don't need
-            // to worry about it going negative because startIndex should
-            // never go negative due to the loop exiting before that.
-            return startIndex.Clamp(originalIndex - 128, originalIndex);
-        }
-
-        private static int CalculateRightNonInclusiveIndex(string text, int originalIndex)
-        {
-            int endIndex = originalIndex;
-            for (; endIndex < text.Length; endIndex++)
-            {
-                if (text[endIndex] == '\n' || text[endIndex] == '\r')
-                {
-                    endIndex--;
-                    break;
-                }
-            }
-
-            // This keeps us in some reasonable range. We also don't need
-            // to worry about it going negative because startIndex should
-            // never go negative due to the loop exiting before that.
-            return endIndex.Clamp(originalIndex, originalIndex + 128);
-        }
-
-        private void LogContextualInformation(string text, List<string> errorMessages)
-        {
-            int leftIndex = CalculateLeftIndex(text, CharOffset);
-            int rightIndexNonInclusive = CalculateRightNonInclusiveIndex(text, CharOffset);
-
-            if (leftIndex >= rightIndexNonInclusive)
-            {
-                errorMessages.Add("Parsing error occurred on a blank line with no text, no contextual information available");
+            if (tokenIndex < 0 && tokenIndex >= tokens.Count)
                 return;
+
+            Token = tokens[tokenIndex];
+            GenerateHelperText(tokenIndex, tokens);
+        }
+
+        public ParserException(int lineNumber, int lineCharOffset, string reason) :
+            base($"Error at line {lineNumber} offset {lineCharOffset}: {reason}")
+        {
+            OffendingLine = "";
+            CaretVisualizer = "";
+        }
+
+        private void GenerateHelperText(int tokenIndex, List<Token> tokens)
+        {
+            Token token = tokens[tokenIndex];
+            int lineNumber = token.LineNumber;
+
+            int startIndexInclusive = tokenIndex;
+            int endIndexInclusive = tokenIndex;
+
+            for (int i = tokenIndex - 1; i >= 0; i--)
+            {
+                if (tokens[i].LineNumber != lineNumber)
+                    break;
+
+                startIndexInclusive = i;
             }
 
-            int numSpaces = CharOffset - leftIndex;
-            int substringLength = rightIndexNonInclusive - leftIndex + 1;
-            string textContext = text.Substring(leftIndex, substringLength);
-            string caret = new string(' ', numSpaces) + "^";
+            for (int i = tokenIndex + 1; i < tokens.Count; i++)
+            {
+                if (tokens[i].LineNumber != lineNumber)
+                    break;
 
-            errorMessages.Add(textContext);
-            errorMessages.Add(caret);
+                endIndexInclusive = i;
+            }
+
+            OffendingLine = ConstructLine(tokens, startIndexInclusive, endIndexInclusive);
+            CaretVisualizer = new string(' ', token.LineCharOffset) + "^";
+        }
+
+        private static string ConstructLine(List<Token> tokens, int startInclusive, int endInclusive)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = startInclusive; i <= endInclusive; i++)
+            {
+                Token token = tokens[i];
+
+                while (builder.Length < token.LineCharOffset)
+                    builder.Append(' ');
+
+                if (token.Type == TokenType.QuotedString)
+                    builder.Append($"\"{token.Text}\"");
+                else
+                    builder.Append(token.Text);
+            }
+
+            return builder.ToString();
         }
     }
 }

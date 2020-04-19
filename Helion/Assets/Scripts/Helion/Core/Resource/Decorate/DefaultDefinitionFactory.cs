@@ -38,7 +38,8 @@ namespace Helion.Core.Resource.Decorate
                 CreateTeleportDestination(actorBase),
                 CreateWeapon(inventory),
                 CreateAmmo(inventory),
-                CreatePowerup(inventory)
+                CreatePowerup(inventory),
+                CreateKey(inventory)
             };
         }
 
@@ -158,6 +159,17 @@ namespace Helion.Core.Resource.Decorate
             powerup.ActorType.Set(ActorType.Powerup);
 
             return powerup;
+        }
+
+        private static ActorDefinition CreateKey(ActorDefinition inventory)
+        {
+            ActorDefinition key = new ActorDefinition("KEY", inventory);
+            key.ActorType.Set(ActorType.Key);
+            key.Flags.Set(ActorFlagType.DontGib, true);
+            key.Flags.Set(ActorFlagType.InventoryInterHubStrip, true);
+            key.Properties.InventoryPickupSound = "MISC/K_PICKUP".AsUpper();
+
+            return key;
         }
     }
 }

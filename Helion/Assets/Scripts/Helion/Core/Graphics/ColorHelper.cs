@@ -22,6 +22,15 @@ namespace Helion.Core.Graphics
         }
 
         /// <summary>
+        /// Turns RGB colors into a color with max alpha.
+        /// </summary>
+        /// <param name="r">The red color.</param>
+        /// <param name="g">The green color.</param>
+        /// <param name="b">The blue color.</param>
+        /// <returns>The color.</returns>
+        public static Color FromRGB(int r, int g, int b) => FromRGB((byte)r, (byte)g, (byte)b);
+
+        /// <summary>
         /// Takes a string and converts it to a known color.
         /// </summary>
         /// <param name="text">The color text. This is case insensitive.

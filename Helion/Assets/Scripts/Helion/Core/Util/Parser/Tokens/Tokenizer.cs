@@ -67,11 +67,11 @@ namespace Helion.Core.Util.Parser.Tokens
         private void ReadEscapeCharacterOrThrow(StringBuilder innerStringBuilder)
         {
             if (textIndex + 1 >= text.Length)
-                throw new ParserException(lineNumber, lineCharOffset, textIndex, "Expected character after escaping in a string");
+                throw new ParserException(lineNumber, lineCharOffset, "Expected character after escaping in a string");
 
             char nextChar = text[textIndex + 1];
             if (!IsEscapableStringChar(nextChar))
-                throw new ParserException(lineNumber, lineCharOffset + 1, textIndex + 1, "Expecting an escaped quote to follow a backslash in a string");
+                throw new ParserException(lineNumber, lineCharOffset + 1, "Expecting an escaped quote to follow a backslash in a string");
 
             innerStringBuilder.Append(nextChar);
             textIndex++;
@@ -131,14 +131,14 @@ namespace Helion.Core.Util.Parser.Tokens
                 else if (c == '\n')
                 {
                     const string endingErrorMessage = "Ended line before finding terminating string quotation mark";
-                    throw new ParserException(lineNumber, startingLineCharOffset, startingTextIndex, endingErrorMessage);
+                    throw new ParserException(lineNumber, startingLineCharOffset, endingErrorMessage);
                 }
             }
 
             // This is for some exotic case where we run into EOF when trying
             // to complete the quoted string.
             const string errorMessage = "String missing ending quote, found end of text instead";
-            throw new ParserException(lineNumber, startingLineCharOffset, startingTextIndex, errorMessage);
+            throw new ParserException(lineNumber, startingLineCharOffset, errorMessage);
         }
 
         private void ConsumeNumber()
@@ -157,7 +157,7 @@ namespace Helion.Core.Util.Parser.Tokens
                 else if (c == '.')
                 {
                     if (isFloat)
-                        throw new ParserException(lineNumber, lineCharOffset, textIndex, "Decimal number cannot have two decimals");
+                        throw new ParserException(lineNumber, lineCharOffset, "Decimal number cannot have two decimals");
                     isFloat = true;
                     numberBuilder.Append(c);
                 }
@@ -170,7 +170,7 @@ namespace Helion.Core.Util.Parser.Tokens
 
             string numberText = numberBuilder.ToString();
             if (numberText.EndsWith("."))
-                throw new ParserException(lineNumber, lineCharOffset - 1, textIndex - 1, "Decimal number cannot end with a period");
+                throw new ParserException(lineNumber, lineCharOffset - 1, "Decimal number cannot end with a period");
 
             if (isFloat)
             {

@@ -11,10 +11,11 @@ namespace Helion.Core.Resource.Decorate.Definitions.Types
     {
         public static readonly int ActorTypeCount = Enum.GetNames(typeof(ActorType)).Length;
 
-        private BitArray bits;
+        private readonly BitArray bits;
 
         public bool Ammo => bits[(int)ActorType.Ammo];
         public bool Inventory => bits[(int)ActorType.Inventory];
+        public bool Key => bits[(int)ActorType.Key];
         public bool Player => bits[(int)ActorType.Player];
         public bool Powerup => bits[(int)ActorType.Powerup];
         public bool SpawnPoint => bits[(int)ActorType.SpawnPoint];

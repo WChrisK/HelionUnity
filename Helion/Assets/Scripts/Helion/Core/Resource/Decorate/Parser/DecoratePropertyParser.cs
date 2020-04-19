@@ -29,7 +29,14 @@ namespace Helion.Core.Resource.Decorate.Parser
         private Color ReadColor()
         {
             if (PeekInteger())
-                return new Color(ConsumeInteger() / 255.0f, ConsumeInteger() / 255.0f, ConsumeInteger() / 255.0f, 1.0f);
+            {
+                int intR = ConsumeInteger();
+                Consume(',');
+                int intG = ConsumeInteger();
+                Consume(',');
+                int intB = ConsumeInteger();
+                return ColorHelper.FromRGB(intR, intG, intB);
+            }
 
             string colorString = ConsumeString();
 
@@ -52,7 +59,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             if (!int.TryParse(blueStr, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int b))
                 throw MakeException($"Cannot parse red component from 'rr gg bb' format for a color in actor '{currentDefinition.Name}");
 
-            return new Color(r / 255.0f, g / 255.0f, b / 255.0f);
+            return ColorHelper.FromRGB(r, g, b);
         }
 
         private DecorateRange<int> ReadSignedIntRange()
@@ -532,8 +539,9 @@ namespace Helion.Core.Resource.Decorate.Parser
 
             float alpha = 0.333333f;
 
-            if (PeekCurrentText(out string current))
+            if (PeekString())
             {
+                PeekCurrentText(out string current);
                 PowerupColorType? colorType = null;
 
                 switch (current.ToUpper())
@@ -751,13 +759,13 @@ namespace Helion.Core.Resource.Decorate.Parser
             switch (selector.String)
             {
             case "AMMOGIVE":
-                currentDefinition.Properties.WeaponAmmoGive = ConsumeInteger();
+                currentDefinition.Properties.WeaponAmmoGive = ConsumeSignedInteger();
                 break;
             case "AMMOGIVE1":
-                currentDefinition.Properties.WeaponAmmoGive1 = ConsumeInteger();
+                currentDefinition.Properties.WeaponAmmoGive1 = ConsumeSignedInteger();
                 break;
             case "AMMOGIVE2":
-                currentDefinition.Properties.WeaponAmmoGive2 = ConsumeInteger();
+                currentDefinition.Properties.WeaponAmmoGive2 = ConsumeSignedInteger();
                 break;
             case "AMMOTYPE":
                 currentDefinition.Properties.WeaponAmmoType = ConsumeString().AsUpper();
@@ -767,6 +775,15 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "AMMOTYPE2":
                 currentDefinition.Properties.WeaponAmmoType2 = ConsumeString().AsUpper();
+                break;
+            case "AMMOUSE":
+                currentDefinition.Properties.WeaponAmmoUse = ConsumeInteger();
+                break;
+            case "AMMOUSE1":
+                currentDefinition.Properties.WeaponAmmoUse1 = ConsumeInteger();
+                break;
+            case "AMMOUSE2":
+                currentDefinition.Properties.WeaponAmmoUse2 = ConsumeInteger();
                 break;
             case "BOBRANGEX":
                 currentDefinition.Properties.WeaponBobRangeX = ConsumeFloat();
@@ -795,7 +812,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "MINSELECTIONAMMO2":
                 currentDefinition.Properties.WeaponMinSelectionAmmo2 = ConsumeInteger();
                 break;
-            case "WEAPONREADYSOUND":
+            case "READYSOUND":
                 currentDefinition.Properties.WeaponReadySound = ConsumeString().AsUpper();
                 break;
             case "SELECTIONORDER":
@@ -926,6 +943,17 @@ namespace Helion.Core.Resource.Decorate.Parser
             default:
                 throw MakeException($"Unknown activation type '{text}' on actor '{currentDefinition.Name}'");
             }
+        }
+
+        private Damage ReadDamage()
+        {
+            if (PeekInteger())
+                return new Damage(ConsumeInteger(), false);
+
+            Consume('(');
+            int value = ConsumeInteger();
+            Consume(')');
+            return new Damage(value, true);
         }
 
         private void ReadDamageFactor()
@@ -1098,9 +1126,8 @@ namespace Helion.Core.Resource.Decorate.Parser
                 currentDefinition.Properties.CrushPainSound = ConsumeString().AsUpper();
                 break;
             case "DAMAGE":
-                // TODO: Handle brackets!
-                currentDefinition.Properties.Damage = ConsumeInteger();
-                throw MakeException("HANDLE BRACKETS YOU IDIOT");
+                currentDefinition.Properties.Damage = ReadDamage();
+                break;
             case "DAMAGEFACTOR":
                 ReadDamageFactor();
                 break;
@@ -1216,6 +1243,9 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "PAINCHANCE":
                 ReadPainChance();
                 break;
+            case "PAINSOUND":
+                currentDefinition.Properties.PainSound = ConsumeString().AsUpper();
+                break;
             case "PAINTHRESHOLD":
                 currentDefinition.Properties.PainThreshold = ConsumeInteger();
                 break;
@@ -1232,7 +1262,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 currentDefinition.Properties.ProjectileKickBack = ConsumeInteger();
                 break;
             case "PROJECTILEPASSHEIGHT":
-                currentDefinition.Properties.ProjectilePassHeight = ConsumeInteger();
+                currentDefinition.Properties.ProjectilePassHeight = ConsumeSignedInteger();
                 break;
             case "PUSHFACTOR":
                 currentDefinition.Properties.PushFactor = ConsumeFloat();
@@ -1263,6 +1293,9 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "SCALE":
                 currentDefinition.Properties.Scale = ConsumeFloat();
+                break;
+            case "SEESOUND":
+                currentDefinition.Properties.SeeSound = ConsumeString().AsUpper();
                 break;
             case "SELFDAMAGEFACTOR":
                 currentDefinition.Properties.SelfDamageFactor = ConsumeFloat();
@@ -1323,6 +1356,9 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "WALLBOUNCEFACTOR":
                 currentDefinition.Properties.WallBounceFactor = ConsumeFloat();
+                break;
+            case "WALLBOUNCESOUND":
+                currentDefinition.Properties.WallBounceSound = ConsumeString().AsUpper();
                 break;
             case "WEAVEINDEXXY":
                 currentDefinition.Properties.WeaveIndexXY = ConsumeInteger();

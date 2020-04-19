@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Helion.Core.Archives;
 using Helion.Core.Util.Extensions;
@@ -102,13 +101,13 @@ namespace Helion.Core.Util.Parser
                     return false;
                 }
 
-                ParserException exception = new ParserException(Tokens.Last(), "Text ended too early when parsing");
-                HandleParserException(exception, text);
+                ParserException exception = new ParserException(CurrentTokenIndex, Tokens, "Text ended too early when parsing");
+                HandleParserException(exception);
                 return false;
             }
             catch (ParserException e)
             {
-                HandleParserException(e, text);
+                HandleParserException(e);
                 return false;
             }
             catch (Exception e)
@@ -355,8 +354,7 @@ namespace Helion.Core.Util.Parser
                 return;
             }
 
-            Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expecting to find {type}, got {Tokens[CurrentTokenIndex].Type} instead");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expecting to find {type}, got {Tokens[CurrentTokenIndex].Type} instead");
         }
 
         /// <summary>
@@ -382,7 +380,7 @@ namespace Helion.Core.Util.Parser
             }
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expecting to find '{c}', got {token.Text} instead");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expecting to find '{c}', got {token.Text} instead");
         }
 
         /// <summary>
@@ -405,7 +403,7 @@ namespace Helion.Core.Util.Parser
             }
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expecting to find \"{str}\", got \"{token.Text}\" instead");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expecting to find \"{str}\", got \"{token.Text}\" instead");
         }
 
         /// <summary>
@@ -449,7 +447,7 @@ namespace Helion.Core.Util.Parser
             }
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected a number, got a '{token.Type}' instead (which was \"{token.Text}\")");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected a number, got a '{token.Type}' instead (which was \"{token.Text}\")");
         }
 
         /// <summary>
@@ -471,7 +469,7 @@ namespace Helion.Core.Util.Parser
             }
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected a number, got a '{token.Type}' instead (which was \"{token.Text}\")");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected a number, got a '{token.Type}' instead (which was \"{token.Text}\")");
         }
 
         /// <summary>
@@ -487,7 +485,7 @@ namespace Helion.Core.Util.Parser
                 return (float)number;
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected a decimal number, got a '{token.Type}' instead (which was \"{token.Text}\")");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected a decimal number, got a '{token.Type}' instead (which was \"{token.Text}\")");
         }
 
         /// <summary>
@@ -502,16 +500,16 @@ namespace Helion.Core.Util.Parser
             if (PeekSignedFloat())
             {
                 if (Tokens[CurrentTokenIndex].Type == TokenType.FloatingPoint)
-                    return (float)ConsumeFloat();
+                    return ConsumeFloat();
                 if (Tokens[CurrentTokenIndex].Type == TokenType.Integer)
                     return ConsumeInteger();
 
                 Consume(TokenType.Minus);
-                return -(float)ConsumeFloat();
+                return -ConsumeFloat();
             }
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected a decimal number, got a '{token.Type}' instead (which was \"{token.Text}\")");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected a decimal number, got a '{token.Type}' instead (which was \"{token.Text}\")");
         }
 
         /// <summary>
@@ -527,7 +525,7 @@ namespace Helion.Core.Util.Parser
                 return Tokens[CurrentTokenIndex++].Text;
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected identifier, got a '{token.Type}' instead");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected identifier, got a '{token.Type}' instead");
         }
 
         /// <summary>
@@ -543,7 +541,7 @@ namespace Helion.Core.Util.Parser
                 return Tokens[CurrentTokenIndex++].Text;
 
             Token token = Tokens[CurrentTokenIndex];
-            throw new ParserException(token, $"Expected text, got a '{token.Type}' instead");
+            throw new ParserException(CurrentTokenIndex, Tokens, $"Expected text, got a '{token.Type}' instead");
         }
 
         /// <summary>
@@ -606,7 +604,7 @@ namespace Helion.Core.Util.Parser
                 int beforeIndex = CurrentTokenIndex;
                 action();
                 if (CurrentTokenIndex == beforeIndex)
-                    throw new ParserException(Tokens[beforeIndex], "Infinite parsing loop detected, InvokeUntilAndConsume(char) usage incorrect (report to a developer)");
+                    throw new ParserException(beforeIndex, Tokens, "Infinite parsing loop detected, InvokeUntilAndConsume(char) usage incorrect (report to a developer)");
             }
 
             Consume(c);
@@ -627,7 +625,7 @@ namespace Helion.Core.Util.Parser
                 int beforeIndex = CurrentTokenIndex;
                 action();
                 if (CurrentTokenIndex == beforeIndex)
-                    throw new ParserException(Tokens[beforeIndex], "Infinite parsing loop detected, InvokeUntilAndConsume(char) usage incorrect (report to a developer)");
+                    throw new ParserException(beforeIndex, Tokens, "Infinite parsing loop detected, InvokeUntilAndConsume(char) usage incorrect (report to a developer)");
             }
 
             Consume(str);
@@ -645,7 +643,7 @@ namespace Helion.Core.Util.Parser
             // occur when there are zero tokens in the stream, but it is all
             // handled.
             int index = (CurrentTokenIndex >= Tokens.Count ? Tokens.Count - 1 : CurrentTokenIndex);
-            return new ParserException(Tokens[index], reason);
+            return new ParserException(index, Tokens, reason);
         }
 
         /// <summary>
@@ -660,15 +658,15 @@ namespace Helion.Core.Util.Parser
         /// </remarks>
         protected abstract void PerformParsing();
 
-        private static void HandleParserException(ParserException e, string text)
+        private static void HandleParserException(ParserException e)
         {
             // It may be possible for the log message to have interpolation
             // values in it. Don't know how the logging framework would
             // handle that correctly but I'll play it safe here by hoping
             // it doesn't recursively interpolate.
             Log.Error("Parsing error: ", e.Message);
-            foreach (string logMessage in e.LogToReadableMessage(text))
-                Log.Error(logMessage);
+            Log.Error(e.OffendingLine);
+            Log.Error(e.CaretVisualizer);
         }
 
         private void PrintUnexpectedErrorMessage(Exception e)
