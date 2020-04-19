@@ -34,5 +34,10 @@ namespace Helion.Core.Resource.Decorate.Definitions
                 ActorType = new ActorTypes(parent.Value.ActorType);
             }
         }
+
+        public override string ToString()
+        {
+            return EditorNumber != null ? $"Actor [{EditorNumber}]: {Name}" : $"Actor: {Name}";
+        }
     }
 }
