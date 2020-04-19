@@ -169,7 +169,10 @@ namespace Helion.Core.Resource.Decorate.Parser
             switch (selector.String)
             {
             case "LOWMESSAGE":
-                currentDefinition.Properties.HealthLowMessage.Set(ConsumeInteger(), ConsumeString());
+                int health = ConsumeInteger();
+                Consume(',');
+                string message = ConsumeString();
+                currentDefinition.Properties.HealthLowMessage.Set(health, message);
                 break;
             default:
                 throw MakeException($"Unknown Health property {selector} on actor {currentDefinition.Name}");

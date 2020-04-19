@@ -5,7 +5,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties.Types
     public class HealthLowMessage
     {
         public int? Value;
-        public Optional<UpperString> Message = new Optional<UpperString>();
+        public Optional<string> Message = new Optional<string>();
 
         public HealthLowMessage()
         {
@@ -14,10 +14,10 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties.Types
         public HealthLowMessage(HealthLowMessage other)
         {
             Value = other.Value;
-            Message = new Optional<UpperString>(Message.Value);
+            Message = new Optional<string>(Message.Value);
         }
 
-        public void Set(int value, UpperString message)
+        public void Set(int value, string message)
         {
             Value = value;
             Message = message;
