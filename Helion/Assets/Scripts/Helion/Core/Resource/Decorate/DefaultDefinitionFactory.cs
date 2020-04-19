@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Decorate.Definitions.Flags;
-using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
 using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
@@ -28,13 +27,18 @@ namespace Helion.Core.Resource.Decorate
         public static List<ActorDefinition> CreateAllDefaultDefinitions()
         {
             ActorDefinition actorBase = CreateBaseDefinition();
+            ActorDefinition inventory = CreateInventory(actorBase);
 
             return new List<ActorDefinition>
             {
                 actorBase,
+                inventory,
                 CreateBaseSpawnPoint(actorBase),
                 CreatePlayerPawn(actorBase),
-                CreateTeleportDestination(actorBase)
+                CreateTeleportDestination(actorBase),
+                CreateWeapon(inventory),
+                CreateAmmo(inventory),
+                CreatePowerup(inventory)
             };
         }
 
@@ -108,6 +112,52 @@ namespace Helion.Core.Resource.Decorate
             teleportDest.Flags.Set(ActorFlagType.NoBlockmap, true);
 
             return teleportDest;
+        }
+
+        private static ActorDefinition CreateInventory(ActorDefinition actorBase)
+        {
+            ActorDefinition inventory = new ActorDefinition("INVENTORY", actorBase);
+            inventory.ActorType.Set(ActorType.Inventory);
+            inventory.Properties.InventoryAmount = 1;
+            inventory.Properties.InventoryInterHubAmount = 1;
+            inventory.Properties.InventoryMaxAmount = 1;
+            inventory.Properties.InventoryPickupSound = "MISC/I_PKUP".AsUpper();
+            inventory.Properties.InventoryPickupMessage = "$TXT_DEFAULTPICKUPMSG".AsUpper();
+            inventory.Properties.InventoryUseSound = "MISC/INVUSE".AsUpper();
+
+            return inventory;
+        }
+
+        private static ActorDefinition CreateWeapon(ActorDefinition inventory)
+        {
+            int totalFrames = inventory.States.Frames.Count;
+            ActorActionFunction lightZeroActionFunc = new ActorActionFunction("A_LIGHT0");
+
+            ActorDefinition weapon = new ActorDefinition("WEAPON", inventory);
+            weapon.ActorType.Set(ActorType.Weapon);
+            weapon.Properties.InventoryPickupSound = "MISC/W_PKUP".AsUpper();
+            weapon.Properties.WeaponDefaultKickBack = true;
+            weapon.States.Labels.Add("LIGHTDONE", totalFrames);
+            weapon.States.Frames.Add(new ActorFrame(totalFrames, "SHTGE", 0, MakeProperties(), lightZeroActionFunc, stop, 0));
+
+            return weapon;
+        }
+
+        private static ActorDefinition CreateAmmo(ActorDefinition inventory)
+        {
+            ActorDefinition ammo = new ActorDefinition("AMMO", inventory);
+            ammo.ActorType.Set(ActorType.Ammo);
+            ammo.Properties.InventoryPickupSound = "MISC/ARMOR_PKUP".AsUpper();
+
+            return ammo;
+        }
+
+        private static ActorDefinition CreatePowerup(ActorDefinition inventory)
+        {
+            ActorDefinition powerup = new ActorDefinition("POWERUP", inventory);
+            powerup.ActorType.Set(ActorType.Powerup);
+
+            return powerup;
         }
     }
 }

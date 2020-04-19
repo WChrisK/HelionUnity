@@ -63,7 +63,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         /// </returns>
         public int? Parent(UpperString parent, UpperString label)
         {
-            if (parentOffsets.TryGetValue(label, out Dictionary<UpperString, int> parentLabels))
+            if (parentOffsets.TryGetValue(parent, out Dictionary<UpperString, int> parentLabels))
                 if (parentLabels.TryGetValue(label, out int number))
                     return number;
             return null;
@@ -82,9 +82,33 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
             return null;
         }
 
+        /// <summary>
+        /// Adds a new label. Should not be used with super or parent labels,
+        /// as this is intended only for standard labels. Will overwrite any
+        /// old label offset with the new one.
+        /// </summary>
+        /// <param name="label">The label name.</param>
+        /// <param name="offset">The label offset. Should be non-negative.
+        /// </param>
         public void Add(UpperString label, int offset)
         {
             labels[label] = offset;
         }
+
+        /// <summary>
+        /// Checks if a label with the provided name exists. This does not work
+        /// for super or parent labels.
+        /// </summary>
+        /// <param name="label">The label name.</param>
+        /// <returns>True if so, false if not.</returns>
+        public bool Contains(UpperString label) => labels.ContainsKey(label);
+
+        /// <summary>
+        /// Deletes a label. This does not affect parent or super labels.
+        /// </summary>
+        /// <param name="label">The label name.</param>
+        /// <returns>True if one was deleted, false if no such label existed.
+        /// </returns>
+        public bool Remove(UpperString label) => labels.Remove(label);
     }
 }

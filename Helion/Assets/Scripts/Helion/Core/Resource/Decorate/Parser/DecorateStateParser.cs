@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Helion.Core.Resource.Decorate.Definitions.States;
@@ -7,7 +6,7 @@ using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
-using UnityEngine;
+using JetBrains.Annotations;
 
 namespace Helion.Core.Resource.Decorate.Parser
 {
@@ -64,38 +63,6 @@ namespace Helion.Core.Resource.Decorate.Parser
             return currentDefinition.States.Frames.Last();
         }
 
-        private int LabelToOffsetOrThrow(ActorFrame frame)
-        {
-            ActorFlowControl flowControl = frame.FlowControl;
-            Debug.Assert(flowControl.Label, "Expected label to exist on flow control");
-
-            int? index;
-            UpperString label = flowControl.Label.Value;
-
-            if (flowControl.FlowType == ActorStateBranch.Goto && flowControl.Parent)
-            {
-                UpperString parent = flowControl.Parent.Value;
-
-                if (parent == "SUPER")
-                    index = currentDefinition.States.Labels.Super(label);
-                else
-                    index = currentDefinition.States.Labels.Parent(parent, label);
-
-                if (index == null)
-                    throw MakeException($"Unable to find label: {parent}::{label}");
-            }
-            else
-            {
-                index = currentDefinition.States.Labels[label];
-                if (index == null)
-                    throw MakeException($"Unable to find label: {label}");
-            }
-
-            // The offset to the label is the delta from our current position,
-            // plus any extra offset that the flow control will have provided.
-            return index.Value - frame.FrameIndex + flowControl.Offset;
-        }
-
         private ActorFlowControl ReadGotoLabel()
         {
             Optional<UpperString> label = ConsumeIdentifier().AsUpper();
@@ -115,14 +82,14 @@ namespace Helion.Core.Resource.Decorate.Parser
             return new ActorFlowControl(ActorStateBranch.Goto, parent, label, offset);
         }
 
-        private void HandleLabelOverride(ActorFlowControl flowControl)
+        private void HandleLabelOverride(UpperString label, ActorFlowControl flowControl)
         {
             switch (flowControl.FlowType)
             {
             case ActorStateBranch.Goto:
-                throw MakeException("Goto flow control override not supported currently");
             case ActorStateBranch.Stop:
-                throw MakeException("Stop flow control override not supported currently");
+                currentDefinition.States.flowOverrides[label] = flowControl;
+                break;
             default:
                 throw MakeException("Flow control override after a label must be either 'Stop' or 'Goto'");
             }
@@ -188,7 +155,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private void ApplyStateBranch(ActorFlowControl flowControl)
         {
             if (justSeenLabelOrNull != null)
-                HandleLabelOverride(flowControl);
+                HandleLabelOverride(justSeenLabelOrNull, flowControl);
             else
                 GetLastFrameOrThrow().FlowControl = flowControl;
         }
@@ -322,7 +289,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 return new ActorActionFunction(functionName);
             }
 
-            return null;
+            return Optional<ActorActionFunction>.Empty();
         }
 
         private void ConsumeActorStateFrames(UpperString sprite)
@@ -371,33 +338,6 @@ namespace Helion.Core.Resource.Decorate.Parser
             justSeenLabelOrNull = null;
         }
 
-        private void ApplyLabelOffsets()
-        {
-            foreach (ActorFrame frame in currentDefinition.States.Frames)
-            {
-                if (!frame.NeedsToSetStateOffset)
-                    continue;
-
-                switch (frame.FlowControl.FlowType)
-                {
-                case ActorStateBranch.Loop:
-                case ActorStateBranch.Goto:
-                    frame.NextStateOffset = LabelToOffsetOrThrow(frame);
-                    break;
-                case ActorStateBranch.Fail:
-                case ActorStateBranch.Stop:
-                case ActorStateBranch.Wait:
-                    frame.NextStateOffset = 0;
-                    break;
-                case ActorStateBranch.None:
-                    frame.NextStateOffset = 1;
-                    break;
-                default:
-                    throw new Exception("Unknown frame branch type");
-                }
-            }
-        }
-
         private void ConsumeActorStates()
         {
             frameIndex = currentDefinition.States.Frames.Count;
@@ -407,7 +347,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             Consume('{');
             InvokeUntilAndConsume('}', ConsumeActorStateElement);
 
-            ApplyLabelOffsets();
+            currentDefinition.States.ResolveLabelsAndOverrides();
         }
     }
 }

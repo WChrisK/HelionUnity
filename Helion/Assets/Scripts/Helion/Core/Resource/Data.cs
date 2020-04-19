@@ -12,7 +12,7 @@ using Helion.Core.Util.Logging;
 namespace Helion.Core.Resource
 {
     /// <summary>
-    /// A collection of all of the data
+    /// A collection of all of the data. It is a static singleton (RIP).
     /// </summary>
     public static class Data
     {
