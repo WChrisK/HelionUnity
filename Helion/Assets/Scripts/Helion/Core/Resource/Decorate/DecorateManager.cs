@@ -26,6 +26,14 @@ namespace Helion.Core.Resource.Decorate
             AddDefinitions(DefaultDefinitionFactory.CreateAllDefaultDefinitions());
         }
 
+        /// <summary>
+        /// Handles a decorate entry, or throws if it cannot parse it.
+        /// </summary>
+        /// <param name="entry">The decorate base entry. This should have the
+        /// name 'decorate' (case insensitive).</param>
+        /// <param name="archive">The archive to look up definitions from.
+        /// </param>
+        /// <exception cref="Exception">If parsing fails.</exception>
         public void HandleDefinitionsOrThrow(IEntry entry, IArchive archive)
         {
             DecorateParser parser = new DecorateParser(this, archive);
