@@ -5,6 +5,8 @@ using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
 using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
+using Helion.Core.Util.Extensions;
+using UnityEngine;
 
 namespace Helion.Core.Resource.Decorate
 {
@@ -90,6 +92,10 @@ namespace Helion.Core.Resource.Decorate
             playerPawn.Properties.PainChance.Value = 255;
             playerPawn.Properties.Radius = 16;
             playerPawn.Properties.Speed = 1;
+            playerPawn.Properties.PlayerAttackZOffset = 8;
+            playerPawn.Properties.PlayerDamageScreenColor.Color = new Color(1, 0, 0);
+            playerPawn.Properties.PlayerFlechetteType = "ARTIPOISONBAG3".AsUpper();
+            playerPawn.Properties.PlayerSoundClass = "PLAYER".AsUpper();
 
             return playerPawn;
         }

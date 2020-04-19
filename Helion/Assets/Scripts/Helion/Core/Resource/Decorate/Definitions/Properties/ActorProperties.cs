@@ -11,198 +11,198 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
 {
     public class ActorProperties
     {
-        public int? Accuracy;
-        public ThingSpecialActivationType Activation = ThingSpecialActivationType.Default;
-        public Optional<UpperString> ActiveSound = Optional<UpperString>.Empty();
-        public float Alpha = 1.0f;
-        public int? AmmoBackpackAmount;
-        public int? AmmoBackpackMaxAmount;
-        public int? AmmoDropAmount;
-        public int? ArmorMaxAbsorb;
-        public int? ArmorMaxBonus;
-        public int? ArmorMaxBonusMax;
-        public int? ArmorMaxFullAbsorb;
-        public int? ArmorMaxSaveAmount;
-        public int? ArmorSaveAmount;
-        public float? ArmorSavePercent;
+        public int? Accuracy; // Unimplemented!
+        public ThingSpecialActivationType Activation = ThingSpecialActivationType.Default; // Unimplemented!
+        public Optional<UpperString> ActiveSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public float Alpha = 1.0f; // Unimplemented!
+        public int? AmmoBackpackAmount; // Unimplemented!
+        public int? AmmoBackpackMaxAmount; // Unimplemented!
+        public int? AmmoDropAmount; // Unimplemented!
+        public int? ArmorMaxAbsorb; // Unimplemented!
+        public int? ArmorMaxBonus; // Unimplemented!
+        public int? ArmorMaxBonusMax; // Unimplemented!
+        public int? ArmorMaxFullAbsorb; // Unimplemented!
+        public int? ArmorMaxSaveAmount; // Unimplemented!
+        public int? ArmorSaveAmount; // Unimplemented!
+        public float? ArmorSavePercent; // Unimplemented!
         public SpecialArgs Args = new SpecialArgs();
-        public Optional<UpperString> AttackSound = Optional<UpperString>.Empty();
-        public Color? BloodColor;
-        public readonly List<UpperString> BloodType = new List<UpperString>();
-        public int BounceCount = int.MaxValue;
-        public float BounceFactor = 0.7f;
-        public Optional<UpperString> BounceSound = Optional<UpperString>.Empty();
-        public BounceType BounceType = BounceType.None;
-        public int? BurnHeight;
-        public int? CameraHeight;
-        public int ConversationID;
-        public Optional<UpperString> CrushPainSound = Optional<UpperString>.Empty();
-        public int Damage;
-        public readonly DamageFactor DamageFactor = new DamageFactor();
-        public Optional<UpperString> DamageType = Optional<UpperString>.Empty();
-        public int? DeathHeight;
-        public Optional<UpperString> DeathSound = Optional<UpperString>.Empty();
-        public Optional<UpperString> DeathType = Optional<UpperString>.Empty();
-        public Optional<UpperString> Decal = Optional<UpperString>.Empty();
-        public int? DefThreshold;
-        public int? DesignatedTeam;
-        public Optional<UpperString> DistanceCheck = Optional<UpperString>.Empty();
-        public readonly List<DropItem> DropItem = new List<DropItem>();
-        public int? ExplosionDamage;
-        public int? ExplosionRadius;
-        public bool FakeInventoryRespawns;
-        public float? FastSpeed;
-        public int FloatBobPhase;
-        public float FloatBobStrength = 1.0f;
-        public float FloatSpeed = 4.0f;
-        public float Friction = 1.0f;
-        public int FriendlySeeBlocks = 10;
-        public readonly List<UpperString> Game = new List<UpperString>();
-        public int? GibHealth;
-        public float Gravity = 1.0f;
-        public int Health = 1000;
-        public readonly HealthLowMessage HealthLowMessage = new HealthLowMessage();
-        public AutoUseType HealthPickupAutoUse = AutoUseType.Never;
+        public Optional<UpperString> AttackSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Color? BloodColor; // Unimplemented!
+        public readonly List<UpperString> BloodType = new List<UpperString>(); // Unimplemented!
+        public int BounceCount = int.MaxValue; // Unimplemented!
+        public float BounceFactor = 0.7f; // Unimplemented!
+        public Optional<UpperString> BounceSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public BounceType BounceType = BounceType.None; // Unimplemented!
+        public int? BurnHeight; // Unimplemented!
+        public int? CameraHeight; // Unimplemented!
+        public int ConversationID; // Unimplemented!
+        public Optional<UpperString> CrushPainSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int Damage; // Unimplemented!
+        public readonly DamageFactor DamageFactor = new DamageFactor(); // Unimplemented!
+        public Optional<UpperString> DamageType = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? DeathHeight; // Unimplemented!
+        public Optional<UpperString> DeathSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> DeathType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> Decal = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? DefThreshold; // Unimplemented!
+        public int? DesignatedTeam; // Unimplemented!
+        public Optional<UpperString> DistanceCheck = Optional<UpperString>.Empty(); // Unimplemented!
+        public readonly List<DropItem> DropItem = new List<DropItem>(); // Unimplemented!
+        public int? ExplosionDamage; // Unimplemented!
+        public int? ExplosionRadius; // Unimplemented!
+        public bool FakeInventoryRespawns; // Unimplemented!
+        public float? FastSpeed; // Unimplemented!
+        public int FloatBobPhase; // Unimplemented!
+        public float FloatBobStrength = 1.0f; // Unimplemented!
+        public float FloatSpeed = 4.0f; // Unimplemented!
+        public float Friction = 1.0f; // Unimplemented!
+        public int FriendlySeeBlocks = 10; // Unimplemented!
+        public readonly List<UpperString> Game = new List<UpperString>(); // Unimplemented!
+        public int? GibHealth; // Unimplemented!
+        public float Gravity = 1.0f; // Unimplemented!
+        public int Health = 1000; // Unimplemented!
+        public readonly HealthLowMessage HealthLowMessage = new HealthLowMessage(); // Unimplemented!
+        public AutoUseType HealthPickupAutoUse = AutoUseType.Never; // Unimplemented!
         public int Height = 16;
-        public Optional<string> HitObituary = Optional<string>.Empty();
-        public Optional<UpperString> HowlSound = Optional<UpperString>.Empty();
-        public Optional<UpperString> InventoryAltHUDIcon = Optional<UpperString>.Empty();
-        public int? InventoryAmount;
-        public int? InventoryDefMaxAmount;
-        public List<UpperString> InventoryForbiddenTo = new List<UpperString>();
-        public int? InventoryGiveQuest;
-        public Optional<UpperString> InventoryIcon = Optional<UpperString>.Empty();
-        public int InventoryInterHubAmount;
-        public int InventoryMaxAmount;
-        public Optional<UpperString> InventoryPickupFlash = Optional<UpperString>.Empty();
-        public Optional<UpperString> InventoryPickupMessage = Optional<UpperString>.Empty();
-        public Optional<UpperString> InventoryPickupSound = Optional<UpperString>.Empty();
-        public int? InventoryRespawnTics;
-        public List<UpperString> InventoryRestrictedTo = new List<UpperString>();
-        public Optional<UpperString> InventoryUseSound = Optional<UpperString>.Empty();
-        public int Mass = 100;
-        public int MaxStepHeight = 24;
-        public int MaxDropOffHeight = 24;
-        public int? MaxTargetRange;
-        public int? MeleeDamage;
-        public int MeleeRange = 44;
-        public Optional<UpperString> MeleeSound = Optional<UpperString>.Empty();
-        public int? MeleeThreshold;
-        public int MinMissileChance = 200;
-        public int? MissileHeight;
-        public Optional<UpperString> MissileType = Optional<UpperString>.Empty();
-        public int? MorphProjectileDuration;
-        public Optional<UpperString> MorphProjectileMonsterClass = Optional<UpperString>.Empty();
-        public Optional<UpperString> MorphProjectileMorphFlash = Optional<UpperString>.Empty();
-        public MorphStyle? MorphProjectileMorphStyle;
-        public Optional<UpperString> MorphProjectilePlayerClass = Optional<UpperString>.Empty();
-        public Optional<UpperString> MorphProjectileUnMorphFlash = Optional<UpperString>.Empty();
-        public Optional<string> Obituary = Optional<string>.Empty();
-        public readonly PainChance PainChance = new PainChance();
-        public int PainThreshold;
-        public Optional<UpperString> PainType = Optional<UpperString>.Empty();
-        public float PlayerAirCapacity = 1.0f;
-        public float PlayerAttackZOffset;
-        public DecorateRange<int> PlayerColorRange = new DecorateRange<int>(0, 0);
-        public Optional<UpperString> PlayerCrouchSprite = Optional<UpperString>.Empty();
-        public readonly DamageScreenColor PlayerDamageScreenColor = new DamageScreenColor();
-        public Optional<UpperString> PlayerDisplayName = Optional<UpperString>.Empty();
-        public Optional<UpperString> PlayerFace = Optional<UpperString>.Empty();
-        public DecorateRange<float> PlayerFallingScreamSpeed = new DecorateRange<float>(35, 45);
-        public Optional<UpperString> PlayerFlechetteType = Optional<UpperString>.Empty();
-        public RunSpeed PlayerForwardMove = new RunSpeed(1.0f, 1.0f);
-        public float PlayerGruntSpeed = 12.0f;
-        public Optional<UpperString> PlayerHealRadiusType = Optional<UpperString>.Empty();
-        public HexenArmor? PlayerHexenArmor;
-        public float PlayerJumpZ = 8.0f;
-        public int PlayerMaxHealth = 100;
-        public Optional<UpperString> PlayerMorphWeapon = Optional<UpperString>.Empty();
-        public int PlayerMugShotMaxHealth;
-        public Optional<UpperString> PlayerPortrait = Optional<UpperString>.Empty();
-        public int PlayerRunHealth;
-        public Optional<UpperString> PlayerScoreIcon = Optional<UpperString>.Empty();
-        public RunSpeed PlayerSideMove = new RunSpeed(1.0f, 1.0f);
-        public Optional<UpperString> PlayerSoundClass = Optional<UpperString>.Empty();
-        public Optional<UpperString> PlayerSpawnClass = Optional<UpperString>.Empty();
-        public readonly Dictionary<UpperString, int> PlayerStartItem = new Dictionary<UpperString, int>();
-        public int PlayerTeleportFreezeTime = 18;
-        public float PlayerUseRange = 64.0f;
-        public readonly Dictionary<int, List<UpperString>> PlayerWeaponSlot = new Dictionary<int, List<UpperString>>();
-        public float PlayerViewBob = 1.0f;
-        public float PlayerViewHeight = 41.0f;
-        public PoisonDamage? PoisonDamage;
-        public Optional<UpperString> PoisonDamageType = Optional<UpperString>.Empty();
-        public PowerupColor? PowerupColor;
-        public PowerupColormap? PowerupColormap;
-        public int? PowerupDuration;
-        public RenderStyle PowerupMode = RenderStyle.Normal;
-        public int? PowerupStrength;
-        public Optional<UpperString> PowerupType = Optional<UpperString>.Empty();
-        public bool PowerSpeedNoTrail;
-        public int? ProjectileKickBack;
-        public int? ProjectilePassHeight;
-        public float PushFactor = 0.25f;
-        public int? PuzzleItemNumber;
-        public Optional<UpperString> PuzzleItemFailMessage = Optional<UpperString>.Empty();
+        public Optional<string> HitObituary = Optional<string>.Empty(); // Unimplemented!
+        public Optional<UpperString> HowlSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryAltHUDIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? InventoryAmount; // Unimplemented!
+        public int? InventoryDefMaxAmount; // Unimplemented!
+        public List<UpperString> InventoryForbiddenTo = new List<UpperString>(); // Unimplemented!
+        public int? InventoryGiveQuest; // Unimplemented!
+        public Optional<UpperString> InventoryIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public int InventoryInterHubAmount; // Unimplemented!
+        public int InventoryMaxAmount; // Unimplemented!
+        public Optional<UpperString> InventoryPickupFlash = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryPickupMessage = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryPickupSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? InventoryRespawnTics; // Unimplemented!
+        public List<UpperString> InventoryRestrictedTo = new List<UpperString>(); // Unimplemented!
+        public Optional<UpperString> InventoryUseSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int Mass = 100; // Unimplemented!
+        public int MaxStepHeight = 24; // Unimplemented!
+        public int MaxDropOffHeight = 24; // Unimplemented!
+        public int? MaxTargetRange; // Unimplemented!
+        public int? MeleeDamage; // Unimplemented!
+        public int MeleeRange = 44; // Unimplemented!
+        public Optional<UpperString> MeleeSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? MeleeThreshold; // Unimplemented!
+        public int MinMissileChance = 200; // Unimplemented!
+        public int? MissileHeight; // Unimplemented!
+        public Optional<UpperString> MissileType = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? MorphProjectileDuration; // Unimplemented!
+        public Optional<UpperString> MorphProjectileMonsterClass = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> MorphProjectileMorphFlash = Optional<UpperString>.Empty(); // Unimplemented!
+        public MorphStyle? MorphProjectileMorphStyle; // Unimplemented!
+        public Optional<UpperString> MorphProjectilePlayerClass = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> MorphProjectileUnMorphFlash = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<string> Obituary = Optional<string>.Empty(); // Unimplemented!
+        public readonly PainChance PainChance = new PainChance(); // Unimplemented!
+        public int PainThreshold; // Unimplemented!
+        public Optional<UpperString> PainType = Optional<UpperString>.Empty(); // Unimplemented!
+        public float PlayerAirCapacity = 1.0f; // Unimplemented!
+        public float PlayerAttackZOffset; // Unimplemented!
+        public DecorateRange<int> PlayerColorRange = new DecorateRange<int>(0, 0); // Unimplemented!
+        public Optional<UpperString> PlayerCrouchSprite = Optional<UpperString>.Empty(); // Unimplemented!
+        public readonly DamageScreenColor PlayerDamageScreenColor = new DamageScreenColor(); // Unimplemented!
+        public Optional<UpperString> PlayerDisplayName = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerFace = Optional<UpperString>.Empty(); // Unimplemented!
+        public DecorateRange<float> PlayerFallingScreamSpeed = new DecorateRange<float>(35, 45); // Unimplemented!
+        public Optional<UpperString> PlayerFlechetteType = Optional<UpperString>.Empty(); // Unimplemented!
+        public RunSpeed PlayerForwardMove = new RunSpeed(1.0f, 1.0f); // Unimplemented!
+        public float PlayerGruntSpeed = 12.0f; // Unimplemented!
+        public Optional<UpperString> PlayerHealRadiusType = Optional<UpperString>.Empty(); // Unimplemented!
+        public HexenArmor? PlayerHexenArmor; // Unimplemented!
+        public float PlayerJumpZ = 8.0f; // Unimplemented!
+        public int PlayerMaxHealth = 100; // Unimplemented!
+        public Optional<UpperString> PlayerMorphWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public int PlayerMugShotMaxHealth; // Unimplemented!
+        public Optional<UpperString> PlayerPortrait = Optional<UpperString>.Empty(); // Unimplemented!
+        public int PlayerRunHealth; // Unimplemented!
+        public Optional<UpperString> PlayerScoreIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public RunSpeed PlayerSideMove = new RunSpeed(1.0f, 1.0f); // Unimplemented!
+        public Optional<UpperString> PlayerSoundClass = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerSpawnClass = Optional<UpperString>.Empty(); // Unimplemented!
+        public readonly Dictionary<UpperString, int> PlayerStartItem = new Dictionary<UpperString, int>(); // Unimplemented!
+        public int PlayerTeleportFreezeTime = 18; // Unimplemented!
+        public float PlayerUseRange = 64.0f; // Unimplemented!
+        public readonly Dictionary<int, List<UpperString>> PlayerWeaponSlot = new Dictionary<int, List<UpperString>>(); // Unimplemented!
+        public float PlayerViewBob = 1.0f; // Unimplemented!
+        public float PlayerViewHeight = 41.0f; // Unimplemented!
+        public PoisonDamage? PoisonDamage; // Unimplemented!
+        public Optional<UpperString> PoisonDamageType = Optional<UpperString>.Empty(); // Unimplemented!
+        public PowerupColor? PowerupColor; // Unimplemented!
+        public PowerupColormap? PowerupColormap; // Unimplemented!
+        public int? PowerupDuration; // Unimplemented!
+        public RenderStyle PowerupMode = RenderStyle.Normal; // Unimplemented!
+        public int? PowerupStrength; // Unimplemented!
+        public Optional<UpperString> PowerupType = Optional<UpperString>.Empty(); // Unimplemented!
+        public bool PowerSpeedNoTrail; // Unimplemented!
+        public int? ProjectileKickBack; // Unimplemented!
+        public int? ProjectilePassHeight; // Unimplemented!
+        public float PushFactor = 0.25f; // Unimplemented!
+        public int? PuzzleItemNumber; // Unimplemented!
+        public Optional<UpperString> PuzzleItemFailMessage = Optional<UpperString>.Empty(); // Unimplemented!
         public int Radius = 20;
-        public float RadiusDamageFactor = 1.0f;
-        public int ReactionTime = 8;
-        public float RenderRadius;
-        public RenderStyle RenderStyle = RenderStyle.Normal;
-        public int RipLevelMax;
-        public int RipLevelMin;
-        public int? RipperLevel;
-        public float Scale = 1.0f;
-        public float SelfDamageFactor = 1.0f;
-        public int SpawnID;
-        public Optional<SpawnInfo> SpawnInfo = Optional<SpawnInfo>.Empty();
-        public Optional<UpperString> Species = Optional<UpperString>.Empty();
-        public float Speed;
-        public int? SpriteAngle;
-        public int? SpriteRotation;
-        public int? Stamina;
-        public float StealthAlpha;
-        public Color? StencilColor;
-        public Optional<UpperString> Tag = Optional<UpperString>.Empty();
-        public UpperString TeleFogDestType = "TELEPORTFOG";
-        public UpperString TeleFogSourceType = "TELEPORTFOG";
-        public int Threshold;
-        public readonly Translation Translation = new Translation();
-        public DecorateRange<int>? VisibleAngles;
-        public DecorateRange<int>? VisiblePitch;
-        public List<UpperString> VisibleToPlayerClass = new List<UpperString>();
-        public int? VisibleToTeam;
-        public float? VSpeed;
-        public float WallBounceFactor = 0.7f;
-        public int? WeaponAmmoGive;
-        public int? WeaponAmmoGive1;
-        public int? WeaponAmmoGive2;
-        public Optional<UpperString> WeaponAmmoType = Optional<UpperString>.Empty();
-        public Optional<UpperString> WeaponAmmoType1 = Optional<UpperString>.Empty();
-        public Optional<UpperString> WeaponAmmoType2 = Optional<UpperString>.Empty();
-        public float WeaponBobRangeX = 1.0f;
-        public float WeaponBobRangeY = 1.0f;
-        public float WeaponBobSpeed = 1.0f;
-        public BobStyle WeaponBobStyle = BobStyle.Normal;
-        public bool WeaponDefaultKickBack;
-        public int? WeaponKickBack;
-        public float? WeaponLookScale;
-        public int? WeaponMinSelectionAmmo1;
-        public int? WeaponMinSelectionAmmo2;
-        public Optional<UpperString> WeaponReadySound = Optional<UpperString>.Empty();
-        public int? WeaponSelectionOrder;
-        public Optional<UpperString> WeaponSisterWeapon = Optional<UpperString>.Empty();
-        public int? WeaponSlotNumber;
-        public float? WeaponSlotPriority;
-        public Optional<UpperString> WeaponUpSound = Optional<UpperString>.Empty();
-        public int? WeaponYAdjust;
-        public int? WeaponPieceNumber;
-        public Optional<UpperString> WeaponPieceWeapon = Optional<UpperString>.Empty();
-        public int? WeaveIndexXY;
-        public int? WeaveIndexZ;
-        public int WoundHealth;
-        public float XScale = 1.0f;
-        public float YScale = 1.0f;
+        public float RadiusDamageFactor = 1.0f; // Unimplemented!
+        public int ReactionTime = 8; // Unimplemented!
+        public float RenderRadius; // Unimplemented!
+        public RenderStyle RenderStyle = RenderStyle.Normal; // Unimplemented!
+        public int RipLevelMax; // Unimplemented!
+        public int RipLevelMin; // Unimplemented!
+        public int? RipperLevel; // Unimplemented!
+        public float Scale = 1.0f; // Unimplemented!
+        public float SelfDamageFactor = 1.0f; // Unimplemented!
+        public int SpawnID; // Unimplemented!
+        public Optional<SpawnInfo> SpawnInfo = Optional<SpawnInfo>.Empty(); // Unimplemented!
+        public Optional<UpperString> Species = Optional<UpperString>.Empty(); // Unimplemented!
+        public float Speed; // Unimplemented!
+        public int? SpriteAngle; // Unimplemented!
+        public int? SpriteRotation; // Unimplemented!
+        public int? Stamina; // Unimplemented!
+        public float StealthAlpha; // Unimplemented!
+        public Color? StencilColor; // Unimplemented!
+        public Optional<UpperString> Tag = Optional<UpperString>.Empty(); // Unimplemented!
+        public UpperString TeleFogDestType = "TELEPORTFOG"; // Unimplemented!
+        public UpperString TeleFogSourceType = "TELEPORTFOG"; // Unimplemented!
+        public int Threshold; // Unimplemented!
+        public readonly Translation Translation = new Translation(); // Unimplemented!
+        public DecorateRange<int>? VisibleAngles; // Unimplemented!
+        public DecorateRange<int>? VisiblePitch; // Unimplemented!
+        public List<UpperString> VisibleToPlayerClass = new List<UpperString>(); // Unimplemented!
+        public int? VisibleToTeam; // Unimplemented!
+        public float? VSpeed; // Unimplemented!
+        public float WallBounceFactor = 0.7f; // Unimplemented!
+        public int? WeaponAmmoGive; // Unimplemented!
+        public int? WeaponAmmoGive1; // Unimplemented!
+        public int? WeaponAmmoGive2; // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType1 = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType2 = Optional<UpperString>.Empty(); // Unimplemented!
+        public float WeaponBobRangeX = 1.0f; // Unimplemented!
+        public float WeaponBobRangeY = 1.0f; // Unimplemented!
+        public float WeaponBobSpeed = 1.0f; // Unimplemented!
+        public BobStyle WeaponBobStyle = BobStyle.Normal; // Unimplemented!
+        public bool WeaponDefaultKickBack; // Unimplemented!
+        public int? WeaponKickBack; // Unimplemented!
+        public float? WeaponLookScale; // Unimplemented!
+        public int? WeaponMinSelectionAmmo1; // Unimplemented!
+        public int? WeaponMinSelectionAmmo2; // Unimplemented!
+        public Optional<UpperString> WeaponReadySound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? WeaponSelectionOrder; // Unimplemented!
+        public Optional<UpperString> WeaponSisterWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? WeaponSlotNumber; // Unimplemented!
+        public float? WeaponSlotPriority; // Unimplemented!
+        public Optional<UpperString> WeaponUpSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? WeaponYAdjust; // Unimplemented!
+        public int? WeaponPieceNumber; // Unimplemented!
+        public Optional<UpperString> WeaponPieceWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public int? WeaveIndexXY; // Unimplemented!
+        public int? WeaveIndexZ; // Unimplemented!
+        public int WoundHealth; // Unimplemented!
+        public float XScale = 1.0f; // Unimplemented!
+        public float YScale = 1.0f; // Unimplemented!
 
         public ActorProperties()
         {

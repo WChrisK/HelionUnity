@@ -361,17 +361,6 @@ namespace Helion.Core.Resource.Decorate.Parser
                 currentDefinition.Properties.PlayerDamageScreenColor.Intensity = intensity;
         }
 
-        private RunSpeed ReadRunSpeed()
-        {
-            float run = ConsumeFloat();
-            float walk = 1.0f;
-
-            if (ConsumeIf(','))
-                walk = ConsumeFloat();
-
-            return new RunSpeed(run, walk);
-        }
-
         private HexenArmor ReadHexenArmor()
         {
             int baseValue = ConsumeInteger();
@@ -395,6 +384,36 @@ namespace Helion.Core.Resource.Decorate.Parser
                 throw MakeException($"Player.HexenArmor value Amulet must be divisible by 5 in {currentDefinition.Name}");
 
             return new HexenArmor(baseValue, armor, shield, helm, amulet);
+        }
+
+        private RunSpeed ReadRunSpeed()
+        {
+            float run = ConsumeFloat();
+            float walk = 1.0f;
+
+            if (ConsumeIf(','))
+                walk = ConsumeFloat();
+
+            return new RunSpeed(run, walk);
+        }
+
+        private void ReadStartItem()
+        {
+            UpperString startItemName = ConsumeString();
+
+            // Note: I have no idea if this is needed, the wiki says it is not
+            // needed, yet the definitions elsewhere say it is. I have no idea
+            // so I'll just accept both as valid for now.
+            if (ConsumeIf(','))
+            {
+                currentDefinition.Properties.PlayerStartItem[startItemName] = ConsumeInteger();
+                return;
+            }
+
+            if (PeekInteger())
+                currentDefinition.Properties.PlayerStartItem[startItemName] = ConsumeInteger();
+            else
+                currentDefinition.Properties.PlayerStartItem[startItemName] = 1;
         }
 
         private void ReadPlayerProperty()
@@ -477,9 +496,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 currentDefinition.Properties.PlayerSpawnClass = ConsumeString().AsUpper();
                 break;
             case "STARTITEM":
-                UpperString startItemName = ConsumeString();
-                int startItemAmount = PeekInteger() ? ConsumeInteger() : 1;
-                currentDefinition.Properties.PlayerStartItem[startItemName] = startItemAmount;
+                ReadStartItem();
                 break;
             case "TELEPORTFREEZETIME":
                 currentDefinition.Properties.PlayerTeleportFreezeTime = ConsumeSignedInteger();
@@ -489,6 +506,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "WEAPONSLOT":
                 int weaponSlot = ConsumeInteger();
+                Consume(',');
                 List<UpperString> weapons = ReadStringList();
                 currentDefinition.Properties.PlayerWeaponSlot[weaponSlot] = weapons;
                 break;
