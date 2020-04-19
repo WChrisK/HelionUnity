@@ -79,7 +79,22 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadAmmoProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "BACKPACKAMOUNT":
+                currentDefinition.Properties.AmmoBackpackAmount = ConsumeInteger();
+                break;
+            case "BACKPACKMAXAMOUNT":
+                currentDefinition.Properties.AmmoBackpackMaxAmount = ConsumeInteger();
+                break;
+            case "DROPAMOUNT":
+                currentDefinition.Properties.AmmoDropAmount = ConsumeInteger();
+                break;
+            default:
+                throw MakeException($"Unknown Ammo property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -88,7 +103,34 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadArmorProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "MAXABSORB":
+                currentDefinition.Properties.ArmorMaxAbsorb = ConsumeInteger();
+                break;
+            case "MAXBONUS":
+                currentDefinition.Properties.ArmorMaxBonus = ConsumeInteger();
+                break;
+            case "MAXBONUSMAX":
+                currentDefinition.Properties.ArmorMaxBonusMax = ConsumeInteger();
+                break;
+            case "MAXSAVEAMOUNT":
+                currentDefinition.Properties.ArmorMaxSaveAmount = ConsumeInteger();
+                break;
+            case "MAXFULLABSORB":
+                currentDefinition.Properties.ArmorMaxFullAbsorb = ConsumeInteger();
+                break;
+            case "SAVEAMOUNT":
+                currentDefinition.Properties.ArmorSaveAmount = ConsumeInteger();
+                break;
+            case "SAVEPERCENT":
+                currentDefinition.Properties.ArmorSavePercent = ConsumeFloat().Clamp(0, 100);
+                break;
+            default:
+                throw MakeException($"Unknown Armor property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -97,7 +139,16 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadFakeInventoryProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "RESPAWNS":
+                currentDefinition.Properties.FakeInventoryRespawns = true;
+                break;
+            default:
+                throw MakeException($"Unknown FakeInventory property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -106,7 +157,16 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadHealthProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "LOWMESSAGE":
+                currentDefinition.Properties.HealthLowMessage.Set(ConsumeInteger(), ConsumeString());
+                break;
+            default:
+                throw MakeException($"Unknown Health property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -115,7 +175,32 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadHealthPickupProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "AUTOUSE":
+                switch (ConsumeInteger())
+                {
+                case 0:
+                    currentDefinition.Properties.HealthPickupAutoUse = AutoUseType.Never;
+                    break;
+                case 1:
+                    currentDefinition.Properties.HealthPickupAutoUse = AutoUseType.WouldDieAndHasAutoUse;
+                    break;
+                case 2:
+                    currentDefinition.Properties.HealthPickupAutoUse = AutoUseType.WouldDieAndHasAutoUseDeathmatch;
+                    break;
+                case 3:
+                    currentDefinition.Properties.HealthPickupAutoUse = AutoUseType.UnderFiftyHealth;
+                    break;
+                default:
+                    throw MakeException($"Out of range HealthPickup property {selector} on actor {currentDefinition.Name} (should be within 0 - 3)");
+                }
+                break;
+            default:
+                throw MakeException($"Unknown HealthPickup property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -124,34 +209,428 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadInventoryProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "ALTHUDICON":
+                currentDefinition.Properties.InventoryAltHUDIcon = ConsumeString().AsUpper();
+                break;
+            case "AMOUNT":
+                currentDefinition.Properties.InventoryAmount = ConsumeInteger();
+                break;
+            case "DEFMAXAMOUNT":
+                // Note: This is wrong if it's for Heretic (then would be 16).
+                currentDefinition.Properties.InventoryDefMaxAmount = 25;
+                break;
+            case "FORBIDDENTO":
+                currentDefinition.Properties.InventoryForbiddenTo = ReadStringList();
+                break;
+            case "GIVEQUEST":
+                currentDefinition.Properties.InventoryGiveQuest = ConsumeInteger();
+                if (currentDefinition.Properties.InventoryGiveQuest < 1 || currentDefinition.Properties.InventoryGiveQuest > 31)
+                    throw MakeException($"Must have Inventory.GiveQuest for actor {currentDefinition.Name} be in range of [1, 31] inclusive");
+                break;
+            case "ICON":
+                currentDefinition.Properties.InventoryIcon = ConsumeString().AsUpper();
+                break;
+            case "INTERHUBAMOUNT":
+                currentDefinition.Properties.InventoryInterHubAmount = ConsumeInteger();
+                break;
+            case "MAXAMOUNT":
+                currentDefinition.Properties.InventoryMaxAmount = ConsumeInteger();
+                break;
+            case "PICKUPFLASH":
+                currentDefinition.Properties.InventoryPickupFlash = ConsumeString().AsUpper();
+                break;
+            case "PICKUPMESSAGE":
+                currentDefinition.Properties.InventoryPickupMessage = ConsumeString().AsUpper();
+                break;
+            case "PICKUPSOUND":
+                currentDefinition.Properties.InventoryPickupSound = ConsumeString().AsUpper();
+                break;
+            case "RESPAWNTICS":
+                currentDefinition.Properties.InventoryRespawnTics = ConsumeInteger();
+                break;
+            case "RESTRICTEDTO":
+                currentDefinition.Properties.InventoryRestrictedTo = ReadStringList();
+                break;
+            case "USESOUND":
+                currentDefinition.Properties.InventoryUseSound = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unknown Inventory property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
 
         #region MorphProjectile Property Readers
 
+        private MorphStyle? ReadMorphStyle()
+        {
+            string style = ConsumeString();
+            switch (style.ToUpper())
+            {
+            case "MRF_ADDSTAMINA":
+                return MorphStyle.AddStamina;
+            case "MRF_FAILNOLAUGH":
+                return MorphStyle.FailNoLaugh;
+            case "MRF_FAILNOTELEFRAG":
+                return MorphStyle.FailNotTelefrag;
+            case "MRF_FULLHEALTH":
+                return MorphStyle.FullHealth;
+            case "MRF_LOSEACTUALWEAPON":
+                return MorphStyle.LoseActualWeapon;
+            case "MRF_NEWTIDBEHAVIOUR":
+                return MorphStyle.NewTidBehavior;
+            case "MRF_TRANSFERTRANSLATION":
+                return MorphStyle.TransferTranslation;
+            case "MRF_UNDOALWAYS":
+                return MorphStyle.UndoAlways;
+            case "MRF_UNDOBYTOMEOFPOWER":
+                return MorphStyle.UndoByTomeOfPower;
+            case "MRF_UNDOBYCHAOSDEVICE":
+                return MorphStyle.UndoByChaosDevice;
+            case "MRF_UNDOBYDEATH":
+                return MorphStyle.UndoByDeath;
+            case "MRF_UNDOBYDEATHFORCED":
+                return MorphStyle.UndoByDeathForced;
+            case "MRF_UNDOBYDEATHSAVES":
+                return MorphStyle.UndoByDeathSaves;
+            case "MRF_WHENINVULNERABLE":
+                return MorphStyle.WhenInvulnerable;
+            default:
+                throw MakeException($"Unknown morph style type '{style}' on actor '{currentDefinition.Name}'");
+            }
+        }
+
         private void ReadMorphProjectileProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "DURATION":
+                currentDefinition.Properties.MorphProjectileDuration = ConsumeInteger();
+                break;
+            case "MONSTERCLASS":
+                currentDefinition.Properties.MorphProjectileMonsterClass = ConsumeString().AsUpper();
+                break;
+            case "MORPHFLASH":
+                currentDefinition.Properties.MorphProjectileMorphFlash = ConsumeString().AsUpper();
+                break;
+            case "MORPHSTYLE":
+                currentDefinition.Properties.MorphProjectileMorphStyle = ReadMorphStyle();
+                break;
+            case "PLAYERCLASS":
+                currentDefinition.Properties.MorphProjectilePlayerClass = ConsumeString().AsUpper();
+                break;
+            case "UNMORPHFLASH":
+                currentDefinition.Properties.MorphProjectileUnMorphFlash = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unknown MorphProjectile property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
 
         #region Player Property Readers
 
+        private void ReadDamageScreenColor()
+        {
+            Color color = ReadColor();
+            float? intensity = null;
+            UpperString damageTypeOrNull = null;
+
+            if (ConsumeIf(','))
+                intensity = ConsumeFloat().Clamp(0, 1);
+            if (ConsumeIf(','))
+                damageTypeOrNull = ConsumeString();
+
+            if (damageTypeOrNull != null)
+            {
+                var component = new DamageScreenColor.DamageScreenColorComponent(color, intensity);
+                currentDefinition.Properties.PlayerDamageScreenColor.DamageTypes[damageTypeOrNull] = component;
+                return;
+            }
+
+            currentDefinition.Properties.PlayerDamageScreenColor.Color = color;
+            if (intensity != null)
+                currentDefinition.Properties.PlayerDamageScreenColor.Intensity = intensity;
+        }
+
+        private RunSpeed ReadRunSpeed()
+        {
+            float run = ConsumeFloat();
+            float walk = 1.0f;
+
+            if (ConsumeIf(','))
+                walk = ConsumeFloat();
+
+            return new RunSpeed(run, walk);
+        }
+
+        private HexenArmor ReadHexenArmor()
+        {
+            int baseValue = ConsumeInteger();
+            if (baseValue % 5 != 0)
+                throw MakeException($"Player.HexenArmor value Base must be divisible by 5 in {currentDefinition.Name}");
+
+            int armor = ConsumeInteger();
+            if (armor % 5 != 0)
+                throw MakeException($"Player.HexenArmor value Armor must be divisible by 5 in {currentDefinition.Name}");
+
+            int shield = ConsumeInteger();
+            if (shield % 5 != 0)
+                throw MakeException($"Player.HexenArmor value Shield must be divisible by 5 in {currentDefinition.Name}");
+
+            int helm = ConsumeInteger();
+            if (helm % 5 != 0)
+                throw MakeException($"Player.HexenArmor value Helm must be divisible by 5 in {currentDefinition.Name}");
+
+            int amulet = ConsumeInteger();
+            if (amulet % 5 != 0)
+                throw MakeException($"Player.HexenArmor value Amulet must be divisible by 5 in {currentDefinition.Name}");
+
+            return new HexenArmor(baseValue, armor, shield, helm, amulet);
+        }
+
         private void ReadPlayerProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "AIRCAPACITY":
+                currentDefinition.Properties.PlayerAirCapacity = ConsumeFloat();
+                break;
+            case "ATTACKZOFFSET":
+                currentDefinition.Properties.PlayerAttackZOffset = ConsumeFloat();
+                break;
+            case "COLORSET":
+            case "COLORSETFILE":
+            case "CLEARCOLORSET":
+                throw MakeException($"Player.{selector} is not supported");
+            case "CROUCHSPRITE":
+                currentDefinition.Properties.PlayerCrouchSprite = ConsumeString().AsUpper();
+                break;
+            case "DAMAGESCREENCOLOR":
+                ReadDamageScreenColor();
+                break;
+            case "DISPLAYNAME":
+                currentDefinition.Properties.PlayerDisplayName = ConsumeString().AsUpper();
+                break;
+            case "FACE":
+                currentDefinition.Properties.PlayerFace = ConsumeString().AsUpper();
+                break;
+            case "FALLINGSCREAMSPEED":
+                float fallingScreamMin = ConsumeFloat();
+                Consume(',');
+                float fallingScreamMax = ConsumeFloat();
+                currentDefinition.Properties.PlayerFallingScreamSpeed = new DecorateRange<float>(fallingScreamMin, fallingScreamMax);
+                break;
+            case "FLECHETTETYPE":
+                currentDefinition.Properties.PlayerFlechetteType = ConsumeString().AsUpper();
+                break;
+            case "FORWARDMOVE":
+                currentDefinition.Properties.PlayerForwardMove = ReadRunSpeed();
+                break;
+            case "GRUNTSPEED":
+                currentDefinition.Properties.PlayerGruntSpeed = ConsumeFloat();
+                break;
+            case "HEALRADIUSTYPE":
+                currentDefinition.Properties.PlayerHealRadiusType = ConsumeString().AsUpper();
+                break;
+            case "HEXENARMOR":
+                currentDefinition.Properties.PlayerHexenArmor = ReadHexenArmor();
+                break;
+            case "JUMPZ":
+                currentDefinition.Properties.PlayerJumpZ = ConsumeFloat();
+                break;
+            case "MAXHEALTH":
+                currentDefinition.Properties.PlayerMaxHealth = ConsumeInteger();
+                break;
+            case "MORPHWEAPON":
+                currentDefinition.Properties.PlayerMorphWeapon = ConsumeString().AsUpper();
+                break;
+            case "MUGSHOTMAXHEALTH":
+                currentDefinition.Properties.PlayerMugShotMaxHealth = ConsumeSignedInteger();
+                break;
+            case "RUNHEALTH":
+                currentDefinition.Properties.PlayerRunHealth = ConsumeInteger();
+                break;
+            case "PORTRAIT":
+                currentDefinition.Properties.PlayerPortrait = ConsumeString().AsUpper();
+                break;
+            case "SCOREICON":
+                currentDefinition.Properties.PlayerScoreIcon = ConsumeString().AsUpper();
+                break;
+            case "SIDEMOVE":
+                currentDefinition.Properties.PlayerSideMove = ReadRunSpeed();
+                break;
+            case "SOUNDCLASS":
+                currentDefinition.Properties.PlayerSoundClass = ConsumeString().AsUpper();
+                break;
+            case "SPAWNCLASS":
+                currentDefinition.Properties.PlayerSpawnClass = ConsumeString().AsUpper();
+                break;
+            case "STARTITEM":
+                UpperString startItemName = ConsumeString();
+                int startItemAmount = PeekInteger() ? ConsumeInteger() : 1;
+                currentDefinition.Properties.PlayerStartItem[startItemName] = startItemAmount;
+                break;
+            case "TELEPORTFREEZETIME":
+                currentDefinition.Properties.PlayerTeleportFreezeTime = ConsumeSignedInteger();
+                break;
+            case "USERANGE":
+                currentDefinition.Properties.PlayerUseRange = ConsumeFloat();
+                break;
+            case "WEAPONSLOT":
+                int weaponSlot = ConsumeInteger();
+                List<UpperString> weapons = ReadStringList();
+                currentDefinition.Properties.PlayerWeaponSlot[weaponSlot] = weapons;
+                break;
+            case "VIEWBOB":
+                currentDefinition.Properties.PlayerViewBob = ConsumeFloat();
+                break;
+            case "VIEWHEIGHT":
+                currentDefinition.Properties.PlayerViewHeight = ConsumeFloat();
+                break;
+            default:
+                throw MakeException($"Unknown Player property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
 
         #region Powerup Property Readers
 
+        private PowerupColor ReadPowerupColor()
+        {
+            // Note that this might not be quite identical to what is normally
+            // done. We will fix it if we ever run into problems.
+
+            float alpha = 0.333333f;
+
+            if (PeekCurrentText(out string current))
+            {
+                PowerupColorType? colorType = null;
+
+                switch (current.ToUpper())
+                {
+                case "BLUEMAP":
+                    colorType = PowerupColorType.Blue;
+                    break;
+                case "GOLDMAP":
+                    colorType = PowerupColorType.Gold;
+                    break;
+                case "GREENMAP":
+                    colorType = PowerupColorType.Green;
+                    break;
+                case "INVERSEMAP":
+                    colorType = PowerupColorType.Inverse;
+                    break;
+                case "REDMAP":
+                    colorType = PowerupColorType.Red;
+                    break;
+                case "NONE":
+                    colorType = PowerupColorType.None;
+                    break;
+                }
+
+                // If we ran into a known color, then we can safely look for
+                // the alpha value. However if we don't, we'll try one last
+                // ditch read since we only peaked.
+                if (colorType != null)
+                {
+                    // We only peaked, so consume it now.
+                    ConsumeString();
+
+                    if (ConsumeIf(','))
+                        alpha = ConsumeFloat().Clamp(0, 1);
+
+                    return new PowerupColor(colorType.Value, alpha);
+                }
+            }
+
+            Color color = ReadColor();
+            if (ConsumeIf(','))
+                alpha = ConsumeFloat().Clamp(0, 1);
+
+            return new PowerupColor(color, alpha);
+        }
+
+        private PowerupColormap ReadPowerupColormap()
+        {
+            float r = ConsumeFloat().Clamp(0, 1);
+            Consume(',');
+            float g = ConsumeFloat().Clamp(0, 1);
+            Consume(',');
+            float b = ConsumeFloat().Clamp(0, 1);
+
+            if (ConsumeIf(','))
+            {
+                float destR = ConsumeFloat().Clamp(0, 1);
+                Consume(',');
+                float destG = ConsumeFloat().Clamp(0, 1);
+                Consume(',');
+                float destB = ConsumeFloat().Clamp(0, 1);
+
+                Color source = new Color(r, g, b);
+                Color dest = new Color(destR, destG, destB);
+                return new PowerupColormap(source, dest);
+            }
+
+            return new PowerupColormap(null, new Color(r, g, b));
+        }
+
         private void ReadPowerupProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "COLOR":
+                currentDefinition.Properties.PowerupColor = ReadPowerupColor();
+                break;
+            case "COLORMAP":
+                currentDefinition.Properties.PowerupColormap = ReadPowerupColormap();
+                break;
+            case "DURATION":
+                currentDefinition.Properties.PowerupDuration = ConsumeSignedInteger();
+                break;
+            case "MODE":
+                currentDefinition.Properties.PowerupMode = ReadRenderStyle();
+                break;
+            case "STRENGTH":
+                currentDefinition.Properties.PowerupStrength = ConsumeInteger();
+                break;
+            case "TYPE":
+                currentDefinition.Properties.PowerupType = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unknown Powerup property {selector} on actor {currentDefinition.Name}");
+            }
+        }
+
+        #endregion
+
+        #region PowerSpeed Property Readers
+
+        private void ReadPowerSpeedProperty()
+        {
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "NOTRAIL":
+                currentDefinition.Properties.PowerSpeedNoTrail = ConsumeInteger() != 0;
+                break;
+            default:
+                throw MakeException($"Unknown PowerSpeed property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -160,7 +639,19 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadPuzzleItemProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "NUMBER":
+                currentDefinition.Properties.PuzzleItemNumber = ConsumeInteger();
+                break;
+            case "FAILMESSAGE":
+                currentDefinition.Properties.PuzzleItemFailMessage = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unknown PuzzleItem property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -212,9 +703,104 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         #region Weapon Property Readers
 
+        private BobStyle ReadBobStyle()
+        {
+            string text = ConsumeString();
+
+            switch (text.ToUpper())
+            {
+            case "ALPHA":
+                return BobStyle.Alpha;
+            case "INVERSEALPHA":
+                return BobStyle.InverseAlpha;
+            case "INVERSENORMAL":
+                return BobStyle.InverseNormal;
+            case "INVERSESMOOTH":
+                return BobStyle.InverseSmooth;
+            case "NORMAL":
+                return BobStyle.Normal;
+            case "SMOOTH":
+                return BobStyle.Smooth;
+            default:
+                throw MakeException($"Unknown weapon bob style {text} on actor {currentDefinition.Name}");
+            }
+        }
+
         private void ReadWeaponProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "AMMOGIVE":
+                currentDefinition.Properties.WeaponAmmoGive = ConsumeInteger();
+                break;
+            case "AMMOGIVE1":
+                currentDefinition.Properties.WeaponAmmoGive1 = ConsumeInteger();
+                break;
+            case "AMMOGIVE2":
+                currentDefinition.Properties.WeaponAmmoGive2 = ConsumeInteger();
+                break;
+            case "AMMOTYPE":
+                currentDefinition.Properties.WeaponAmmoType = ConsumeString().AsUpper();
+                break;
+            case "AMMOTYPE1":
+                currentDefinition.Properties.WeaponAmmoType1 = ConsumeString().AsUpper();
+                break;
+            case "AMMOTYPE2":
+                currentDefinition.Properties.WeaponAmmoType2 = ConsumeString().AsUpper();
+                break;
+            case "BOBRANGEX":
+                currentDefinition.Properties.WeaponBobRangeX = ConsumeFloat();
+                break;
+            case "BOBRANGEY":
+                currentDefinition.Properties.WeaponBobRangeY = ConsumeFloat();
+                break;
+            case "BOBSPEED":
+                currentDefinition.Properties.WeaponBobSpeed = ConsumeFloat();
+                break;
+            case "BOBSTYLE":
+                currentDefinition.Properties.WeaponBobStyle = ReadBobStyle();
+                break;
+            case "DEFAULTKICKBACK":
+                currentDefinition.Properties.WeaponDefaultKickBack = ConsumeBoolean();
+                break;
+            case "KICKBACK":
+                currentDefinition.Properties.WeaponKickBack = ConsumeInteger();
+                break;
+            case "LOOKSCALE":
+                currentDefinition.Properties.WeaponLookScale = ConsumeFloat();
+                break;
+            case "MINSELECTIONAMMO1":
+                currentDefinition.Properties.WeaponMinSelectionAmmo1 = ConsumeInteger();
+                break;
+            case "MINSELECTIONAMMO2":
+                currentDefinition.Properties.WeaponMinSelectionAmmo2 = ConsumeInteger();
+                break;
+            case "WEAPONREADYSOUND":
+                currentDefinition.Properties.WeaponReadySound = ConsumeString().AsUpper();
+                break;
+            case "SELECTIONORDER":
+                currentDefinition.Properties.WeaponSelectionOrder = ConsumeInteger();
+                break;
+            case "SISTERWEAPON":
+                currentDefinition.Properties.WeaponSisterWeapon = ConsumeString().AsUpper();
+                break;
+            case "SLOTNUMBER":
+                currentDefinition.Properties.WeaponSlotNumber = ConsumeInteger();
+                break;
+            case "SLOTPRIORITY":
+                currentDefinition.Properties.WeaponSlotPriority = ConsumeSignedFloat();
+                break;
+            case "UPSOUND":
+                currentDefinition.Properties.WeaponUpSound = ConsumeString().AsUpper();
+                break;
+            case "YADJUST":
+                currentDefinition.Properties.WeaponYAdjust = ConsumeInteger();
+                break;
+            default:
+                throw MakeException($"Unknown Weapon property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -223,7 +809,19 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         private void ReadWeaponPieceProperty()
         {
-            throw MakeException("Not supported currently");
+            UpperString selector = ConsumeIdentifier();
+
+            switch (selector.String)
+            {
+            case "NUMBER":
+                currentDefinition.Properties.WeaponPieceNumber = ConsumeInteger();
+                break;
+            case "WEAPON":
+                currentDefinition.Properties.WeaponPieceWeapon = ConsumeString().AsUpper();
+                break;
+            default:
+                throw MakeException($"Unknown WeaponPiece property {selector} on actor {currentDefinition.Name}");
+            }
         }
 
         #endregion
@@ -429,7 +1027,7 @@ namespace Helion.Core.Resource.Decorate.Parser
             }
         }
 
-        private void ConsumeTopLevelPropertyOrCombo(UpperString property)
+        private void ConsumeTopLevelProperty(UpperString property)
         {
             switch (property.String)
             {
@@ -482,6 +1080,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 currentDefinition.Properties.CrushPainSound = ConsumeString().AsUpper();
                 break;
             case "DAMAGE":
+                // TODO: Handle brackets!
                 currentDefinition.Properties.Damage = ConsumeInteger();
                 throw MakeException("HANDLE BRACKETS YOU IDIOT");
             case "DAMAGEFACTOR":
@@ -514,6 +1113,12 @@ namespace Helion.Core.Resource.Decorate.Parser
             case "DROPITEM":
                 currentDefinition.Properties.DropItem.Add(ReadDropItem());
                 break;
+            case "EXPLOSIONDAMAGE":
+                currentDefinition.Properties.ExplosionDamage = ConsumeInteger();
+                break;
+            case "EXPLOSIONRADIUS":
+                currentDefinition.Properties.ExplosionRadius = ConsumeInteger();
+                break;
             case "FASTSPEED":
                 currentDefinition.Properties.FastSpeed = ConsumeFloat();
                 break;
@@ -531,12 +1136,6 @@ namespace Helion.Core.Resource.Decorate.Parser
                 break;
             case "FRIENDLYSEEBLOCKS":
                 currentDefinition.Properties.FriendlySeeBlocks = ConsumeInteger();
-                break;
-            case "EXPLOSIONDAMAGE":
-                currentDefinition.Properties.ExplosionDamage = ConsumeInteger();
-                break;
-            case "EXPLOSIONRADIUS":
-                currentDefinition.Properties.ExplosionRadius = ConsumeInteger();
                 break;
             case "GAME":
                 // Note: We do not support multiple games by only checking one.
@@ -766,6 +1365,9 @@ namespace Helion.Core.Resource.Decorate.Parser
                 case "POWERUP":
                     ReadPowerupProperty();
                     break;
+                case "POWERSPEED":
+                    ReadPowerSpeedProperty();
+                    break;
                 case "PUZZLEITEM":
                     ReadPuzzleItemProperty();
                     break;
@@ -815,7 +1417,8 @@ namespace Helion.Core.Resource.Decorate.Parser
                     currentDefinition.Flags.Set(ActorFlagType.NoTeleport, true);
                     break;
                 default:
-                    throw MakeException($"Unknown property/field on actor {currentDefinition.Name}: {property}");
+                    ConsumeTopLevelProperty(property);
+                    break;
                 }
             }
         }

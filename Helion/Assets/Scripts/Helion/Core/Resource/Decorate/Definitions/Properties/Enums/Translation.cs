@@ -7,7 +7,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties.Enums
     {
         public int? Standard;
         public bool? Ice;
-        public List<UpperString> Translations = new List<UpperString>();
+        public readonly List<UpperString> Translations = new List<UpperString>();
 
         public Translation()
         {
