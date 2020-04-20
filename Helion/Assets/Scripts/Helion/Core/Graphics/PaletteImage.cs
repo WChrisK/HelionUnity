@@ -161,6 +161,24 @@ namespace Helion.Core.Graphics
         }
 
         /// <summary>
+        /// Checks if the data is likely a flat formatted image.
+        /// </summary>
+        /// <param name="data">The data to check.</param>
+        /// <returns>True if it is, false if not.</returns>
+        public static bool LikelyFlat(byte[] data)
+        {
+            switch (data.Length * data.Length)
+            {
+            case 64 * 64:
+            case 64 * 65:
+            case 128 * 128:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Converts this image to an RGBA image with the palette provided.
         /// </summary>
         /// <param name="palette">The palette to convert with.</param>

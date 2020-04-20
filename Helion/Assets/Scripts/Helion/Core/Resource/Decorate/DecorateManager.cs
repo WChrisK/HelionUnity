@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Archives;
 using Helion.Core.Resource.Decorate.Definitions;
+using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Decorate.Parser;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
@@ -58,6 +59,13 @@ namespace Helion.Core.Resource.Decorate
         /// <param name="editorID">The ID to look up.</param>
         /// <returns>The definition if it exists, or an empty value.</returns>
         public Optional<ActorDefinition> Find(int editorID) => editorIDToDefinition.Find(editorID);
+
+        internal void AttachSpriteRotationsToFrames()
+        {
+            foreach (ActorDefinition definition in actors)
+                foreach (ActorFrame frame in definition.States.Frames)
+                    frame.SpriteRotations = Data.Sprites.Rotations(frame.Sprite);
+        }
 
         private void AddDefinitions(IEnumerable<ActorDefinition> definitions)
         {

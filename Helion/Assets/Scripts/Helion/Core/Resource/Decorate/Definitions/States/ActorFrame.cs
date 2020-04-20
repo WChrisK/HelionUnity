@@ -1,4 +1,5 @@
-﻿using Helion.Core.Util;
+﻿using Helion.Core.Resource.Textures.Sprites;
+using Helion.Core.Util;
 
 namespace Helion.Core.Resource.Decorate.Definitions.States
 {
@@ -70,6 +71,15 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         public int NextStateOffset;
 
         /// <summary>
+        /// The sprite rotations for rendering with.
+        /// </summary>
+        /// <remarks>
+        /// This is to be set at the very end once all the data has been
+        /// loaded.
+        /// </remarks>
+        public SpriteRotations SpriteRotations = Data.Sprites.NullRotations;
+
+        /// <summary>
         /// True if this has not been set due to it being a new frame, or false
         /// if it has been post-processed and is ready to go.
         /// </summary>
@@ -79,7 +89,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         /// True if this is a frame that is to loop forever, false if not.
         /// </summary>
         public bool IsInfiniteStopFrame => FlowControl.FlowType == ActorStateBranch.Stop &&
-                                           Ticks == ActorFrame.InfiniteFrame;
+                                           Ticks == InfiniteFrame;
 
         public ActorFrame(int frameIndex, UpperString sprite, int ticks, ActorFrameProperties properties,
             Optional<ActorActionFunction> actionFunction, ActorFlowControl flowControl = null,

@@ -6,12 +6,15 @@ using Helion.Core.Resource.Textures.Definitions.Vanilla;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Unity;
-using Helion.Unity;
 using MoreLinq;
 using UnityEngine;
 
+// TODO: This needs a huge overhaul...
+
 namespace Helion.Core.Resource.Textures
 {
+    using PaletteReaderFunc = Func<byte[], ResourceNamespace, Optional<PaletteImage>>;
+
     /// <summary>
     /// Manages all of the texture resources in the archive.
     /// </summary>
@@ -19,7 +22,7 @@ namespace Helion.Core.Resource.Textures
     {
         private static readonly Log Log = LogManager.Instance();
         private static readonly Shader defaultShader = Shader.Find("Doom/Default");
-        private static readonly Material NullMaterial = Resources.Load<Material>("Materials/null");
+        private static readonly Material nullMaterial = Resources.Load<Material>("Materials/null");
 
         public Palette Palette { get; private set; } = Palette.CreateDefault();
         private readonly ResourceTracker<Material> materials = new ResourceTracker<Material>();
@@ -27,38 +30,49 @@ namespace Helion.Core.Resource.Textures
         private readonly VanillaTextureTracker vanillaTextureTracker = new VanillaTextureTracker();
 
         /// <summary>
-        /// Gets the material for the name/namespace provided.
+        /// Gets the null material that indicates a material is missing. This
+        /// can be used to render with and will never be absent/null.
+        /// </summary>
+        public Material NullMaterial => nullMaterial;
+
+        /// <summary>
+        /// Gets the material for the name/namespace provided. Priority is
+        /// given to the namespace provided, but will search other namespaces
+        /// if the priority one cannot be found.
         /// </summary>
         /// <param name="name">The material name.</param>
-        /// <param name="resourceNamespace">The namespace of the material.
-        /// </param>
+        /// <param name="resourceNamespace">The namespace of the material. By
+        /// default is the global namespace.</param>
         /// <returns>The material, or a "null" texture material if it does not
         /// exist but still can be rendered with.</returns>
-        public Material Material(UpperString name, ResourceNamespace resourceNamespace)
+        public Material Material(UpperString name, ResourceNamespace resourceNamespace = ResourceNamespace.Global)
         {
-            if (materials.TryGetValue(name, resourceNamespace, out Material material))
+            if (TryGetMaterial(name, resourceNamespace, out Material material))
                 return material;
-
-            if (TryCreateFromExistingImage(name, resourceNamespace, out material))
-                return material;
-
-            return NullMaterial;
+            return nullMaterial;
         }
 
         /// <summary>
-        /// Gets the texture for the name/namespace provided. This should not
-        /// be called with <see cref="Material"/> since it will do two lookups
-        /// for the same data. You should instead access `mainTexture` from the
-        /// material.
+        /// Gets the material for the name/namespace provided if available.
         /// </summary>
-        /// <param name="name">The texture name.</param>
-        /// <param name="resourceNamespace">The namespace of the texture.
+        /// <param name="name">The material name.</param>
+        /// <param name="priorityNamespace">The namespace of the material.
         /// </param>
-        /// <returns>The texture, or a "null" texture texture if it does not
-        /// exist but still can be rendered with.</returns>
-        public Texture Texture(UpperString name, ResourceNamespace resourceNamespace)
+        /// <param name="material">The material if found, null otherwise.
+        /// </param>
+        /// <returns>True if found, false if not.</returns>
+        public bool TryGetMaterial(UpperString name, ResourceNamespace priorityNamespace, out Material material)
         {
-            return Material(name, resourceNamespace).mainTexture;
+            if (materials.TryGetValue(name, priorityNamespace, out material))
+                return material;
+
+            if (TryCreateFromExistingImage(name, priorityNamespace, out material))
+                return true;
+
+            // TODO: Call materials.TryGetAnyValue? The ordering above needs some thought...
+
+            material = null;
+            return false;
         }
 
         public void Dispose()
@@ -148,18 +162,38 @@ namespace Helion.Core.Resource.Textures
                 return true;
             }
 
-            if (resourceNamespace == ResourceNamespace.Flats)
+            Optional<IEntry> entry = Data.FindPriority(name, resourceNamespace);
+            if (!entry)
             {
-                // TODO: Find by flat namespace only!
-                Optional<PaletteImage> flat = Data.Find(name).Map(entry => PaletteImage.FromFlat(entry.Data, resourceNamespace).Value);
-                if (flat)
-                {
-                    RgbaImage convertedImage = flat.Value.ToColor(Palette);
-                    loadedImages.Add(name, ResourceNamespace.Flats, convertedImage);
+                material = null;
+                return false;
+            }
 
-                    material = ImageToMaterial(name, ResourceNamespace.Flats, convertedImage);
-                    return true;
-                }
+            byte[] data = entry.Value.Data;
+
+            // TODO: If extension is PNG/JPG/whatever, or has a header of that type, do that here!
+
+            // We want to give priority to reading flats if it's coming from a
+            // flat namespace. This way we reduce false positive hits... which
+            // should be very rare anyways. Usually column palette images are
+            // in the global namespace anyways and flats are generally in the
+            // flat namespace.
+            PaletteReaderFunc[] paletteReaders;
+            if (resourceNamespace == ResourceNamespace.Flats)
+                paletteReaders = new PaletteReaderFunc[] { PaletteImage.FromFlat, PaletteImage.FromColumn };
+            else
+                paletteReaders = new PaletteReaderFunc[] { PaletteImage.FromColumn, PaletteImage.FromFlat };
+
+            foreach (PaletteReaderFunc readerFunc in paletteReaders)
+            {
+                Optional<PaletteImage> paletteImage = readerFunc(data, resourceNamespace);
+                if (!paletteImage)
+                    continue;
+
+                RgbaImage convertedImage = paletteImage.Value.ToColor(Palette);
+                loadedImages.Add(name, resourceNamespace, convertedImage);
+                material = ImageToMaterial(name, resourceNamespace, convertedImage);
+                return true;
             }
 
             material = null;
@@ -170,7 +204,11 @@ namespace Helion.Core.Resource.Textures
         {
             // TODO: If we already made a texture, we should share it instead of making a new one!
             Texture2D texture = image.ToTexture();
-            Material material = new Material(defaultShader) { mainTexture = texture };
+            Material material = new Material(defaultShader)
+            {
+                mainTexture = texture,
+                name = $"{name.String} ({resourceNamespace})"
+            };
 
             Material existingMaterial = materials.Add(name, resourceNamespace, material);
 

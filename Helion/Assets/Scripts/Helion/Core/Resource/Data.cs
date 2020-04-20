@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Core.Archives;
 using Helion.Core.Configs;
 using Helion.Core.Resource.Decorate;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Textures;
+using Helion.Core.Resource.Textures.Sprites;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
+using MoreLinq;
 
 namespace Helion.Core.Resource
 {
@@ -16,11 +19,16 @@ namespace Helion.Core.Resource
     /// </summary>
     public static class Data
     {
-        public static Config Config = new Config();
-        public static DecorateManager Decorate = new DecorateManager();
-        public static TextureManager Textures = new TextureManager();
         private static readonly Log Log = LogManager.Instance();
-        private static List<IArchive> Archives = new List<IArchive>();
+
+        // TODO: Break initialize order dependency (use singletons? oh man...)
+        public static Config Config = new Config();
+        public static TextureManager Textures = new TextureManager();
+        public static SpriteManager Sprites = new SpriteManager(Textures);
+        public static DecorateManager Decorate = new DecorateManager();
+        private static List<IArchive> archives = new List<IArchive>();
+        private static ResourceTracker<IEntry> entries = new ResourceTracker<IEntry>();
+        private static Dictionary<UpperString, List<IEntry>> nameToEntries = new Dictionary<UpperString, List<IEntry>>();
 
         /// <summary>
         /// Loads a config from either the path provided, or the default path.
@@ -56,7 +64,7 @@ namespace Helion.Core.Resource
         {
             try
             {
-                Archives = ReadArchivesOrThrow(filePaths);
+                archives = ReadArchivesOrThrow(filePaths);
 
                 // Any game objects that need disposing must be done first,
                 // since we could leak valuable memory/resources if we do not
@@ -66,8 +74,11 @@ namespace Helion.Core.Resource
 
                 // Then initialize a clean slate, so if we call this multiple
                 // times we will load new resources cleanly each time.
-                Decorate = new DecorateManager();
+                entries = new ResourceTracker<IEntry>();
+                nameToEntries = new Dictionary<UpperString, List<IEntry>>();
                 Textures = new TextureManager();
+                Sprites = new SpriteManager(Textures);
+                Decorate = new DecorateManager();
 
                 ProcessArchivesOrThrow();
 
@@ -88,30 +99,42 @@ namespace Helion.Core.Resource
         /// </returns>
         public static Optional<IEntry> Find(UpperString name)
         {
-            for (int i = Archives.Count - 1; i >= 0; i--)
-            {
-                Optional<IEntry> entry = Archives[i].Find(name);
-                if (entry)
-                    return entry;
-            }
-
+            if (nameToEntries.TryGetValue(name, out List<IEntry> entryList))
+                return new Optional<IEntry>(entryList.Last());
             return Optional<IEntry>.Empty();
         }
 
         /// <summary>
-        /// Gets all of the entries. The latest loaded ones are at the front of
-        /// the enumerable.
+        /// Finds the latest entry for the exact namespace provided. This will
+        /// not return any entry that has another namespace. To find any entry
+        /// but with a namespace priority, use <see cref="FindPriority"/>.
         /// </summary>
-        /// <param name="name">The entry name to search for.</param>
-        /// <returns>A collection of entries, which is empty if there are no
-        /// matches</returns>
-        public static IEnumerable<IEntry> FindAll(UpperString name)
+        /// <param name="name">The entry to find.</param>
+        /// <param name="resourceNamespace">The namespace to match.</param>
+        /// <returns>The entry if it exists, or an empty optional if not.
+        /// </returns>
+        public static Optional<IEntry> Find(UpperString name, ResourceNamespace resourceNamespace)
         {
-            List<IEntry> entries = new List<IEntry>();
-            for (int i = Archives.Count - 1; i >= 0; i--)
-                entries.AddRange(Archives[i].FindAll(name));
+            if (entries.TryGetValue(name, resourceNamespace, out IEntry entry))
+                return new Optional<IEntry>(entry);
+            return Optional<IEntry>.Empty();
+        }
 
-            return entries;
+        /// <summary>
+        /// Searches for all entries with the namespace provided, and if it
+        /// cannot find one with the priority namespace then will return the
+        /// most recent entry. If no entry exists with the name at all, then
+        /// an empty value is returned.
+        /// </summary>
+        /// <param name="name">The entry to find.</param>
+        /// <param name="priority">The priority namespace to look in, or global
+        /// by default.</param>
+        /// <returns>The entry if it exists, or an empty optional if not.
+        /// </returns>
+        public static Optional<IEntry> FindPriority(UpperString name, ResourceNamespace priority = ResourceNamespace.Global)
+        {
+            Optional<IEntry> entryForNamespace = Find(name, priority);
+            return entryForNamespace ? entryForNamespace : Find(name);
         }
 
         /// <summary>
@@ -123,9 +146,9 @@ namespace Helion.Core.Resource
         /// </returns>
         public static Optional<IMap> FindMap(UpperString name)
         {
-            for (int i = Archives.Count - 1; i >= 0; i--)
+            for (int i = archives.Count - 1; i >= 0; i--)
             {
-                foreach (MapComponents mapComponents in Archives[i].GetMaps())
+                foreach (MapComponents mapComponents in archives[i].GetMaps())
                 {
                     if (mapComponents.Name != name)
                         continue;
@@ -149,26 +172,42 @@ namespace Helion.Core.Resource
 
         private static List<IArchive> ReadArchivesOrThrow(IEnumerable<string> filePaths)
         {
-            List<IArchive> archives = new List<IArchive>();
+            List<IArchive> archiveList = new List<IArchive>();
 
             foreach (string filePath in filePaths)
             {
                 Optional<IArchive> archive = ArchiveReader.ReadFile(filePath);
                 if (archive)
-                    archives.Add(archive.Value);
+                    archiveList.Add(archive.Value);
                 else
                     throw new Exception($"Unable to open or read archive: {filePath}");
             }
 
-            return archives;
+            return archiveList;
+        }
+
+        private static void TrackEntry(IEntry entry)
+        {
+            entries.Add(entry.Name, entry.Namespace, entry);
+
+            if (nameToEntries.TryGetValue(entry.Name, out List<IEntry> entryList))
+                entryList.Add(entry);
+            else
+                nameToEntries[entry.Name] = new List<IEntry> { entry };
         }
 
         private static void ProcessArchivesOrThrow()
         {
-            foreach (IArchive archive in Archives)
+            foreach (IArchive archive in archives)
             {
                 Log.Info("Loading ", archive.Uri);
 
+                // We want every entry to be tracked before processing any
+                // definition files.
+                archive.ForEach(TrackEntry);
+
+                // Now that every entry has been indexed, we can process any
+                // definition/data entries.
                 foreach (IEntry entry in archive)
                 {
                     switch (entry.Name.String)
@@ -191,6 +230,7 @@ namespace Helion.Core.Resource
             }
 
             Textures.FinishPostProcessingOrThrow();
+            Decorate.AttachSpriteRotationsToFrames();
         }
     }
 }

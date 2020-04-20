@@ -52,7 +52,9 @@ namespace Helion.Core.Resource
         }
 
         /// <summary>
-        /// Tries to get the value if it exists.
+        /// Tries to get the value if it exists. This is an exact match for the
+        /// namespace provided. For non-exact namespace matching, call the
+        /// function <see cref="TryGetAnyValue"/>.
         /// </summary>
         /// <param name="name">The name of the resource.</param>
         /// <param name="resourceNamespace">The namespace.</param>
@@ -61,9 +63,41 @@ namespace Helion.Core.Resource
         /// <returns>True if found, false if not.</returns>
         public bool TryGetValue(UpperString name, ResourceNamespace resourceNamespace, out T value)
         {
+            if (table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry))
+            {
+                return namespaceToEntry.TryGetValue(resourceNamespace, out value);
+            }
+
             value = null;
-            return table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry) &&
-                   namespaceToEntry.TryGetValue(resourceNamespace, out value);
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the value if it exists from any namespace, but will
+        /// search the priority one first.
+        /// </summary>
+        /// <param name="name">The name of the resource.</param>
+        /// <param name="priorityNamespace">The namespace to search first for.
+        /// </param>
+        /// <param name="value">The value that will be set with the instance,
+        /// or null if it does not exist.</param>
+        /// <returns>True if found, false if not.</returns>
+        public bool TryGetAnyValue(UpperString name, ResourceNamespace priorityNamespace, out T value)
+        {
+            if (table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry))
+            {
+                if (namespaceToEntry.TryGetValue(priorityNamespace, out value))
+                    return true;
+
+                foreach (var pair in namespaceToEntry)
+                {
+                    value = pair.Value;
+                    return true;
+                }
+            }
+
+            value = null;
+            return false;
         }
 
         public IEnumerator<T> GetEnumerator() => table.Values.SelectMany(dict => dict.Values).GetEnumerator();
