@@ -122,7 +122,7 @@ namespace Helion.Core.Resource.Textures
                 if (TryReadImageEntry(entry, resourceNamespace, out RgbaImage newImage))
                 {
                     loadedImages.Add(name, resourceNamespace, newImage);
-                    material = CreateAndTrackMaterial(name, resourceNamespace, loadedImage);
+                    material = CreateAndTrackMaterial(name, resourceNamespace, newImage);
                     return true;
                 }
             }
