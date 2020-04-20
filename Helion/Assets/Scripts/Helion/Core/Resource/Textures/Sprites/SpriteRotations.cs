@@ -35,5 +35,7 @@ namespace Helion.Core.Resource.Textures.Sprites
             Mirrored = false;
             materials = new[] { frame1, frame2, frame3, frame4, frame5, frame6, frame7, frame8 };
         }
+
+        public Material this[int index] => materials[index];
     }
 }

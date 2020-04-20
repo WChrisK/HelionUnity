@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Helion.Core.Graphics;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Decorate.Definitions;
+using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
@@ -114,7 +116,8 @@ namespace Helion.Core.Worlds.Entities
             entity.entityNode = entities.AddLast(entity);
 
             float height = entity.Definition.Properties.Height;
-            float y = geometry.FloorHeight(position);
+            Sector sector = geometry.BspTree.Sector(position);
+            float y = sector.FloorPlane.Height;
             Vector3 worldPos = new Vector3(position.x, y, position.y);
             entity.transform.position = worldPos.MapUnit();
             entity.Position = worldPos;
@@ -124,23 +127,54 @@ namespace Helion.Core.Worlds.Entities
             BoxCollider collider = entityObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(0, height / 2, 0).MapUnit();
             collider.size = new Vector3(diameter, height, diameter).MapUnit();
-            AddLineRendererIfDebug(collider);
+
+            CreateSpriteBillboardMesh(entity, sector);
 
             return entity;
         }
 
-        private void AddLineRendererIfDebug(BoxCollider collider)
+        private void CreateSpriteBillboardMesh(Entity entity, Sector sector)
         {
-            if (Data.Config.Debug.DrawEntityWireframes && UnityHelper.InEditor)
+            ActorFrame frame = entity.frameTracker.Frame;
+            Material material = frame.SpriteRotations[0];
+            Texture texture = material.mainTexture;
+
+            MeshRenderer meshRenderer = entity.gameObject.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = material;
+
+            MeshFilter meshFilter = entity.gameObject.AddComponent<MeshFilter>();
+
+            // 2--3
+            // |  |
+            // 0--1
+            float radius = texture.width / 2.0f;
+            Color brightness = ColorHelper.FromRGB(sector.LightLevel, sector.LightLevel, sector.LightLevel);
+            Vector3[] vertices =
             {
-                // TODO: Broken due to Z-depth issues... shader issue?
-                Vector3[] points = collider.GetEdgeLinePoints();
-                LineRenderer lineRenderer = collider.gameObject.AddComponent<LineRenderer>();
-                lineRenderer.startWidth = Constants.MapUnit;
-                lineRenderer.endWidth = Constants.MapUnit;
-                lineRenderer.positionCount = points.Length;
-                lineRenderer.SetPositions(points);
-            }
+                new Vector3(-radius, 0, 0).MapUnit(),
+                new Vector3(radius, 0, 0).MapUnit(),
+                new Vector3(-radius, texture.height, 0).MapUnit(),
+                new Vector3(radius, texture.height, 0).MapUnit()
+            };
+            Vector2[] uvCoords =
+            {
+                new Vector2(0, 1),
+                new Vector2(1, 1),
+                new Vector2(0, 0),
+                new Vector2(1, 0)
+            };
+            Vector3[] normals = { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
+            Color[] colors = { brightness, brightness, brightness, brightness };
+            Mesh mesh = new Mesh
+            {
+                vertices = vertices,
+                triangles = new[] { 0, 2, 1, 1, 2, 3 },
+                normals = normals,
+                uv = uvCoords,
+                colors = colors
+            };
+            meshFilter.sharedMesh = mesh;
+            mesh.RecalculateBounds();
         }
     }
 }
