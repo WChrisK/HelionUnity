@@ -77,7 +77,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
         /// This is to be set at the very end once all the data has been
         /// loaded.
         /// </remarks>
-        public SpriteRotations SpriteRotations = Data.Sprites.NullRotations;
+        public SpriteRotations SpriteRotations = SpriteManager.NullRotations;
 
         /// <summary>
         /// True if this has not been set due to it being a new frame, or false

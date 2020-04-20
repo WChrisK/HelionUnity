@@ -90,7 +90,7 @@ namespace Helion.Unity
 
         private static void LoadAndRegisterConfig()
         {
-            Data.LoadConfig($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}");
+            LoadConfig($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}");
 
             var console = ConsoleCommandsRepository.Instance;
             foreach (IConfigField configField in Data.Config.GetConfigFields())
@@ -113,6 +113,27 @@ namespace Helion.Unity
             }
         }
 
+        /// <summary>
+        /// Loads a config from either the path provided, or the default path.
+        /// </summary>
+        /// <param name="path">The path to use, or null if the default path
+        /// should be used.</param>
+        private static void LoadConfig(string path = null)
+        {
+            path = path ?? Config.DefaultConfigName;
+
+            Optional<Config> config = Config.FromFile(path);
+            if (!config)
+            {
+                Log.Error("Failed to load config from: ", path);
+                Log.Info("Creating empty config, will save on exit");
+                return;
+            }
+
+            Log.Info("Loaded config from ", path);
+            Data.Config = config.Value;
+        }
+
         private void RegisterConsoleCommands()
         {
             var console = ConsoleCommandsRepository.Instance;
@@ -129,11 +150,10 @@ namespace Helion.Unity
                     return "Usage: map <NAME>";
 
                 string mapName = args[0];
-                Optional<IMap> map = Data.FindMap(mapName);
-                if (!map)
+                if (!Data.TryFindMap(mapName, out IMap map))
                     return $"Cannot find {mapName}";
 
-                Optional<World> worldOpt = World.From(map.Value);
+                Optional<World> worldOpt = World.From(map);
                 if (!worldOpt)
                     return $"Unable to load corrupt world data for {mapName}";
 

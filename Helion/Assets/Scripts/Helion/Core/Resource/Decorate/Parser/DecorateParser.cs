@@ -18,14 +18,11 @@ namespace Helion.Core.Resource.Decorate.Parser
         private static readonly Log Log = LogManager.Instance();
 
         public readonly List<ActorDefinition> Definitions = new List<ActorDefinition>();
-        private readonly DecorateManager manager;
         private readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
         private ActorDefinition currentDefinition = new ActorDefinition("", Optional<ActorDefinition>.Empty());
 
-        public DecorateParser(DecorateManager manager, IArchive archive) :
-            base(CreateIncludePreprocessorWith(archive))
+        public DecorateParser(IArchive archive) : base(CreateIncludePreprocessorWith(archive))
         {
-            this.manager = manager;
         }
 
         protected override void PerformParsing()
@@ -62,7 +59,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private Optional<ActorDefinition> LookupActor(UpperString name)
         {
             Optional<ActorDefinition> parsedActor = nameToDefinition.Find(name);
-            return parsedActor ? parsedActor : manager.Find(name);
+            return parsedActor ? parsedActor : DecorateManager.Find(name);
         }
 
         private void ConsumeActorDefinition()
@@ -80,7 +77,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         {
             UpperString name = ConsumeString();
 
-            ActorDefinition parent = manager.BaseActorDefinition;
+            ActorDefinition parent = DecorateManager.BaseActorDefinition;
             if (ConsumeIf(':'))
             {
                 UpperString parentName = ConsumeString();

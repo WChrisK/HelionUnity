@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using Helion.Core.Archives;
 using Helion.Core.Graphics;
 using Helion.Core.Resource.Colors.Palettes;
-using Helion.Core.Resource.Textures.Definitions.Vanilla;
+using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Util;
+using Helion.Core.Util.Geometry;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Unity;
 using MoreLinq;
 using UnityEngine;
-
-// TODO: This needs a huge overhaul...
 
 namespace Helion.Core.Resource.Textures
 {
@@ -18,160 +18,182 @@ namespace Helion.Core.Resource.Textures
     /// <summary>
     /// Manages all of the texture resources in the archive.
     /// </summary>
-    public class TextureManager : IDisposable
+    public static class TextureManager
     {
         private static readonly Log Log = LogManager.Instance();
+
+        public static readonly Material NullMaterial = Resources.Load<Material>("Materials/null");
         private static readonly Shader defaultShader = Shader.Find("Doom/Default");
-        private static readonly Material nullMaterial = Resources.Load<Material>("Materials/null");
 
-        public Palette Palette { get; private set; } = Palette.CreateDefault();
-        private readonly ResourceTracker<Material> materials = new ResourceTracker<Material>();
-        private readonly ResourceTracker<RgbaImage> loadedImages = new ResourceTracker<RgbaImage>();
-        private readonly VanillaTextureTracker vanillaTextureTracker = new VanillaTextureTracker();
-
-        /// <summary>
-        /// Gets the null material that indicates a material is missing. This
-        /// can be used to render with and will never be absent/null.
-        /// </summary>
-        public Material NullMaterial => nullMaterial;
+        public static Palette Palette { get; private set; } = Palette.CreateDefault();
+        private static ResourceTracker<Material> materials = new ResourceTracker<Material>();
+        private static ResourceTracker<RgbaImage> loadedImages = new ResourceTracker<RgbaImage>();
+        private static HashSet<UpperString> missingTextureNames = new HashSet<UpperString>();
 
         /// <summary>
-        /// Gets the material for the name/namespace provided. Priority is
-        /// given to the namespace provided, but will search other namespaces
-        /// if the priority one cannot be found.
+        /// Gets a material for the name. If the namespace is provided, it will
+        /// give priority to that namespace. If the material cannot be found,
+        /// the null material is returned.
         /// </summary>
         /// <param name="name">The material name.</param>
-        /// <param name="resourceNamespace">The namespace of the material. By
-        /// default is the global namespace.</param>
-        /// <returns>The material, or a "null" texture material if it does not
-        /// exist but still can be rendered with.</returns>
-        public Material Material(UpperString name, ResourceNamespace resourceNamespace = ResourceNamespace.Global)
+        /// <param name="priorityNamespace">The namespace to search for first
+        /// in.</param>
+        /// <returns>The material that was found, or the 'null material' for
+        /// rendering with.</returns>
+        public static Material Material(UpperString name, ResourceNamespace priorityNamespace = ResourceNamespace.Global)
         {
-            if (TryGetMaterial(name, resourceNamespace, out Material material))
-                return material;
-            return nullMaterial;
+            return TryGetMaterial(name, priorityNamespace, out Material material) ? material : NullMaterial;
         }
 
-        /// <summary>
-        /// Gets the material for the name/namespace provided if available.
-        /// </summary>
-        /// <param name="name">The material name.</param>
-        /// <param name="priorityNamespace">The namespace of the material.
-        /// </param>
-        /// <param name="material">The material if found, null otherwise.
-        /// </param>
-        /// <returns>True if found, false if not.</returns>
-        public bool TryGetMaterial(UpperString name, ResourceNamespace priorityNamespace, out Material material)
+        public static bool TryGetMaterial(UpperString name, ResourceNamespace priorityNamespace,
+            out Material material)
         {
             if (materials.TryGetValue(name, priorityNamespace, out material))
-                return material;
-
-            if (TryCreateFromExistingImage(name, priorityNamespace, out material))
                 return true;
 
-            // TODO: Call materials.TryGetAnyValue? The ordering above needs some thought...
+            // This is a heuristic to make failed lookups less expensive, as
+            // there is a lot of work done to create the texture if it does
+            // not exist after this.
+            if (missingTextureNames.Contains(name))
+            {
+                material = NullMaterial;
+                return false;
+            }
+
+            if (TryCreateExactNamespaceMaterial(name, priorityNamespace, out material))
+            {
+                materials.Add(name, priorityNamespace, material);
+                return true;
+            }
+
+            if (materials.TryGetAnyValue(name, out material, out _))
+                return true;
+
+            if (TryCreateAnyNamespaceMaterial(name, out material, out ResourceNamespace newNamespace))
+            {
+                materials.Add(name, newNamespace, material);
+                return true;
+            }
+
+            missingTextureNames.Add(name);
+
+            material = NullMaterial;
+            return false;
+        }
+
+        public static void Clear()
+        {
+            materials.ForEach(DestroyMaterialAndTexture);
+
+            Palette = Palette.CreateDefault();
+            materials = new ResourceTracker<Material>();
+            loadedImages = new ResourceTracker<RgbaImage>();
+            missingTextureNames = new HashSet<UpperString>();
+        }
+
+        internal static void TrackPalette(IEntry entry)
+        {
+            Optional<Palette> palette = Palette.From(entry.Data);
+            if (palette)
+                Palette = palette.Value;
+            else
+                Log.Error("Unable to read palette from entry: ", entry.Path);
+        }
+
+        private static bool TryCreateExactNamespaceMaterial(UpperString name, ResourceNamespace resourceNamespace,
+            out Material material)
+        {
+            if (loadedImages.TryGetValue(name, resourceNamespace, out RgbaImage loadedImage))
+            {
+                material = CreateAndTrackMaterial(name, resourceNamespace, loadedImage);
+                return true;
+            }
+
+            if (TextureDefinitionManager.TryGetExact(name, resourceNamespace, out TextureDefinition definition))
+            {
+                RgbaImage compiledImage = TextureDefinitionToImage(definition);
+                loadedImages.Add(name, resourceNamespace, compiledImage);
+                material = CreateAndTrackMaterial(name, resourceNamespace, compiledImage);
+                return true;
+            }
+
+            if (Data.TryFindExact(name, resourceNamespace, out IEntry entry))
+            {
+                if (TryReadImageEntry(entry, resourceNamespace, out RgbaImage newImage))
+                {
+                    loadedImages.Add(name, resourceNamespace, newImage);
+                    material = CreateAndTrackMaterial(name, resourceNamespace, loadedImage);
+                    return true;
+                }
+            }
 
             material = null;
             return false;
         }
 
-        public void Dispose()
+        private static bool TryCreateAnyNamespaceMaterial(UpperString name, out Material material,
+            out ResourceNamespace newNamespace)
         {
-            materials.ForEach(DestroyMaterialAndTexture);
-        }
-
-        internal void HandlePaletteOrThrow(IEntry entry)
-        {
-            Optional<Palette> palette = Palette.From(entry.Data);
-            if (!palette)
-                throw new Exception("Palette is corrupt");
-
-            Palette = palette.Value;
-        }
-
-        internal void TrackPNamesOrThrow(IEntry entry, IArchive archive)
-        {
-            Optional<PNames> pnames = PNames.From(entry.Data);
-            if (!pnames)
-                throw new Exception($"PNAMES is corrupt (at {entry.Path})");
-
-            vanillaTextureTracker.Track(pnames.Value, archive);
-        }
-
-        internal void TrackTextureXOrThrow(IEntry entry, IArchive archive)
-        {
-            Optional<TextureX> textureX = TextureX.From(entry);
-            if (!textureX)
-                throw new Exception($"TEXTUREx is corrupt (at {entry.Path})");
-
-            vanillaTextureTracker.Track(textureX.Value, archive);
-        }
-
-        internal void FinishPostProcessingOrThrow()
-        {
-            // TODO: Refactor me please...
-            foreach ((PNames pnames, TextureX textureX) in vanillaTextureTracker)
+            if (loadedImages.TryGetAnyValue(name, out RgbaImage loadedImage, out newNamespace))
             {
-                foreach (TextureXImage textureXImage in textureX)
-                {
-                    RgbaImage image = new RgbaImage(textureXImage.Dimension);
-
-                    foreach (TextureXPatch patch in textureXImage.Patches)
-                    {
-                        UpperString name = pnames[patch.PatchIndex];
-
-                        if (!loadedImages.TryGetValue(name, ResourceNamespace.Textures, out RgbaImage loadedImage))
-                        {
-                            // TODO: Search by namespace priority!
-                            Optional<IEntry> entry = Data.Find(name);
-                            if (!entry)
-                                throw new Exception($"Unable to find entry for texture resource {name}");
-
-                            Optional<PaletteImage> paletteImage = PaletteImage.FromColumn(entry.Value.Data, ResourceNamespace.Textures);
-                            if (!paletteImage)
-                                throw new Exception($"Corrupt palette image from texture resource {name}");
-
-                            RgbaImage convertedImage = paletteImage.Value.ToColor(Palette);
-                            loadedImages.Add(name, ResourceNamespace.Textures, convertedImage);
-                            loadedImage = convertedImage;
-                        }
-
-                        // OPTIMIZE: If the definition is the exact same image at offset <0, 0>, don't bother.
-                        bool success = image.DrawOntoThis(loadedImage, patch.Offset);
-                        if (!success)
-                            Log.Error($"Unable to draw patch {name} onto composite texture {textureXImage.Name}");
-                    }
-
-                    loadedImages.Add(textureXImage.Name, ResourceNamespace.Textures, image);
-                }
-            }
-        }
-
-        private bool TryCreateFromExistingImage(UpperString name, ResourceNamespace resourceNamespace,
-            out Material material)
-        {
-            if (loadedImages.TryGetValue(name, resourceNamespace, out RgbaImage image))
-            {
-                material = ImageToMaterial(name, ResourceNamespace.Flats, image);
+                material = CreateAndTrackMaterial(name, newNamespace, loadedImage);
                 return true;
             }
 
-            Optional<IEntry> entry = Data.FindPriority(name, resourceNamespace);
-            if (!entry)
+            if (TextureDefinitionManager.TryGetAny(name, out TextureDefinition definition, out ResourceNamespace definitionNamespace))
             {
-                material = null;
-                return false;
+                RgbaImage compiledImage = TextureDefinitionToImage(definition);
+                loadedImages.Add(name, definitionNamespace, compiledImage);
+                material = CreateAndTrackMaterial(name, definitionNamespace, compiledImage);
+                return true;
             }
 
-            byte[] data = entry.Value.Data;
+            if (Data.TryFindAny(name, out IEntry entry))
+            {
+                if (TryReadImageEntry(entry, entry.Namespace, out RgbaImage newImage))
+                {
+                    loadedImages.Add(name, entry.Namespace, newImage);
+                    material = CreateAndTrackMaterial(name, entry.Namespace, loadedImage);
+                    return true;
+                }
+            }
 
-            // TODO: If extension is PNG/JPG/whatever, or has a header of that type, do that here!
+            material = null;
+            newNamespace = ResourceNamespace.Global;
+            return false;
+        }
+
+        private static bool TryGetOrReadImage(UpperString name, ResourceNamespace resourceNamespace,
+            out RgbaImage rgbaImage)
+        {
+            if (loadedImages.TryGetValue(name, resourceNamespace, out rgbaImage))
+                return true;
+
+            if (Data.TryFindExact(name, resourceNamespace, out IEntry entry))
+            {
+                if (TryReadImageEntry(entry, entry.Namespace, out rgbaImage))
+                {
+                    loadedImages.Add(name, entry.Namespace, rgbaImage);
+                    return true;
+                }
+            }
+
+            rgbaImage = null;
+            return false;
+        }
+
+        private static bool TryReadImageEntry(IEntry entry, ResourceNamespace resourceNamespace,
+            out RgbaImage rgbaImage)
+        {
+            byte[] data = entry.Data;
+
+            // TODO: Handle PNG/JPG/...etc, here!
 
             // We want to give priority to reading flats if it's coming from a
             // flat namespace. This way we reduce false positive hits... which
-            // should be very rare anyways. Usually column palette images are
-            // in the global namespace anyways and flats are generally in the
-            // flat namespace.
+            // should be very rare. Usually column palette images are in the
+            // global namespace anyways and flats are generally in the flat
+            // namespace.
             PaletteReaderFunc[] paletteReaders;
             if (resourceNamespace == ResourceNamespace.Flats)
                 paletteReaders = new PaletteReaderFunc[] { PaletteImage.FromFlat, PaletteImage.FromColumn };
@@ -184,41 +206,64 @@ namespace Helion.Core.Resource.Textures
                 if (!paletteImage)
                     continue;
 
-                RgbaImage convertedImage = paletteImage.Value.ToColor(Palette);
-                loadedImages.Add(name, resourceNamespace, convertedImage);
-                material = ImageToMaterial(name, resourceNamespace, convertedImage);
+                rgbaImage = paletteImage.Value.ToColor(Palette);
                 return true;
             }
 
-            material = null;
+            rgbaImage = null;
             return false;
         }
 
-        private Material ImageToMaterial(UpperString name, ResourceNamespace resourceNamespace, RgbaImage image)
+        private static RgbaImage TextureDefinitionToImage(TextureDefinition definition)
         {
-            Texture2D texture = image.ToTexture();
-
-            // We don't want interpolation on sprites... for now...
-            if (resourceNamespace == ResourceNamespace.Sprites)
-                texture.filterMode = FilterMode.Point;
-
-            Material material = new Material(defaultShader)
+            RgbaImage newImage = new RgbaImage(definition.Dimension)
             {
-                mainTexture = texture,
-                name = $"{name.String} ({resourceNamespace})"
+                Namespace = definition.Namespace,
+                Offset = definition.Offset
             };
 
-            Material existingMaterial = materials.Add(name, resourceNamespace, material);
-            // ...
+            foreach (TextureDefinitionPatch patch in definition.Patches)
+            {
+                if (TryGetOrReadImage(patch.Name, patch.Namespace, out RgbaImage image))
+                {
+                    Vec2I position = patch.Origin;
+                    if (patch.UseOffsets)
+                        position += image.Offset;
+
+                    // TODO: Handle the other fields on the patch (ex: flipping, rotation).
+
+                    newImage.DrawOntoThis(image, position);
+                }
+                else
+                    throw new Exception($"Cannot find image patch {patch.Name} in texture definition {definition.Name}");
+            }
+
+            return newImage;
+        }
+
+        private static Material CreateAndTrackMaterial(UpperString name, ResourceNamespace resourceNamespace,
+            RgbaImage image)
+        {
+            Material material = new Material(defaultShader)
+            {
+                mainTexture = image.ToTexture(),
+                name = $"{name.String} ({resourceNamespace})"
+            };
+            materials.Add(name, resourceNamespace, material);
+
+            // To make things look a bit more reasonable with sprites, we'll
+            // do GL_NEAREST since filtering makes them blurry and ugly.
+            if (resourceNamespace == ResourceNamespace.Sprites)
+                material.mainTexture.filterMode = FilterMode.Point;
 
             return material;
         }
 
-        private void DestroyMaterialAndTexture(Material material)
-         {
-             if (material.mainTexture != null)
-                 GameObjectHelper.Destroy(material.mainTexture);
-             GameObjectHelper.Destroy(material);
-         }
+        private static void DestroyMaterialAndTexture(Material material)
+        {
+            if (material.mainTexture != null)
+                GameObjectHelper.Destroy(material.mainTexture);
+            GameObjectHelper.Destroy(material);
+        }
     }
 }

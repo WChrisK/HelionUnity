@@ -9,21 +9,18 @@ namespace Helion.Core.Resource.Textures.Sprites
     /// <summary>
     /// Manages graphical information for existing sprites.
     /// </summary>
-    public class SpriteManager
+    public static class SpriteManager
     {
         /// <summary>
         /// Get a rotational sprite with null textures. Always will exist and
         /// can be supplied to any actor frame safely.
         /// </summary>
-        public readonly SpriteRotations NullRotations;
+        public static readonly SpriteRotations NullRotations = new SpriteRotations("NULL", TextureManager.NullMaterial);
+        private static readonly Dictionary<UpperString, SpriteRotations> spriteRotations = new Dictionary<UpperString, SpriteRotations>();
 
-        private readonly TextureManager textureManager;
-        private readonly Dictionary<UpperString, SpriteRotations> spriteRotations = new Dictionary<UpperString, SpriteRotations>();
-
-        public SpriteManager(TextureManager texManager)
+        public static void Clear()
         {
-            textureManager = texManager;
-            NullRotations = new SpriteRotations("NULL", texManager.NullMaterial);
+            spriteRotations.Clear();
         }
 
         /// <summary>
@@ -34,7 +31,7 @@ namespace Helion.Core.Resource.Textures.Sprites
         /// "PLAYD"). This must contain the frame (or 5th letter).</param>
         /// <returns>The sprite rotations, or a default value of missing images
         /// if the sprite/frame is an empty string.</returns>
-        public SpriteRotations Rotations(UpperString spriteAndFrame)
+        public static SpriteRotations Rotations(UpperString spriteAndFrame)
         {
             if (spriteAndFrame.Empty())
                 return NullRotations;
@@ -56,14 +53,14 @@ namespace Helion.Core.Resource.Textures.Sprites
             return builder.ToString();
         }
 
-        private SpriteRotations CreateSpriteFrom(UpperString name)
+        private static SpriteRotations CreateSpriteFrom(UpperString name)
         {
-            Material none = textureManager.NullMaterial;
+            Material none = TextureManager.NullMaterial;
             Material[] frames = { none, none, none, none, none, none, none, none };
 
             // If we have a default rotation, set it to be the rotations for
             // everything and let other valid matches override it later.
-            if (textureManager.TryGetMaterial(name + '0', ResourceNamespace.Sprites, out Material frame0))
+            if (TextureManager.TryGetMaterial(name + '0', ResourceNamespace.Sprites, out Material frame0))
                 frames = new[] { frame0, frame0, frame0, frame0, frame0, frame0, frame0, frame0 };
 
             // Track how many 2,8 / 3,7 / 4,6 rotations we find. Write them if
@@ -83,18 +80,18 @@ namespace Helion.Core.Resource.Textures.Sprites
             return new SpriteRotations(name, frames[0], frames[1], frames[2], frames[3], frames[4], frames[5], frames[6], frames[7]);
         }
 
-        private void AddSingleFrameIfExists(UpperString name, char first, Material[] frames)
+        private static void AddSingleFrameIfExists(UpperString name, char first, Material[] frames)
         {
             UpperString lookupName = name + first;
-            if (textureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
+            if (TextureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
                 frames[first - '1'] = material;
         }
 
-        private void AddMirrorFrameIfExists(UpperString name, char first, char second,
+        private static void AddMirrorFrameIfExists(UpperString name, char first, char second,
             Material[] frames, ref int mirrorsFound)
         {
             UpperString lookupName = MakeRotation(name, first, second);
-            if (textureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
+            if (TextureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
             {
                 frames[first - '1'] = material;
                 frames[second - '1'] = material;

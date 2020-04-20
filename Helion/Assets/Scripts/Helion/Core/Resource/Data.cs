@@ -1,154 +1,137 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Helion.Core.Archives;
 using Helion.Core.Configs;
 using Helion.Core.Resource.Decorate;
 using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Textures;
+using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Resource.Textures.Sprites;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
-using MoreLinq;
 
 namespace Helion.Core.Resource
 {
     /// <summary>
-    /// A collection of all of the data. It is a static singleton (RIP).
+    /// A collection of all of the entries loaded from an archive. All archive
+    /// loading should be done through this class, as it will populate the rest
+    /// of the classes with data.
     /// </summary>
     public static class Data
     {
         private static readonly Log Log = LogManager.Instance();
 
-        // TODO: Break initialize order dependency (use singletons? oh man...)
         public static Config Config = new Config();
-        public static TextureManager Textures = new TextureManager();
-        public static SpriteManager Sprites = new SpriteManager(Textures);
-        public static DecorateManager Decorate = new DecorateManager();
-        private static List<IArchive> archives = new List<IArchive>();
-        private static ResourceTracker<IEntry> entries = new ResourceTracker<IEntry>();
-        private static Dictionary<UpperString, List<IEntry>> nameToEntries = new Dictionary<UpperString, List<IEntry>>();
+        public static readonly List<IArchive> Archives = new List<IArchive>();
+        private static readonly ResourceTracker<IEntry> entries = new ResourceTracker<IEntry>();
+        private static readonly Dictionary<UpperString, IEntry> nameToEntry = new Dictionary<UpperString, IEntry>();
+        private static readonly Dictionary<UpperString, IEntry> pathToEntry = new Dictionary<UpperString, IEntry>();
 
         /// <summary>
-        /// Loads a config from either the path provided, or the default path.
+        /// Attempts to load the data at the URIs provided. This will destroy
+        /// any existing data.
         /// </summary>
-        /// <param name="path">The path to use, or null if the default path
-        /// should be used.</param>
-        /// <returns>True if the load was successful, false if not.</returns>
-        public static bool LoadConfig(string path = null)
+        /// <param name="uris">The URIs to load.</param>
+        /// <returns>True on success, false on failure.</returns>
+        public static bool Load(IEnumerable<string> uris)
         {
-            path = path ?? Config.DefaultConfigName;
+            List<IArchive> archiveList = new List<IArchive>();
 
-            Optional<Config> config = Config.FromFile(path);
-            if (!config)
+            foreach (string uri in uris)
             {
-                Log.Error("Failed to load config from: ", path);
-                Log.Info("Creating empty config, will save on exit");
-                return false;
+                Optional<IArchive> archive = ArchiveReader.ReadFile(uri);
+                if (archive)
+                    archiveList.Add(archive.Value);
+                else
+                {
+                    Log.Error($"Unable to open or read archive: {uri}");
+                    return false;
+                }
             }
 
-            Log.Info("Loaded config from ", path);
-            Config = config.Value;
-            return true;
+            Archives.Clear();
+            Archives.AddRange(archiveList);
+
+            return ProcessArchives();
         }
 
         /// <summary>
-        /// Loads all of the archives at the file paths provided. If this fails
-        /// then the state of the application will be in a malformed state.
+        /// Finds the last loaded entry with the name provided.
         /// </summary>
-        /// <param name="filePaths">The paths to the archives on the hard drive
-        /// to load.</param>
-        /// <returns>True if they all loaded, false if any failed.</returns>
-        public static bool Load(params string[] filePaths)
+        /// <param name="name">The entry name.</param>
+        /// <param name="entry">The entry that was found.</param>
+        /// <returns>True if found, false if not (and then entry is set to
+        /// null).</returns>
+        public static bool TryFindLatest(UpperString name, out IEntry entry)
         {
-            try
-            {
-                archives = ReadArchivesOrThrow(filePaths);
-
-                // Any game objects that need disposing must be done first,
-                // since we could leak valuable memory/resources if we do not
-                // dispose Unity things (as GC won't get them until an unload,
-                // or possibly never).
-                Textures.Dispose();
-
-                // Then initialize a clean slate, so if we call this multiple
-                // times we will load new resources cleanly each time.
-                entries = new ResourceTracker<IEntry>();
-                nameToEntries = new Dictionary<UpperString, List<IEntry>>();
-                Textures = new TextureManager();
-                Sprites = new SpriteManager(Textures);
-                Decorate = new DecorateManager();
-
-                ProcessArchivesOrThrow();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                Log.Error("Unable to load files: ", e.Message);
-                return false;
-            }
+            return nameToEntry.TryGetValue(name, out entry);
         }
 
         /// <summary>
-        /// Finds the latest entry from all the loaded archives.
+        /// Finds the last loaded entry with the name provided. This will
+        /// include the extension in searches.
         /// </summary>
-        /// <param name="name">The entry to find.</param>
-        /// <returns>The entry if it exists, or an empty optional if not.
-        /// </returns>
-        public static Optional<IEntry> Find(UpperString name)
+        /// <param name="path">The entry path.</param>
+        /// <param name="entry">The entry that was found.</param>
+        /// <returns>True if found, false if not (and then entry is set to
+        /// null).</returns>
+        public static bool TryFindPath(UpperString path, out IEntry entry)
         {
-            if (nameToEntries.TryGetValue(name, out List<IEntry> entryList))
-                return new Optional<IEntry>(entryList.Last());
-            return Optional<IEntry>.Empty();
+            return pathToEntry.TryGetValue(path, out entry);
         }
 
         /// <summary>
-        /// Finds the latest entry for the exact namespace provided. This will
-        /// not return any entry that has another namespace. To find any entry
-        /// but with a namespace priority, use <see cref="FindPriority"/>.
+        /// Finds the latest entry for the name and namespace.
         /// </summary>
-        /// <param name="name">The entry to find.</param>
-        /// <param name="resourceNamespace">The namespace to match.</param>
-        /// <returns>The entry if it exists, or an empty optional if not.
-        /// </returns>
-        public static Optional<IEntry> Find(UpperString name, ResourceNamespace resourceNamespace)
+        /// <param name="name">The entry name.</param>
+        /// <param name="resourceNamespace">The namespace.</param>
+        /// <param name="entry">The found entry.</param>
+        /// <returns>True if found, false if not (and entry is null in this
+        /// case).</returns>
+        public static bool TryFindExact(UpperString name, ResourceNamespace resourceNamespace, out IEntry entry)
         {
-            if (entries.TryGetValue(name, resourceNamespace, out IEntry entry))
-                return new Optional<IEntry>(entry);
-            return Optional<IEntry>.Empty();
+            return entries.TryGetValue(name, resourceNamespace, out entry);
         }
 
         /// <summary>
-        /// Searches for all entries with the namespace provided, and if it
-        /// cannot find one with the priority namespace then will return the
-        /// most recent entry. If no entry exists with the name at all, then
-        /// an empty value is returned.
+        /// Looks up an entry by name. Note that this is not guaranteed to be
+        /// the latest value, but rather the latest one from an implementation
+        /// defined namespace.
         /// </summary>
-        /// <param name="name">The entry to find.</param>
-        /// <param name="priority">The priority namespace to look in, or global
-        /// by default.</param>
-        /// <returns>The entry if it exists, or an empty optional if not.
-        /// </returns>
-        public static Optional<IEntry> FindPriority(UpperString name, ResourceNamespace priority = ResourceNamespace.Global)
+        /// <param name="name">The entry name.</param>
+        /// <param name="entry">The entry.</param>
+        /// <returns>True if found, false if not.</returns>
+        public static bool TryFindAny(UpperString name, out IEntry entry)
         {
-            Optional<IEntry> entryForNamespace = Find(name, priority);
-            return entryForNamespace ? entryForNamespace : Find(name);
+            return entries.TryGetAnyValue(name, out entry, out _);
         }
 
         /// <summary>
-        /// Finds a map with the name provided, or if it cannot be found then
-        /// returns an empty value.
+        /// Gets all of the entries for all namespaces for the name provided.
+        /// </summary>
+        /// <param name="name">The entries to find.</param>
+        /// <returns>The found entries, or an empty list otherwise.</returns>
+        public static List<IEntry> TryFindAll(UpperString name)
+        {
+            return entries.TryGetAnyValues(name);
+        }
+
+        /// <summary>
+        /// Finds a map with the name provided. If the map that was found ends
+        /// up being corrupt or it could not be found, this returns false.
         /// </summary>
         /// <param name="name">The map name.</param>
+        /// <param name="map">The found map, or null if none was found.</param>
         /// <returns>The map, or an empty optional if no map name matches.
         /// </returns>
-        public static Optional<IMap> FindMap(UpperString name)
+        public static bool TryFindMap(UpperString name, out IMap map)
         {
-            for (int i = archives.Count - 1; i >= 0; i--)
+            map = null;
+
+            for (int i = Archives.Count - 1; i >= 0; i--)
             {
-                foreach (MapComponents mapComponents in archives[i].GetMaps())
+                foreach (MapComponents mapComponents in Archives[i].GetMaps())
                 {
                     if (mapComponents.Name != name)
                         continue;
@@ -156,81 +139,76 @@ namespace Helion.Core.Resource
                     switch (mapComponents.MapType)
                     {
                     case MapType.Doom:
-                        return DoomMap.From(mapComponents);
+                        Optional<IMap> doomMap = DoomMap.From(mapComponents);
+                        map = doomMap.Value;
+                        return doomMap.HasValue;
                     case MapType.Hexen:
-                        return Optional<IMap>.Empty();
+                        return false;
                     case MapType.UDMF:
-                        return Optional<IMap>.Empty();
+                        return false;
                     default:
                         throw new ArgumentOutOfRangeException($"Unexpected map type when finding map {name}");
                     }
                 }
             }
 
-            return Optional<IMap>.Empty();
+            return false;
         }
 
-        private static List<IArchive> ReadArchivesOrThrow(IEnumerable<string> filePaths)
+        private static bool ProcessArchives()
         {
-            List<IArchive> archiveList = new List<IArchive>();
-
-            foreach (string filePath in filePaths)
+            try
             {
-                Optional<IArchive> archive = ArchiveReader.ReadFile(filePath);
-                if (archive)
-                    archiveList.Add(archive.Value);
-                else
-                    throw new Exception($"Unable to open or read archive: {filePath}");
-            }
+                entries.Clear();
+                nameToEntry.Clear();
+                pathToEntry.Clear();
+                TextureManager.Clear();
+                TextureDefinitionManager.Clear();
+                SpriteManager.Clear();
+                DecorateManager.Clear();
 
-            return archiveList;
-        }
-
-        private static void TrackEntry(IEntry entry)
-        {
-            entries.Add(entry.Name, entry.Namespace, entry);
-
-            if (nameToEntries.TryGetValue(entry.Name, out List<IEntry> entryList))
-                entryList.Add(entry);
-            else
-                nameToEntries[entry.Name] = new List<IEntry> { entry };
-        }
-
-        private static void ProcessArchivesOrThrow()
-        {
-            foreach (IArchive archive in archives)
-            {
-                Log.Info("Loading ", archive.Uri);
-
-                // We want every entry to be tracked before processing any
-                // definition files.
-                archive.ForEach(TrackEntry);
-
-                // Now that every entry has been indexed, we can process any
-                // definition/data entries.
-                foreach (IEntry entry in archive)
+                foreach (IArchive archive in Archives)
                 {
-                    switch (entry.Name.String)
-                    {
-                    case "DECORATE":
-                        Decorate.HandleDefinitionsOrThrow(entry, archive);
-                        continue;
-                    case "PLAYPAL":
-                        Textures.HandlePaletteOrThrow(entry);
-                        continue;
-                    case "PNAMES":
-                        Textures.TrackPNamesOrThrow(entry, archive);
-                        continue;
-                    case "TEXTURE1":
-                    case "TEXTURE2":
-                        Textures.TrackTextureXOrThrow(entry, archive);
-                        continue;
-                    }
-                }
-            }
+                    Log.Info("Loading ", archive.Uri);
 
-            Textures.FinishPostProcessingOrThrow();
-            Decorate.AttachSpriteRotationsToFrames();
+                    // We want every entry to be tracked before processing any
+                    // definition files.
+                    foreach (IEntry entry in archive)
+                    {
+                        entries.Add(entry.Name, entry.Namespace, entry);
+                        nameToEntry[entry.Name] = entry;
+                        pathToEntry[entry.Path.ToString()] = entry;
+                    }
+
+                    foreach (IEntry entry in archive)
+                    {
+                        switch (entry.Name.String)
+                        {
+                        case "DECORATE":
+                            DecorateManager.HandleDefinitionsOrThrow(entry, archive);
+                            continue;
+                        case "PLAYPAL":
+                            TextureManager.TrackPalette(entry);
+                            continue;
+                        case "PNAMES":
+                        case "TEXTURE1":
+                        case "TEXTURE2":
+                            TextureDefinitionManager.TrackVanillaDefinition(entry);
+                            continue;
+                        }
+                    }
+
+                    TextureDefinitionManager.CompileAnyNewVanillaDefinitions();
+                }
+
+                DecorateManager.AttachSpriteRotationsToFrames();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

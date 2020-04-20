@@ -4,6 +4,10 @@ using Helion.Core.Util.Geometry;
 
 namespace Helion.Core.Resource.Textures.Definitions
 {
+    /// <summary>
+    /// A definition of a texture that can be compiled into an image from other
+    /// textures.
+    /// </summary>
     public class TextureDefinition
     {
         public readonly UpperString Name;

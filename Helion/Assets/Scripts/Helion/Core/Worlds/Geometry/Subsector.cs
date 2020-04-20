@@ -1,6 +1,7 @@
 ﻿using System;
 using Helion.Core.Resource;
 using Helion.Core.Resource.Maps.Shared;
+using Helion.Core.Resource.Textures;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Unity;
@@ -39,7 +40,7 @@ namespace Helion.Core.Worlds.Geometry
             SectorPlane plane = isFloor ? Sector.FloorPlane : Sector.CeilingPlane;
 
             UpperString textureName = plane.TextureName;
-            Material material = Data.Textures.Material(textureName, ResourceNamespace.Flats);
+            Material material = TextureManager.Material(textureName, ResourceNamespace.Flats);
             Texture texture = material.mainTexture;
 
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();

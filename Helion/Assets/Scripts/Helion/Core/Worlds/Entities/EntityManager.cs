@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Graphics;
-using Helion.Core.Resource;
+using Helion.Core.Resource.Decorate;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Resource.Maps;
@@ -51,7 +51,7 @@ namespace Helion.Core.Worlds.Entities
                 return Optional<Entity>.Empty();
             }
 
-            Optional<ActorDefinition> actorDefinition = Data.Decorate.Find("DOOMPLAYER");
+            Optional<ActorDefinition> actorDefinition = DecorateManager.Find("DOOMPLAYER");
             if (!actorDefinition)
                 return Optional<Entity>.Empty();
 
@@ -84,7 +84,7 @@ namespace Helion.Core.Worlds.Entities
         {
             foreach (DoomThing thing in things)
             {
-                Optional<ActorDefinition> actorDefinition = Data.Decorate.Find(thing.EditorNumber);
+                Optional<ActorDefinition> actorDefinition = DecorateManager.Find(thing.EditorNumber);
                 if (!actorDefinition)
                 {
                     Log.Warn("Unknown entity type: ", thing.EditorNumber);
