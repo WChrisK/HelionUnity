@@ -37,6 +37,11 @@ namespace Helion.Core.Worlds.Entities
         internal World world;
         internal FrameTracker frameTracker;
 
+        void Update()
+        {
+            // TODO: Update sprite mesh and rotation image.
+        }
+
         void FixedUpdate()
         {
             Tick();
