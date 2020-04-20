@@ -6,6 +6,7 @@ using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Logging;
 using Helion.Core.Util.Unity;
 using MoreLinq;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Helion.Core.Resource.Textures
     /// </summary>
     public static class TextureManagerNew
     {
+        private static readonly Log Log = LogManager.Instance();
         private static readonly Shader defaultShader = Shader.Find("Doom/Default");
         private static readonly Material nullMaterial = Resources.Load<Material>("Materials/null");
 
@@ -97,6 +99,15 @@ namespace Helion.Core.Resource.Textures
             missingTextureNames = new HashSet<UpperString>();
         }
 
+        internal static void TrackPalette(IEntry entry)
+        {
+            Optional<Palette> palette = Palette.From(entry.Data);
+            if (palette)
+                Palette = palette.Value;
+            else
+                Log.Error("Unable to read palette from entry: ", entry.Path);
+        }
+
         private static bool TryCreateExactNamespaceMaterial(UpperString name, ResourceNamespace resourceNamespace,
             out Material material)
         {
@@ -114,7 +125,7 @@ namespace Helion.Core.Resource.Textures
                 return true;
             }
 
-            if (DataNew.TryFind(name, resourceNamespace, out IEntry entry))
+            if (DataNew.TryFindExact(name, resourceNamespace, out IEntry entry))
             {
                 if (TryReadImageEntry(entry, resourceNamespace, out RgbaImage newImage))
                 {
@@ -145,7 +156,7 @@ namespace Helion.Core.Resource.Textures
                 return true;
             }
 
-            if (DataNew.TryFind(name, out IEntry entry))
+            if (DataNew.TryFindAny(name, out IEntry entry))
             {
                 if (TryReadImageEntry(entry, entry.Namespace, out RgbaImage newImage))
                 {
@@ -166,7 +177,7 @@ namespace Helion.Core.Resource.Textures
             if (loadedImages.TryGetValue(name, resourceNamespace, out rgbaImage))
                 return true;
 
-            if (DataNew.TryFind(name, out IEntry entry))
+            if (DataNew.TryFindExact(name, resourceNamespace, out IEntry entry))
             {
                 if (TryReadImageEntry(entry, entry.Namespace, out rgbaImage))
                 {
