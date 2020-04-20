@@ -202,8 +202,12 @@ namespace Helion.Core.Resource.Textures
 
         private Material ImageToMaterial(UpperString name, ResourceNamespace resourceNamespace, RgbaImage image)
         {
-            // TODO: If we already made a texture, we should share it instead of making a new one!
             Texture2D texture = image.ToTexture();
+
+            // We don't want interpolation on sprites... for now...
+            if (resourceNamespace == ResourceNamespace.Sprites)
+                texture.filterMode = FilterMode.Point;
+
             Material material = new Material(defaultShader)
             {
                 mainTexture = texture,
@@ -211,10 +215,7 @@ namespace Helion.Core.Resource.Textures
             };
 
             Material existingMaterial = materials.Add(name, resourceNamespace, material);
-
-            // TODO: Need to destroy the texture as well! But some textures are shared... :(
-            // if (existingMaterial != null)
-            //     DestroyMaterialAndTexture(existingMaterial);
+            // ...
 
             return material;
         }

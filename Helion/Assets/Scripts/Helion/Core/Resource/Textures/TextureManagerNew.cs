@@ -187,6 +187,11 @@ namespace Helion.Core.Resource.Textures
             };
             materials.Add(name, resourceNamespace, material);
 
+            // To make things look a bit more reasonable with sprites, we'll
+            // do GL_NEAREST since filtering makes them blurry and ugly.
+            if (resourceNamespace == ResourceNamespace.Sprites)
+                material.mainTexture.filterMode = FilterMode.Point;
+
             return material;
         }
 
