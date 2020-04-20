@@ -49,7 +49,7 @@ namespace Helion.Core.Graphics
         /// </param>
         public RgbaImage(int width, int height)
         {
-            if (width <= 0 || Height <= 0)
+            if (width <= 0 || height <= 0)
             {
                 width = Math.Max(1, width);
                 height = Math.Max(1, height);
@@ -101,6 +101,10 @@ namespace Helion.Core.Graphics
             RgbaImage src = image;
             RgbaImage dest = this;
             Vec2I destEnd = (image.Width + topLeft.X, image.Height + topLeft.Y);
+
+            // Until we get a proper library in, we'll have to clamp at the bounds...
+            destEnd = new Vec2I(Math.Min(destEnd.X, Width), Math.Min(destEnd.Y, Height));
+
             Vec2I delta = destEnd - topLeft;
 
             try
