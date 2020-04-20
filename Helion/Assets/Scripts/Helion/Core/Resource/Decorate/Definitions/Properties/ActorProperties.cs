@@ -169,7 +169,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public UpperString TeleFogDestType = "TELEPORTFOG"; // Unimplemented!
         public UpperString TeleFogSourceType = "TELEPORTFOG"; // Unimplemented!
         public int Threshold; // Unimplemented!
-        public readonly Translation Translation = new Translation(); // Unimplemented!
+        public readonly DecorateTranslation DecorateTranslation = new DecorateTranslation(); // Unimplemented!
         public DecorateRange<int>? VisibleAngles; // Unimplemented!
         public DecorateRange<int>? VisiblePitch; // Unimplemented!
         public List<UpperString> VisibleToPlayerClass = new List<UpperString>(); // Unimplemented!
@@ -371,7 +371,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
             StealthAlpha = other.StealthAlpha;
             StencilColor = other.StencilColor;
             Tag = other.Tag.Copy();
-            Translation = new Translation(Translation);
+            DecorateTranslation = new DecorateTranslation(DecorateTranslation);
             Threshold = other.Threshold;
             TeleFogDestType = other.TeleFogDestType;
             TeleFogSourceType = other.TeleFogSourceType;

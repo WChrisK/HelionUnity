@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Util;
+using Helion.Core.Util.Extensions;
 
 namespace Helion.Core.Resource
 {
@@ -64,11 +65,38 @@ namespace Helion.Core.Resource
         public bool TryGetValue(UpperString name, ResourceNamespace resourceNamespace, out T value)
         {
             if (table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry))
-            {
                 return namespaceToEntry.TryGetValue(resourceNamespace, out value);
+
+            value = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the value if it exists from any namespace. The return
+        /// order is implementation defined, and only guarantees that you will
+        /// get back a value with the same name.
+        /// </summary>
+        /// <param name="name">The name of the resource.</param>
+        /// <param name="value">The value that will be set with the instance,
+        /// or null if it does not exist.</param>
+        /// <param name="resourceNamespace">The namespace that will be filled
+        /// with whatever namespace the value is from, or set to Global if the
+        /// resource cannot be found.</param>
+        /// <returns>True if found, false if not.</returns>
+        public bool TryGetAnyValue(UpperString name, out T value, out ResourceNamespace resourceNamespace)
+        {
+            if (table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry))
+            {
+                foreach (var pair in namespaceToEntry)
+                {
+                    value = pair.Value;
+                    resourceNamespace = pair.Key;
+                    return true;
+                }
             }
 
             value = null;
+            resourceNamespace = ResourceNamespace.Global;
             return false;
         }
 
@@ -77,27 +105,20 @@ namespace Helion.Core.Resource
         /// search the priority one first.
         /// </summary>
         /// <param name="name">The name of the resource.</param>
-        /// <param name="priorityNamespace">The namespace to search first for.
-        /// </param>
-        /// <param name="value">The value that will be set with the instance,
-        /// or null if it does not exist.</param>
         /// <returns>True if found, false if not.</returns>
-        public bool TryGetAnyValue(UpperString name, ResourceNamespace priorityNamespace, out T value)
+        public List<T> TryGetAnyValues(UpperString name)
         {
-            if (table.TryGetValue(name, out Dictionary<ResourceNamespace, T> namespaceToEntry))
-            {
-                if (namespaceToEntry.TryGetValue(priorityNamespace, out value))
-                    return true;
+            return table.Find(name)
+                        .Map(d => d.Values.ToList())
+                        .Or(() => new List<T>());
+        }
 
-                foreach (var pair in namespaceToEntry)
-                {
-                    value = pair.Value;
-                    return true;
-                }
-            }
-
-            value = null;
-            return false;
+        /// <summary>
+        /// Clears all of the entries.
+        /// </summary>
+        public void Clear()
+        {
+            table.Clear();
         }
 
         public IEnumerator<T> GetEnumerator() => table.Values.SelectMany(dict => dict.Values).GetEnumerator();

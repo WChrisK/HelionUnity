@@ -88,18 +88,27 @@ namespace Helion.Core.Util
 
         /// <summary>
         /// Returns the inner value, or a default value if it is not present.
+        /// If the creation of the object is expensive, you can use
+        /// <see cref="Or(T)"/> or try null coalescing.
         /// </summary>
-        /// <remarks>
-        /// If the creation of the object is expensive, it is probably better
-        /// to use the null coalescing operator by getting Value. This is
-        /// primarily intended for when you have the value created and want to
-        /// get it by reference.
-        /// </remarks>
         /// <param name="other">The value to return if it does not exist.
         /// </param>
         /// <returns>The value inside the optional if it exists, or the value
         /// passed in as the argument if this optional is empty.</returns>
         public T Or(T other) => HasValue ? Value : other;
+
+        /// <summary>
+        /// Returns the inner value, or calls the generator function if the
+        /// value does not exist. This is designed such that lazy evaluation
+        /// on a generator can be done to avoid Or() having a new object being
+        /// instantiated.
+        /// </summary>
+        /// <param name="itemGenerator">The function to be called to generate
+        /// the item if the value is not present.
+        /// </param>
+        /// <returns>The value inside the optional if it exists, or the value
+        /// passed in as the argument if this optional is empty.</returns>
+        public T Or(Func<T> itemGenerator) => HasValue ? Value : itemGenerator();
 
         /// <summary>
         /// Maps an optional to another optional type. If this optional is

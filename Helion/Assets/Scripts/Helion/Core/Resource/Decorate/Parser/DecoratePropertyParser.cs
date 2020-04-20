@@ -1055,24 +1055,24 @@ namespace Helion.Core.Resource.Decorate.Parser
                 if (index < 0 || index > 2)
                     throw MakeException($"Translation index out of range for {currentDefinition.Name}");
 
-                currentDefinition.Properties.Translation.Standard = index;
+                currentDefinition.Properties.DecorateTranslation.Standard = index;
                 return;
             }
 
             UpperString text = ConsumeString();
             if (text == "ICE")
             {
-                currentDefinition.Properties.Translation.Ice = true;
+                currentDefinition.Properties.DecorateTranslation.Ice = true;
                 return;
             }
 
             // TODO: Assert it's a proper translation string!
-            currentDefinition.Properties.Translation.Translations.Add(text);
+            currentDefinition.Properties.DecorateTranslation.Translations.Add(text);
 
             while (ConsumeIf(','))
             {
                 // TODO: Assert it's a proper translation string!
-                currentDefinition.Properties.Translation.Translations.Add(ConsumeString());
+                currentDefinition.Properties.DecorateTranslation.Translations.Add(ConsumeString());
             }
         }
 

@@ -220,10 +220,10 @@ namespace Helion.Core.Resource.Textures
         }
 
         private void DestroyMaterialAndTexture(Material material)
-        {
-            if (material.mainTexture != null)
-                GameObjectHelper.Destroy(material.mainTexture);
-            GameObjectHelper.Destroy(material);
-        }
+         {
+             if (material.mainTexture != null)
+                 GameObjectHelper.Destroy(material.mainTexture);
+             GameObjectHelper.Destroy(material);
+         }
     }
 }
