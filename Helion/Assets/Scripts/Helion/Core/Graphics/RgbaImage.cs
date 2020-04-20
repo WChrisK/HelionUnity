@@ -1,6 +1,9 @@
-﻿using Helion.Core.Util;
+﻿using System;
+using Helion.Core.Resource;
+using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Logging;
 using UnityEngine;
 
 namespace Helion.Core.Graphics
@@ -11,40 +14,57 @@ namespace Helion.Core.Graphics
     public class RgbaImage : IImage
     {
         public static readonly Color Transparent = new Color(0, 0, 0, 0);
+        private static readonly Log Log = LogManager.Instance();
 
-        public Dimension Dimension { get; }
         public int Width => Dimension.Width;
         public int Height => Dimension.Height;
         public int Area => Dimension.Area;
-        public ImageMetadata Metadata { get; }
+        public ResourceNamespace Namespace { get; set; } = ResourceNamespace.Global;
+        public Vec2I Offset { get; set; } = Vec2I.Zero;
+        public Dimension Dimension { get; }
         public readonly Color[] Pixels;
 
-        private RgbaImage(int width, int height, Color[] pixels, ImageMetadata metadata = null)
+        /// <summary>
+        /// Creates a new RGBA image.
+        /// </summary>
+        /// <remarks>
+        /// If the width or height are zero or less, it will be substituted in
+        /// with a value of 1 for that axis.
+        /// </remarks>
+        /// <param name="dimension">The dimension of the image.</param>
+        public RgbaImage(Dimension dimension) : this(dimension.Width, dimension.Height)
         {
-            Dimension = new Dimension(width, height);
-            Pixels = pixels;
-            Metadata = new ImageMetadata(metadata);
         }
 
         /// <summary>
-        /// Creates an empty RGBA image from a given width, height, and
-        /// possibly metadata. The image contents are undefined.
+        /// Creates a new RGBA image.
         /// </summary>
-        /// <param name="width">The width of the image. Should not be negative.
+        /// <remarks>
+        /// If the width or height are zero or less, it will be substituted in
+        /// with a value of 1 for that axis.
+        /// </remarks>
+        /// <param name="width">The width in pixels. Should be positive.
         /// </param>
-        /// <param name="height">The height of the image. Should not be
-        /// negative.</param>
-        /// <param name="metadata">The metadata to use, or null if we want a
-        /// default one.</param>
-        /// <returns>The RGBA image, or empty if the parameters are invalid
-        /// and one cannot be made (ex: negative dimension).</returns>
-        public static Optional<RgbaImage> From(int width, int height, ImageMetadata metadata = null)
+        /// <param name="height">The height in pixels. Should be positive.
+        /// </param>
+        public RgbaImage(int width, int height)
         {
-            if (width <= 0 || height <= 0)
-                return Optional<RgbaImage>.Empty();
+            if (width <= 0 || Height <= 0)
+            {
+                width = Math.Max(1, width);
+                height = Math.Max(1, height);
+                Log.Error($"Trying to create an RGBA image width a bad dimension ({width} x {height})");
+            }
 
-            Color[] pixels = Arrays.Create(width * height, Transparent);
-            return new RgbaImage(width, height, pixels, metadata);
+            Dimension = new Dimension(width, height);
+            Pixels = new Color[Dimension.Area];
+            Pixels.Fill(Transparent);
+        }
+
+        private RgbaImage(int width, int height, Color[] pixels)
+        {
+            Dimension = new Dimension(width, height);
+            Pixels = pixels;
         }
 
         /// <summary>
@@ -53,17 +73,14 @@ namespace Helion.Core.Graphics
         /// <param name="width">The width of the image.</param>
         /// <param name="height">The height of the image.</param>
         /// <param name="pixels">The pixels that make up the image.</param>
-        /// <param name="metadata">The metadata for the image, which is optional
-        /// and may be null.</param>
         /// <returns>The RGBA image, or an empty value if any dimension is not
         /// positive or the pixel size does not match the area provided.
         /// </returns>
-        public static Optional<RgbaImage> From(int width, int height, Color[] pixels, ImageMetadata metadata = null)
+        public static Optional<RgbaImage> From(int width, int height, Color[] pixels)
         {
             if (width <= 0 || height <= 0 || pixels.Length != width * height)
                 return Optional<RgbaImage>.Empty();
-
-            return new RgbaImage(width, height, pixels, metadata);
+            return new RgbaImage(width, height, pixels);
         }
 
         /// <summary>

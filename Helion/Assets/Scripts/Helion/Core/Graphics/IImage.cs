@@ -1,4 +1,5 @@
-﻿using Helion.Core.Util.Geometry;
+﻿using Helion.Core.Resource;
+using Helion.Core.Util.Geometry;
 
 namespace Helion.Core.Graphics
 {
@@ -31,8 +32,13 @@ namespace Helion.Core.Graphics
         Dimension Dimension { get; }
 
         /// <summary>
-        /// The metadata of the image.
+        /// The namespace this data was loaded from.
         /// </summary>
-        ImageMetadata Metadata { get; }
+        ResourceNamespace Namespace { get; }
+
+        /// <summary>
+        /// The offset embedded in this texture.
+        /// </summary>
+        Vec2I Offset { get; }
     }
 }

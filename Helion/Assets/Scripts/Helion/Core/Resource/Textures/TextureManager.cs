@@ -114,13 +114,7 @@ namespace Helion.Core.Resource.Textures
             {
                 foreach (TextureXImage textureXImage in textureX)
                 {
-                    int w = textureXImage.Dimension.Width;
-                    int h = textureXImage.Dimension.Height;
-                    Optional<RgbaImage> imageOpt = RgbaImage.From(w, h).Value;
-                    if (!imageOpt)
-                        throw new Exception($"Bad dimensions for TextureX image: {textureXImage.Name}");
-
-                    RgbaImage image = imageOpt.Value;
+                    RgbaImage image = new RgbaImage(textureXImage.Dimension);
 
                     foreach (TextureXPatch patch in textureXImage.Patches)
                     {

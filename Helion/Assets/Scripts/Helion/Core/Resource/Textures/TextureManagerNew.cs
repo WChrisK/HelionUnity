@@ -5,7 +5,7 @@ using Helion.Core.Graphics;
 using Helion.Core.Resource.Colors.Palettes;
 using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Util;
-using Helion.Core.Util.Logging;
+using Helion.Core.Util.Geometry;
 using Helion.Core.Util.Unity;
 using MoreLinq;
 using UnityEngine;
@@ -14,9 +14,11 @@ namespace Helion.Core.Resource.Textures
 {
     using PaletteReaderFunc = Func<byte[], ResourceNamespace, Optional<PaletteImage>>;
 
+    /// <summary>
+    /// Manages all of the texture resources in the archive.
+    /// </summary>
     public static class TextureManagerNew
     {
-        private static readonly Log Log = LogManager.Instance();
         private static readonly Shader defaultShader = Shader.Find("Doom/Default");
         private static readonly Material nullMaterial = Resources.Load<Material>("Materials/null");
 
@@ -26,34 +28,62 @@ namespace Helion.Core.Resource.Textures
         private static ResourceTracker<RgbaImage> loadedImages = new ResourceTracker<RgbaImage>();
         private static HashSet<UpperString> missingTextureNames = new HashSet<UpperString>();
 
+        /// <summary>
+        /// Gets a material for the name. If the namespace is provided, it will
+        /// give priority to that namespace. If the material cannot be found,
+        /// the null material is returned.
+        /// </summary>
+        /// <param name="name">The material name.</param>
+        /// <param name="priorityNamespace">The namespace to search for first
+        /// in.</param>
+        /// <returns>The material that was found, or the 'null material' for
+        /// rendering with.</returns>
         public static Material Material(UpperString name, ResourceNamespace priorityNamespace = ResourceNamespace.Global)
         {
-            if (materials.TryGetValue(name, priorityNamespace, out Material priorityMaterial))
-                return priorityMaterial;
+            return TryGetMaterial(name, priorityNamespace, out _);
+        }
+
+        public static Material TryGetMaterial(UpperString name, ResourceNamespace priorityNamespace,
+            out bool isNullMaterial)
+        {
+            if (materials.TryGetValue(name, priorityNamespace, out Material material))
+            {
+                isNullMaterial = false;
+                return material;
+            }
 
             // This is a heuristic to make failed lookups less expensive, as
             // there is a lot of work done to create the texture if it does
             // not exist after this.
             if (missingTextureNames.Contains(name))
+            {
+                isNullMaterial = true;
                 return nullMaterial;
+            }
 
             if (TryCreateExactNamespaceMaterial(name, priorityNamespace, out Material newPriorityMaterial))
             {
                 materials.Add(name, priorityNamespace, newPriorityMaterial);
+                isNullMaterial = false;
                 return newPriorityMaterial;
             }
 
-            if (materials.TryGetAnyValue(name, out Material nonPriorityMaterial, out _))
-                return nonPriorityMaterial;
+            if (materials.TryGetAnyValue(name, out material, out _))
+            {
+                isNullMaterial = false;
+                return material;
+            }
 
             if (TryCreateAnyNamespaceMaterial(name, out Material newMaterial, out ResourceNamespace newNamespace))
             {
                 materials.Add(name, newNamespace, newMaterial);
+                isNullMaterial = false;
                 return newMaterial;
             }
 
             missingTextureNames.Add(name);
 
+            isNullMaterial = true;
             return nullMaterial;
         }
 
@@ -78,7 +108,7 @@ namespace Helion.Core.Resource.Textures
 
             if (TextureDefinitionManager.TryGetExact(name, resourceNamespace, out TextureDefinition definition))
             {
-                RgbaImage compiledImage = TextureDefinitionToImage(definition, resourceNamespace);
+                RgbaImage compiledImage = TextureDefinitionToImage(definition);
                 loadedImages.Add(name, resourceNamespace, compiledImage);
                 material = CreateAndTrackMaterial(name, resourceNamespace, compiledImage);
                 return true;
@@ -109,7 +139,7 @@ namespace Helion.Core.Resource.Textures
 
             if (TextureDefinitionManager.TryGetAny(name, out TextureDefinition definition, out ResourceNamespace definitionNamespace))
             {
-                RgbaImage compiledImage = TextureDefinitionToImage(definition, definitionNamespace);
+                RgbaImage compiledImage = TextureDefinitionToImage(definition);
                 loadedImages.Add(name, definitionNamespace, compiledImage);
                 material = CreateAndTrackMaterial(name, definitionNamespace, compiledImage);
                 return true;
@@ -127,6 +157,25 @@ namespace Helion.Core.Resource.Textures
 
             material = null;
             newNamespace = ResourceNamespace.Global;
+            return false;
+        }
+
+        private static bool TryGetOrReadImage(UpperString name, ResourceNamespace resourceNamespace,
+            out RgbaImage rgbaImage)
+        {
+            if (loadedImages.TryGetValue(name, resourceNamespace, out rgbaImage))
+                return true;
+
+            if (DataNew.TryFind(name, out IEntry entry))
+            {
+                if (TryReadImageEntry(entry, entry.Namespace, out rgbaImage))
+                {
+                    loadedImages.Add(name, entry.Namespace, rgbaImage);
+                    return true;
+                }
+            }
+
+            rgbaImage = null;
             return false;
         }
 
@@ -151,30 +200,42 @@ namespace Helion.Core.Resource.Textures
             foreach (PaletteReaderFunc readerFunc in paletteReaders)
             {
                 Optional<PaletteImage> paletteImage = readerFunc(data, resourceNamespace);
-                if (paletteImage)
-                {
-                    rgbaImage = paletteImage.Value.ToColor(Palette);
-                    return true;
-                }
+                if (!paletteImage)
+                    continue;
+
+                rgbaImage = paletteImage.Value.ToColor(Palette);
+                return true;
             }
 
             rgbaImage = null;
             return false;
         }
 
-        private static RgbaImage TextureDefinitionToImage(TextureDefinition definition, ResourceNamespace resourceNamespace)
+        private static RgbaImage TextureDefinitionToImage(TextureDefinition definition)
         {
-            if (definition.Width <= 0 || definition.Height <= 0)
+            RgbaImage newImage = new RgbaImage(definition.Dimension)
             {
-                Log.Error("Bad texture dimensions for texture definition: ", definition.Name);
-                return RgbaImage.From(4, 4).Value;
+                Namespace = definition.Namespace,
+                Offset = definition.Offset
+            };
+
+            foreach (TextureDefinitionPatch patch in definition.Patches)
+            {
+                if (TryGetOrReadImage(patch.Name, patch.Namespace, out RgbaImage image))
+                {
+                    Vec2I position = patch.Origin;
+                    if (patch.UseOffsets)
+                        position += image.Offset;
+
+                    // TODO: Handle the other fields on the patch (ex: flipping, rotation).
+
+                    newImage.DrawOntoThis(image, position);
+                }
+                else
+                    throw new Exception($"Cannot find image patch {patch.Name} in texture definition {definition.Name}");
             }
 
-            RgbaImage image = RgbaImage.From(definition.Width, definition.Height).Value;
-
-            // TODO: Fill in image here.
-
-            return image;
+            return newImage;
         }
 
         private static Material CreateAndTrackMaterial(UpperString name, ResourceNamespace resourceNamespace,

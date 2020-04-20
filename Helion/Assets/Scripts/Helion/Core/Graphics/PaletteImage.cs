@@ -24,39 +24,18 @@ namespace Helion.Core.Graphics
         /// </remarks>
         public const short TransparentIndex = 256;
 
-        public Dimension Dimension { get; }
         public int Width => Dimension.Width;
         public int Height => Dimension.Height;
         public int Area => Dimension.Area;
-        public ImageMetadata Metadata { get; }
+        public Dimension Dimension { get; }
+        public ResourceNamespace Namespace { get; set; } = ResourceNamespace.Global;
+        public Vec2I Offset { get; set; } = Vec2I.Zero;
         public readonly short[] Indices;
 
-        private PaletteImage(int width, int height, short[] indices, ImageMetadata metadata)
+        private PaletteImage(int width, int height, short[] indices)
         {
             Dimension = new Dimension(width, height);
             Indices = indices;
-            Metadata = new ImageMetadata(metadata);
-        }
-
-        /// <summary>
-        /// Creates an empty palette image from a given width, height, and
-        /// possibly metadata. The image contents are undefined.
-        /// </summary>
-        /// <param name="width">The width of the image. Should not be negative.
-        /// </param>
-        /// <param name="height">The height of the image. Should not be
-        /// negative.</param>
-        /// <param name="metadata">The metadata to use, or null if we want a
-        /// default one.</param>
-        /// <returns>The palette image, or null if the parameters are invalid
-        /// and one cannot be made (ex: negative dimension).</returns>
-        public static Optional<PaletteImage> From(int width, int height, ImageMetadata metadata = null)
-        {
-            if (width <= 0 || height <= 0)
-                return Optional<PaletteImage>.Empty();
-
-            short[] data = Arrays.Create(width * height, TransparentIndex);
-            return new PaletteImage(width, height, data, metadata);
         }
 
         /// <summary>
@@ -111,8 +90,11 @@ namespace Helion.Core.Graphics
                     }
                 }
 
-                ImageMetadata metadata = new ImageMetadata(offset, resourceNamespace);
-                return new PaletteImage(width, height, indices, metadata);
+                return new PaletteImage(width, height, indices)
+                {
+                    Namespace = resourceNamespace,
+                    Offset = offset
+                };
             }
             catch
             {
@@ -156,8 +138,11 @@ namespace Helion.Core.Graphics
             for (int i = 0; i < area; i++)
                 indices[i] = data[i];
 
-            ImageMetadata metadata = new ImageMetadata(Vec2I.Zero, resourceNamespace);
-            return new PaletteImage(width, height, indices, metadata);
+            return new PaletteImage(width, height, indices)
+            {
+                Namespace = resourceNamespace,
+                Offset = Vec2I.Zero
+            };
         }
 
         /// <summary>
@@ -196,8 +181,9 @@ namespace Helion.Core.Graphics
                 pixels[i] = color;
             }
 
-            RgbaImage image = RgbaImage.From(Width, Height, pixels, Metadata).Value;
-            Debug.Assert(image != null, "Should never fail converting a valid palette image to RGBA");
+            RgbaImage image = RgbaImage.From(Width, Height, pixels).Value;
+            image.Namespace = Namespace;
+            image.Offset = Offset;
             return image;
         }
     }
