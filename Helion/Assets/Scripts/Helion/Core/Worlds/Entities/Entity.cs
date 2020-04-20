@@ -12,6 +12,11 @@ namespace Helion.Core.Worlds.Entities
     public class Entity : MonoBehaviour, ITickable, IDisposable
     {
         /// <summary>
+        /// A unique ID for the entity.
+        /// </summary>
+        public int ID;
+
+        /// <summary>
         /// The definition that makes up this entity.
         /// </summary>
         public ActorDefinition Definition;
@@ -39,7 +44,7 @@ namespace Helion.Core.Worlds.Entities
 
         void Update()
         {
-            // TODO: Update sprite mesh and rotation image.
+            UpdateSpriteMesh();
         }
 
         void FixedUpdate()
@@ -69,6 +74,19 @@ namespace Helion.Core.Worlds.Entities
         {
             Destroy(gameObject);
             entityNode.List.Remove(entityNode);
+        }
+
+        private void UpdateSpriteMesh()
+        {
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+            if (!meshRenderer)
+                return;
+
+            meshRenderer.sharedMaterial = frameTracker.Frame.SpriteRotations[0];
+
+            // MeshFilter meshFilter = GetComponent<MeshFilter>();
+            // if (!meshFilter)
+            //     return;
         }
     }
 }

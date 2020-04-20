@@ -16,6 +16,7 @@ namespace Helion.Core.Worlds
     public class World : ITickable, IDisposable
     {
         public int GameTick { get; private set; }
+        public int ConsolePlayerNumber = 1;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
         private readonly GameObject gameObject;
@@ -57,8 +58,6 @@ namespace Helion.Core.Worlds
 
         public void Tick()
         {
-            Entities.ForEach(entity => entity.Tick());
-
             GameTick++;
             timer.Restart();
         }

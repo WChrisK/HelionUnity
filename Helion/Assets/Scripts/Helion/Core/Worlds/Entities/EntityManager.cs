@@ -30,6 +30,7 @@ namespace Helion.Core.Worlds.Entities
         private readonly MapGeometry geometry;
         private readonly LinkedList<Entity> entities = new LinkedList<Entity>();
         private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
+        private int nextAvailableID;
 
         public EntityManager(World owningWorld, GameObject parentObject, MapGeometry mapGeometry, IMap map)
         {
@@ -103,13 +104,14 @@ namespace Helion.Core.Worlds.Entities
 
         private Entity CreateEntity(ActorDefinition definition, Vector2 position)
         {
-            GameObject entityObject = new GameObject($"{definition.Name}");
+            GameObject entityObject = new GameObject($"{definition.Name} ({nextAvailableID})");
             entityCollectorGameObject.SetChild(entityObject);
 
             // Note: The definition should be set immediately on the entity
             // as other code relies on it. We should consider restructuring
             // this so the dependency is not required.
             Entity entity = entityObject.AddComponent<Entity>();
+            entity.ID = nextAvailableID++;
             entity.Definition = definition;
             entity.world = world;
             entity.frameTracker = new FrameTracker(entity);
@@ -123,10 +125,13 @@ namespace Helion.Core.Worlds.Entities
             entity.Position = worldPos;
             entity.PrevPosition = worldPos;
 
-            float diameter = entity.Definition.Properties.Radius * 2;
-            BoxCollider collider = entityObject.AddComponent<BoxCollider>();
-            collider.center = new Vector3(0, height / 2, 0).MapUnit();
-            collider.size = new Vector3(diameter, height, diameter).MapUnit();
+            if (entity.Definition.Flags.Solid)
+            {
+                float diameter = entity.Definition.Properties.Radius * 2;
+                BoxCollider collider = entityObject.AddComponent<BoxCollider>();
+                collider.center = new Vector3(0, height / 2, 0).MapUnit();
+                collider.size = new Vector3(diameter, height, diameter).MapUnit();
+            }
 
             CreateSpriteBillboardMesh(entity, sector);
 
@@ -174,7 +179,6 @@ namespace Helion.Core.Worlds.Entities
                 colors = colors
             };
             meshFilter.sharedMesh = mesh;
-            mesh.RecalculateBounds();
         }
     }
 }

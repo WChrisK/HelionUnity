@@ -1,6 +1,7 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
@@ -18,7 +19,14 @@ namespace Helion.Core.Worlds.Entities
         void Update()
         {
             UpdateCamera();
-            // TODO: Update rotation on entity to match camera.
+            HandleSpriteIfConsolePlayer();
+        }
+
+        private void HandleSpriteIfConsolePlayer()
+        {
+            MeshRenderer MeshRenderer = GetComponent<MeshRenderer>();
+            if (MeshRenderer)
+                MeshRenderer.enabled = (entity.world.ConsolePlayerNumber != PlayerNumber);
         }
 
         void FixedUpdate()

@@ -1,6 +1,7 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.States;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
+using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
 {
