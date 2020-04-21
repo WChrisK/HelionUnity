@@ -3,6 +3,7 @@ using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds.Geometry.Lines
 {
@@ -12,7 +13,7 @@ namespace Helion.Core.Worlds.Geometry.Lines
         public readonly Line2 Segment;
         public readonly Unpeg Unpeg;
         public readonly Side Front;
-        public readonly Optional<Side> Back = Optional<Side>.Empty();
+        public readonly Optional<Side> Back = Empty;
 
         public Line(DoomLinedef linedef, IList<Sector> sectors, GameObject parentGameObject)
         {

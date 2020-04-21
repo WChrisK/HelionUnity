@@ -7,6 +7,7 @@ using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Parser;
 using Helion.Core.Util.Parser.Preprocessor;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate.Parser
 {
@@ -19,7 +20,7 @@ namespace Helion.Core.Resource.Decorate.Parser
 
         public readonly List<ActorDefinition> Definitions = new List<ActorDefinition>();
         private readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
-        private ActorDefinition currentDefinition = new ActorDefinition("", Optional<ActorDefinition>.Empty());
+        private ActorDefinition currentDefinition = new ActorDefinition("", Empty);
 
         public DecorateParser(IArchive archive) : base(CreateIncludePreprocessorWith(archive))
         {

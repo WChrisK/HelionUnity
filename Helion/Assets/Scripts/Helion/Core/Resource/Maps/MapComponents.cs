@@ -1,5 +1,6 @@
 ﻿using Helion.Core.Archives;
 using Helion.Core.Util;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Maps
 {
@@ -9,28 +10,28 @@ namespace Helion.Core.Resource.Maps
     public class MapComponents
     {
         public UpperString Name;
-        public Optional<IEntry> Marker { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Vertices { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Sectors { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Sidedefs { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Linedefs { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Things { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Segments { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Subsectors { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Nodes { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Blockmap { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Reject { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> TextMap { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> ZNodes { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Dialogue { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Behavior { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> Scripts { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> EndMap { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> GLMarker { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> GLVertices { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> GLSegments { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> GLSubsectors { get; private set; } = Optional<IEntry>.Empty();
-        public Optional<IEntry> GLNodes { get; private set; } = Optional<IEntry>.Empty();
+        public Optional<IEntry> Marker { get; private set; } = Empty;
+        public Optional<IEntry> Vertices { get; private set; } = Empty;
+        public Optional<IEntry> Sectors { get; private set; } = Empty;
+        public Optional<IEntry> Sidedefs { get; private set; } = Empty;
+        public Optional<IEntry> Linedefs { get; private set; } = Empty;
+        public Optional<IEntry> Things { get; private set; } = Empty;
+        public Optional<IEntry> Segments { get; private set; } = Empty;
+        public Optional<IEntry> Subsectors { get; private set; } = Empty;
+        public Optional<IEntry> Nodes { get; private set; } = Empty;
+        public Optional<IEntry> Blockmap { get; private set; } = Empty;
+        public Optional<IEntry> Reject { get; private set; } = Empty;
+        public Optional<IEntry> TextMap { get; private set; } = Empty;
+        public Optional<IEntry> ZNodes { get; private set; } = Empty;
+        public Optional<IEntry> Dialogue { get; private set; } = Empty;
+        public Optional<IEntry> Behavior { get; private set; } = Empty;
+        public Optional<IEntry> Scripts { get; private set; } = Empty;
+        public Optional<IEntry> EndMap { get; private set; } = Empty;
+        public Optional<IEntry> GLMarker { get; private set; } = Empty;
+        public Optional<IEntry> GLVertices { get; private set; } = Empty;
+        public Optional<IEntry> GLSegments { get; private set; } = Empty;
+        public Optional<IEntry> GLSubsectors { get; private set; } = Empty;
+        public Optional<IEntry> GLNodes { get; private set; } = Empty;
 
         /// <summary>
         /// Gets the map type based on what entries are present.

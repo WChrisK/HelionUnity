@@ -3,6 +3,7 @@ using Helion.Core.Resource.Maps.Shared;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds.Geometry.Bsp
 {
@@ -32,7 +33,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
         public static Optional<BspTree> From(IList<GLNode> glNodes, List<Subsector> subsectors)
         {
             if (glNodes.Empty() || subsectors.Empty())
-                return Optional<BspTree>.Empty();
+                return Empty;
 
             try
             {
@@ -42,7 +43,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
             }
             catch
             {
-                return Optional<BspTree>.Empty();
+                return Empty;
             }
         }
 

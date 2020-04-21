@@ -5,6 +5,7 @@ using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Maps.Shared
 {
@@ -205,7 +206,7 @@ namespace Helion.Core.Resource.Maps.Shared
             bool onRightSide, IList<DoomLinedef> linedefs, IList<DoomSidedef> sidedefs)
         {
             if (linedefIndex >= linedefs.Count)
-                return (Optional<DoomLinedef>.Empty(), Optional<DoomSidedef>.Empty());
+                return (Empty, Empty);
 
             DoomLinedef linedef = linedefs[linedefIndex];
             DoomSidedef sidedef = onRightSide ? linedef.Front : linedef.Back.Value;

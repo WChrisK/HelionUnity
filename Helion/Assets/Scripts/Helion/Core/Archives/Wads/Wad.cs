@@ -7,6 +7,7 @@ using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Extensions;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Archives.Wads
 {
@@ -49,8 +50,20 @@ namespace Helion.Core.Archives.Wads
             }
             catch
             {
-                return Optional<Wad>.Empty();
+                return Empty;
             }
+        }
+
+        /// <summary>
+        /// A helper method that reads a wad file but returns the interface
+        /// type.
+        /// </summary>
+        /// <param name="path">The path to read the wad from.</param>
+        /// <returns>The wad file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<IArchive> FromArchive(string path)
+        {
+            return From(path).Map(val => (IArchive)val);
         }
 
         /// <summary>
@@ -70,15 +83,15 @@ namespace Helion.Core.Archives.Wads
             }
             catch
             {
-                return Optional<Wad>.Empty();
+                return Empty;
             }
         }
 
         public Optional<IEntry> Find(UpperString name)
         {
-            return nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries) ?
-                existingEntries.FirstOrDefault() :
-                Optional<IEntry>.Empty();
+            if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
+                return existingEntries.FirstOrDefault();
+            return Empty;
         }
 
         public Optional<IEntry> Find(UpperString name, ResourceNamespace type)
@@ -88,7 +101,7 @@ namespace Helion.Core.Archives.Wads
                     if (entry.Namespace == type)
                         return entry;
 
-            return Optional<IEntry>.Empty();
+            return Empty;
         }
 
         public Optional<IEntry> FindPath(UpperString path) => Find(path);

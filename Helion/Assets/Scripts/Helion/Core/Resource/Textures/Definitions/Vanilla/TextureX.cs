@@ -6,6 +6,7 @@ using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using MoreLinq;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Textures.Definitions.Vanilla
 {
@@ -53,7 +54,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
             case '2':
                 return From(2, entry.Data);
             default:
-                return Optional<TextureX>.Empty();
+                return Empty;
             }
         }
 
@@ -85,7 +86,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
                     reader.Offset = offset;
                     Optional<TextureXImage> imageOptional = TextureXImage.From(reader);
                     if (!imageOptional)
-                        return Optional<TextureX>.Empty();
+                        return Empty;
 
                     // Unfortunately we have to follow the specification as per
                     // the ZDoom wiki:  "...however if a texture is defined
@@ -100,7 +101,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
             }
             catch
             {
-                return Optional<TextureX>.Empty();
+                return Empty;
             }
         }
 
@@ -113,9 +114,9 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
         /// for some definition, null if it cannot find it.</returns>
         public Optional<TextureXImage> Find(UpperString name)
         {
-            return images.TryGetValue(name, out TextureXImage image) ?
-                image :
-                Optional<TextureXImage>.Empty();
+            if (images.TryGetValue(name, out TextureXImage image))
+                return image;
+            return Empty;
         }
 
         public IEnumerator<TextureXImage> GetEnumerator() => images.Values.GetEnumerator();

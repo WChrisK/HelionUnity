@@ -1,5 +1,6 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Core.Util;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate.Definitions.Properties.Types
 {
@@ -7,7 +8,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties.Types
     {
         public int Number;
         public SpawnGameMode Mode;
-        public Optional<UpperString> Team = Optional<UpperString>.Empty();
+        public Optional<UpperString> Team = Empty;
 
         public SpawnInfo()
         {

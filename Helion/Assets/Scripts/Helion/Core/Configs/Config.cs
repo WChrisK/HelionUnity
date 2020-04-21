@@ -7,6 +7,7 @@ using Helion.Core.Configs.Fields;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Configs
 {
@@ -48,7 +49,7 @@ namespace Helion.Core.Configs
             }
             catch
             {
-                return Optional<Config>.Empty();
+                return Empty;
             }
         }
 
@@ -68,7 +69,7 @@ namespace Helion.Core.Configs
             }
             catch
             {
-                return Optional<Config>.Empty();
+                return Empty;
             }
         }
 

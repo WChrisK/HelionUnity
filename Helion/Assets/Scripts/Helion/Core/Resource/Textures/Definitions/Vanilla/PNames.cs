@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Textures.Definitions.Vanilla
 {
@@ -49,7 +50,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
             }
             catch
             {
-                return Optional<PNames>.Empty();
+                return Empty;
             }
         }
 

@@ -6,6 +6,7 @@ using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
 using static Helion.Core.Util.Extensions.EnumerableExtensions;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Textures.Definitions.Vanilla
 {
@@ -85,7 +86,7 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
             }
             catch
             {
-                return Optional<TextureXImage>.Empty();
+                return Empty;
             }
         }
     }

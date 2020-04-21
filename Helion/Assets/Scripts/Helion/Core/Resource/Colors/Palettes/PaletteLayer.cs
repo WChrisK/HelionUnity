@@ -1,6 +1,7 @@
 ﻿using System;
 using Helion.Core.Util;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Colors.Palettes
 {
@@ -31,7 +32,7 @@ namespace Helion.Core.Resource.Colors.Palettes
         public static Optional<PaletteLayer> From(byte[] data, int dataOffset)
         {
             if (dataOffset < 0 || dataOffset + BytesPerLayer > data.Length)
-                return Optional<PaletteLayer>.Empty();
+                return Empty;
 
             Color[] colors = new Color[ColorsPerLayer];
             for (int i = 0; i < ColorsPerLayer; i++)

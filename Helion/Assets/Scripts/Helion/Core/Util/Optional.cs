@@ -12,6 +12,9 @@ namespace Helion.Core.Util
         /// <summary>
         /// The instance to use for creating optionals.
         /// </summary>
+        /// <remarks>
+        /// You can use: using static Helion.Core.Util.OptionalHelper;
+        /// </remarks>
         public static readonly OptionalHelper Empty = new OptionalHelper();
 
         private OptionalHelper()
@@ -59,16 +62,6 @@ namespace Helion.Core.Util
         }
 
         /// <summary>
-        /// Creates an empty optional.
-        /// </summary>
-        /// <remarks>
-        /// Intended to be for return values where we cannot do something like
-        /// `return null;` because it would return a null optional and defeat
-        /// the purpose of this class.
-        /// </remarks>
-        public static Optional<T> Empty() => new Optional<T>(null);
-
-        /// <summary>
         /// Allows us to use this in boolean expressions.
         /// </summary>
         /// <param name="self">The optional value.</param>
@@ -92,6 +85,12 @@ namespace Helion.Core.Util
         /// <param name="value">The value to make an optional from.</param>
         /// <returns>The optional for the value.</returns>
         public static implicit operator Optional<T>(T value) => new Optional<T>(value);
+
+        /// <summary>
+        /// Creates an empty optional.
+        /// </summary>
+        /// <returns>An empty optional.</returns>
+        public static Optional<T> Empty() => new Optional<T>(null);
 
         /// <summary>
         /// Returns a new optional that is a shallow copy of the old one. This

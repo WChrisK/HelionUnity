@@ -6,6 +6,7 @@ using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using MoreLinq;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate.Definitions.Properties
 {
@@ -13,7 +14,7 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
     {
         public int? Accuracy; // Unimplemented!
         public ThingSpecialActivationType Activation = ThingSpecialActivationType.Default; // Unimplemented!
-        public Optional<UpperString> ActiveSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> ActiveSound = Empty; // Unimplemented!
         public float Alpha = 1.0f; // Unimplemented!
         public int? AmmoBackpackAmount; // Unimplemented!
         public int? AmmoBackpackMaxAmount; // Unimplemented!
@@ -26,27 +27,27 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int? ArmorSaveAmount; // Unimplemented!
         public float? ArmorSavePercent; // Unimplemented!
         public SpecialArgs Args = new SpecialArgs();
-        public Optional<UpperString> AttackSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> AttackSound = Empty; // Unimplemented!
         public Color? BloodColor; // Unimplemented!
         public readonly List<UpperString> BloodType = new List<UpperString>(); // Unimplemented!
         public int BounceCount = int.MaxValue; // Unimplemented!
         public float BounceFactor = 0.7f; // Unimplemented!
-        public Optional<UpperString> BounceSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> BounceSound = Empty; // Unimplemented!
         public BounceType BounceType = BounceType.None; // Unimplemented!
         public int? BurnHeight; // Unimplemented!
         public int? CameraHeight; // Unimplemented!
         public int ConversationID; // Unimplemented!
-        public Optional<UpperString> CrushPainSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> CrushPainSound = Empty; // Unimplemented!
         public Damage? Damage; // Unimplemented!
         public readonly DamageFactor DamageFactor = new DamageFactor(); // Unimplemented!
-        public Optional<UpperString> DamageType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> DamageType = Empty; // Unimplemented!
         public int? DeathHeight; // Unimplemented!
-        public Optional<UpperString> DeathSound = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> DeathType = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> Decal = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> DeathSound = Empty; // Unimplemented!
+        public Optional<UpperString> DeathType = Empty; // Unimplemented!
+        public Optional<UpperString> Decal = Empty; // Unimplemented!
         public int? DefThreshold; // Unimplemented!
         public int? DesignatedTeam; // Unimplemented!
-        public Optional<UpperString> DistanceCheck = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> DistanceCheck = Empty; // Unimplemented!
         public readonly List<DropItem> DropItem = new List<DropItem>(); // Unimplemented!
         public int? ExplosionDamage; // Unimplemented!
         public int? ExplosionRadius; // Unimplemented!
@@ -64,67 +65,67 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public readonly HealthLowMessage HealthLowMessage = new HealthLowMessage(); // Unimplemented!
         public AutoUseType HealthPickupAutoUse = AutoUseType.Never; // Unimplemented!
         public int Height = 16;
-        public Optional<string> HitObituary = Optional<string>.Empty(); // Unimplemented!
-        public Optional<UpperString> HowlSound = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> InventoryAltHUDIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<string> HitObituary = Empty; // Unimplemented!
+        public Optional<UpperString> HowlSound = Empty; // Unimplemented!
+        public Optional<UpperString> InventoryAltHUDIcon = Empty; // Unimplemented!
         public int? InventoryAmount; // Unimplemented!
         public int? InventoryDefMaxAmount; // Unimplemented!
         public List<UpperString> InventoryForbiddenTo = new List<UpperString>(); // Unimplemented!
         public int? InventoryGiveQuest; // Unimplemented!
-        public Optional<UpperString> InventoryIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryIcon = Empty; // Unimplemented!
         public int InventoryInterHubAmount; // Unimplemented!
         public int InventoryMaxAmount; // Unimplemented!
-        public Optional<UpperString> InventoryPickupFlash = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> InventoryPickupMessage = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> InventoryPickupSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryPickupFlash = Empty; // Unimplemented!
+        public Optional<UpperString> InventoryPickupMessage = Empty; // Unimplemented!
+        public Optional<UpperString> InventoryPickupSound = Empty; // Unimplemented!
         public int? InventoryRespawnTics; // Unimplemented!
         public List<UpperString> InventoryRestrictedTo = new List<UpperString>(); // Unimplemented!
-        public Optional<UpperString> InventoryUseSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> InventoryUseSound = Empty; // Unimplemented!
         public int Mass = 100; // Unimplemented!
         public int MaxStepHeight = 24; // Unimplemented!
         public int MaxDropOffHeight = 24; // Unimplemented!
         public int? MaxTargetRange; // Unimplemented!
         public int? MeleeDamage; // Unimplemented!
         public int MeleeRange = 44; // Unimplemented!
-        public Optional<UpperString> MeleeSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> MeleeSound = Empty; // Unimplemented!
         public int? MeleeThreshold; // Unimplemented!
         public int MinMissileChance = 200; // Unimplemented!
         public int? MissileHeight; // Unimplemented!
-        public Optional<UpperString> MissileType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> MissileType = Empty; // Unimplemented!
         public int? MorphProjectileDuration; // Unimplemented!
-        public Optional<UpperString> MorphProjectileMonsterClass = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> MorphProjectileMorphFlash = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> MorphProjectileMonsterClass = Empty; // Unimplemented!
+        public Optional<UpperString> MorphProjectileMorphFlash = Empty; // Unimplemented!
         public MorphStyle? MorphProjectileMorphStyle; // Unimplemented!
-        public Optional<UpperString> MorphProjectilePlayerClass = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> MorphProjectileUnMorphFlash = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<string> Obituary = Optional<string>.Empty(); // Unimplemented!
+        public Optional<UpperString> MorphProjectilePlayerClass = Empty; // Unimplemented!
+        public Optional<UpperString> MorphProjectileUnMorphFlash = Empty; // Unimplemented!
+        public Optional<string> Obituary = Empty; // Unimplemented!
         public readonly PainChance PainChance = new PainChance(); // Unimplemented!
-        public Optional<UpperString> PainSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PainSound = Empty; // Unimplemented!
         public int PainThreshold; // Unimplemented!
-        public Optional<UpperString> PainType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PainType = Empty; // Unimplemented!
         public float PlayerAirCapacity = 1.0f; // Unimplemented!
         public float PlayerAttackZOffset; // Unimplemented!
         public DecorateRange<int> PlayerColorRange = new DecorateRange<int>(0, 0); // Unimplemented!
-        public Optional<UpperString> PlayerCrouchSprite = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerCrouchSprite = Empty; // Unimplemented!
         public readonly DamageScreenColor PlayerDamageScreenColor = new DamageScreenColor(); // Unimplemented!
-        public Optional<UpperString> PlayerDisplayName = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> PlayerFace = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerDisplayName = Empty; // Unimplemented!
+        public Optional<UpperString> PlayerFace = Empty; // Unimplemented!
         public DecorateRange<float> PlayerFallingScreamSpeed = new DecorateRange<float>(35, 45); // Unimplemented!
-        public Optional<UpperString> PlayerFlechetteType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerFlechetteType = Empty; // Unimplemented!
         public RunSpeed PlayerForwardMove = new RunSpeed(1.0f, 1.0f); // Unimplemented!
         public float PlayerGruntSpeed = 12.0f; // Unimplemented!
-        public Optional<UpperString> PlayerHealRadiusType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerHealRadiusType = Empty; // Unimplemented!
         public HexenArmor? PlayerHexenArmor; // Unimplemented!
         public float PlayerJumpZ = 8.0f; // Unimplemented!
         public int PlayerMaxHealth = 100; // Unimplemented!
-        public Optional<UpperString> PlayerMorphWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerMorphWeapon = Empty; // Unimplemented!
         public int PlayerMugShotMaxHealth; // Unimplemented!
-        public Optional<UpperString> PlayerPortrait = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerPortrait = Empty; // Unimplemented!
         public int PlayerRunHealth; // Unimplemented!
-        public Optional<UpperString> PlayerScoreIcon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerScoreIcon = Empty; // Unimplemented!
         public RunSpeed PlayerSideMove = new RunSpeed(1.0f, 1.0f); // Unimplemented!
-        public Optional<UpperString> PlayerSoundClass = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> PlayerSpawnClass = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PlayerSoundClass = Empty; // Unimplemented!
+        public Optional<UpperString> PlayerSpawnClass = Empty; // Unimplemented!
         public readonly Dictionary<UpperString, int> PlayerStartItem = new Dictionary<UpperString, int>(); // Unimplemented!
         public int PlayerTeleportFreezeTime = 18; // Unimplemented!
         public float PlayerUseRange = 64.0f; // Unimplemented!
@@ -132,19 +133,19 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public float PlayerViewBob = 1.0f; // Unimplemented!
         public float PlayerViewHeight = 41.0f;
         public PoisonDamage? PoisonDamage; // Unimplemented!
-        public Optional<UpperString> PoisonDamageType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PoisonDamageType = Empty; // Unimplemented!
         public PowerupColor? PowerupColor; // Unimplemented!
         public PowerupColormap? PowerupColormap; // Unimplemented!
         public int? PowerupDuration; // Unimplemented!
         public RenderStyle PowerupMode = RenderStyle.Normal; // Unimplemented!
         public int? PowerupStrength; // Unimplemented!
-        public Optional<UpperString> PowerupType = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PowerupType = Empty; // Unimplemented!
         public bool PowerSpeedNoTrail; // Unimplemented!
         public int? ProjectileKickBack; // Unimplemented!
         public int? ProjectilePassHeight; // Unimplemented!
         public float PushFactor = 0.25f; // Unimplemented!
         public int? PuzzleItemNumber; // Unimplemented!
-        public Optional<UpperString> PuzzleItemFailMessage = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> PuzzleItemFailMessage = Empty; // Unimplemented!
         public int Radius = 20;
         public float RadiusDamageFactor = 1.0f; // Unimplemented!
         public int ReactionTime = 8; // Unimplemented!
@@ -154,18 +155,18 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int RipLevelMin; // Unimplemented!
         public int? RipperLevel; // Unimplemented!
         public float Scale = 1.0f; // Unimplemented!
-        public Optional<UpperString> SeeSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> SeeSound = Empty; // Unimplemented!
         public float SelfDamageFactor = 1.0f; // Unimplemented!
         public int SpawnID; // Unimplemented!
-        public Optional<SpawnInfo> SpawnInfo = Optional<SpawnInfo>.Empty(); // Unimplemented!
-        public Optional<UpperString> Species = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<SpawnInfo> SpawnInfo = Empty; // Unimplemented!
+        public Optional<UpperString> Species = Empty; // Unimplemented!
         public float Speed; // Unimplemented!
         public int? SpriteAngle; // Unimplemented!
         public int? SpriteRotation; // Unimplemented!
         public int? Stamina; // Unimplemented!
         public float StealthAlpha; // Unimplemented!
         public Color? StencilColor; // Unimplemented!
-        public Optional<UpperString> Tag = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> Tag = Empty; // Unimplemented!
         public UpperString TeleFogDestType = "TELEPORTFOG"; // Unimplemented!
         public UpperString TeleFogSourceType = "TELEPORTFOG"; // Unimplemented!
         public int Threshold; // Unimplemented!
@@ -176,13 +177,13 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public int? VisibleToTeam; // Unimplemented!
         public float? VSpeed; // Unimplemented!
         public float WallBounceFactor = 0.7f; // Unimplemented!
-        public Optional<UpperString> WallBounceSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WallBounceSound = Empty; // Unimplemented!
         public int? WeaponAmmoGive; // Unimplemented!
         public int? WeaponAmmoGive1; // Unimplemented!
         public int? WeaponAmmoGive2; // Unimplemented!
-        public Optional<UpperString> WeaponAmmoType = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> WeaponAmmoType1 = Optional<UpperString>.Empty(); // Unimplemented!
-        public Optional<UpperString> WeaponAmmoType2 = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType = Empty; // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType1 = Empty; // Unimplemented!
+        public Optional<UpperString> WeaponAmmoType2 = Empty; // Unimplemented!
         public int? WeaponAmmoUse; // Unimplemented!
         public int? WeaponAmmoUse1; // Unimplemented!
         public int? WeaponAmmoUse2; // Unimplemented!
@@ -195,15 +196,15 @@ namespace Helion.Core.Resource.Decorate.Definitions.Properties
         public float? WeaponLookScale; // Unimplemented!
         public int? WeaponMinSelectionAmmo1; // Unimplemented!
         public int? WeaponMinSelectionAmmo2; // Unimplemented!
-        public Optional<UpperString> WeaponReadySound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponReadySound = Empty; // Unimplemented!
         public int? WeaponSelectionOrder; // Unimplemented!
-        public Optional<UpperString> WeaponSisterWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponSisterWeapon = Empty; // Unimplemented!
         public int? WeaponSlotNumber; // Unimplemented!
         public float? WeaponSlotPriority; // Unimplemented!
-        public Optional<UpperString> WeaponUpSound = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponUpSound = Empty; // Unimplemented!
         public int? WeaponYAdjust; // Unimplemented!
         public int? WeaponPieceNumber; // Unimplemented!
-        public Optional<UpperString> WeaponPieceWeapon = Optional<UpperString>.Empty(); // Unimplemented!
+        public Optional<UpperString> WeaponPieceWeapon = Empty; // Unimplemented!
         public int? WeaveIndexXY; // Unimplemented!
         public int? WeaveIndexZ; // Unimplemented!
         public int WoundHealth; // Unimplemented!

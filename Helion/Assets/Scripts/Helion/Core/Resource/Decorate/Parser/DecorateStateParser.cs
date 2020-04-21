@@ -6,7 +6,7 @@ using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
-using JetBrains.Annotations;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate.Parser
 {
@@ -66,7 +66,7 @@ namespace Helion.Core.Resource.Decorate.Parser
         private ActorFlowControl ReadGotoLabel()
         {
             Optional<UpperString> label = ConsumeIdentifier().AsUpper();
-            Optional<UpperString> parent = Optional<UpperString>.Empty();
+            Optional<UpperString> parent = Empty;
             int offset = 0;
 
             if (ConsumeIf(':'))
@@ -289,7 +289,7 @@ namespace Helion.Core.Resource.Decorate.Parser
                 return new ActorActionFunction(functionName);
             }
 
-            return Optional<ActorActionFunction>.Empty();
+            return Empty;
         }
 
         private void ConsumeActorStateFrames(UpperString sprite)

@@ -6,6 +6,7 @@ using System.Linq;
 using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Archives.PK3s
 {
@@ -62,13 +63,24 @@ namespace Helion.Core.Archives.PK3s
             }
             catch
             {
-                return Optional<PK3>.Empty();
+                return Empty;
             }
             finally
             {
                 zip?.Dispose();
                 fileStream?.Dispose();
             }
+        }
+        /// <summary>
+        /// A helper method that reads a PK3 file but returns the interface
+        /// type.
+        /// </summary>
+        /// <param name="path">The path to read the PK3 from.</param>
+        /// <returns>The PK3 file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<IArchive> FromArchive(string path)
+        {
+            return From(path).Map(val => (IArchive)val);
         }
 
         /// <summary>
@@ -87,9 +99,9 @@ namespace Helion.Core.Archives.PK3s
 
         public Optional<IEntry> Find(UpperString name)
         {
-            return nameToEntry.TryGetValue(name, out List<PK3Entry> existingEntries) ?
-                existingEntries.FirstOrDefault() :
-                Optional<IEntry>.Empty();
+            if (nameToEntry.TryGetValue(name, out List<PK3Entry> existingEntries))
+                return existingEntries.FirstOrDefault();
+            return Empty;
         }
 
         public Optional<IEntry> Find(UpperString name, ResourceNamespace type)
@@ -99,12 +111,14 @@ namespace Helion.Core.Archives.PK3s
                     if (entry.Namespace == type)
                         return entry;
 
-            return Optional<IEntry>.Empty();
+            return Empty;
         }
 
         public Optional<IEntry> FindPath(UpperString path)
         {
-            return pathToEntry.TryGetValue(path, out PK3Entry entry) ? entry : Optional<IEntry>.Empty();
+            if (pathToEntry.TryGetValue(path, out PK3Entry entry))
+                return entry;
+            return Empty;
         }
 
         public IEnumerable<IEntry> FindAll(UpperString name)

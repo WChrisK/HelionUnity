@@ -1,5 +1,6 @@
 ﻿using Helion.Core.Util;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate.Definitions.States
 {
@@ -9,8 +10,8 @@ namespace Helion.Core.Resource.Decorate.Definitions.States
     public class ActorFlowControl
     {
         public readonly ActorStateBranch FlowType;
-        public readonly Optional<UpperString> Parent = Optional<UpperString>.Empty();
-        public readonly Optional<UpperString> Label = Optional<UpperString>.Empty();
+        public readonly Optional<UpperString> Parent = Empty;
+        public readonly Optional<UpperString> Label = Empty;
         public readonly int Offset;
 
         public ActorFlowControl() : this(ActorStateBranch.None)

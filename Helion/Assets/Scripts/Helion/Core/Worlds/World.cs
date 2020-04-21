@@ -5,8 +5,8 @@ using Helion.Core.Util.Timing;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
-using MoreLinq;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds
 {
@@ -53,7 +53,7 @@ namespace Helion.Core.Worlds
             }
             catch
             {
-                return Optional<World>.Empty();
+                return Empty;
             }
         }
 

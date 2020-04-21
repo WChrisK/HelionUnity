@@ -3,6 +3,7 @@ using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Textures.Definitions
 {
@@ -15,7 +16,7 @@ namespace Helion.Core.Resource.Textures.Definitions
         public bool FlipY;
         public bool UseOffsets;
         public TextureRotation Rotation = TextureRotation.None;
-        public Optional<Translation> Translation = Optional<Translation>.Empty();
+        public Optional<Translation> Translation = Empty;
         public Color? Blend;
         public float Alpha = 1.0f;
         public RenderStyle RenderStyle = RenderStyle.Normal;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Util;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Colors.Palettes
 {
@@ -34,7 +35,7 @@ namespace Helion.Core.Resource.Colors.Palettes
         public static Optional<Palette> From(byte[] data)
         {
             if (data.Length < PaletteLayer.BytesPerLayer)
-                return Optional<Palette>.Empty();
+                return Empty;
 
             List<PaletteLayer> layers = new List<PaletteLayer>();
 
@@ -42,7 +43,7 @@ namespace Helion.Core.Resource.Colors.Palettes
             {
                 Optional<PaletteLayer> processedLayer = PaletteLayer.From(data, offset);
                 if (!processedLayer)
-                    return Optional<Palette>.Empty();
+                    return Empty;
 
                 layers.Add(processedLayer.Value);
             }

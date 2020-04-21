@@ -3,6 +3,7 @@ using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
 using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds.Geometry
 {
@@ -15,7 +16,7 @@ namespace Helion.Core.Worlds.Geometry
         public readonly Optional<Wall> Middle;
         public readonly Optional<Wall> Lower;
         public Vector2 Offset;
-        public Optional<Side> PartnerSide = Optional<Side>.Empty();
+        public Optional<Side> PartnerSide = Empty;
 
         public bool IsFront => ReferenceEquals(this, Line.Front);
 
@@ -29,9 +30,9 @@ namespace Helion.Core.Worlds.Geometry
 
             if (linedef.OneSided)
             {
-                Lower = Optional<Wall>.Empty();
+                Lower = Empty;
                 Middle = CreateOneSidedMiddle(this, line, linedef, sidedef, sectors, parentGameObject);
-                Upper = Optional<Wall>.Empty();
+                Upper = Empty;
             }
             else
             {
@@ -63,7 +64,7 @@ namespace Helion.Core.Worlds.Geometry
             UpperString textureName = sidedef.LowerTexture;
 
             if (lowerPlane.Height >= upperPlane.Height)
-                return Optional<Wall>.Empty();
+                return Empty;
 
             return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.Lower, parentGameObject);
         }
@@ -72,7 +73,7 @@ namespace Helion.Core.Worlds.Geometry
             DoomLinedef linedef, DoomSidedef sidedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             if (sidedef.MiddleTexture == Constants.NoTexture)
-                return Optional<Wall>.Empty();
+                return Empty;
 
             DoomSidedef partnerSide = linedef.PartnerSideOf(sidedef);
             Sector sector = sectors[sidedef.Sector.Index];
@@ -86,7 +87,7 @@ namespace Helion.Core.Worlds.Geometry
             UpperString textureName = sidedef.MiddleTexture;
 
             if (lowerPlane.Height >= upperPlane.Height)
-                return Optional<Wall>.Empty();
+                return Empty;
 
             return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.MiddleTwoSided, parentGameObject);
         }
@@ -102,7 +103,7 @@ namespace Helion.Core.Worlds.Geometry
             UpperString textureName = sidedef.UpperTexture;
 
             if (lowerPlane.Height >= upperPlane.Height)
-                return Optional<Wall>.Empty();
+                return Empty;
 
             return new Wall(side, line, isFront, textureName, lowerPlane, upperPlane, WallSection.Upper, parentGameObject);
         }

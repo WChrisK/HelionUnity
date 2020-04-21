@@ -3,6 +3,7 @@ using Helion.Core.Archives;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Textures.Definitions.Vanilla
 {
@@ -13,9 +14,9 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
     {
         private static readonly Log Log = LogManager.Instance();
 
-        private Optional<PNames> lastPnames = Optional<PNames>.Empty();
-        private Optional<TextureX> lastTexture1 = Optional<TextureX>.Empty();
-        private Optional<TextureX> lastTexture2 = Optional<TextureX>.Empty();
+        private Optional<PNames> lastPnames = Empty;
+        private Optional<TextureX> lastTexture1 = Empty;
+        private Optional<TextureX> lastTexture2 = Empty;
 
         /// <summary>
         /// Tracks a pnames/textureX entry. Does nothing if it is not one of
@@ -71,8 +72,8 @@ namespace Helion.Core.Resource.Textures.Definitions.Vanilla
                 ParseAndAddDefinitions(lastPnames.Value, lastTexture2.Value, definitions);
             }
 
-            lastTexture1 = Optional<TextureX>.Empty();
-            lastTexture2 = Optional<TextureX>.Empty();
+            lastTexture1 = Empty;
+            lastTexture2 = Empty;
             return definitions;
         }
 

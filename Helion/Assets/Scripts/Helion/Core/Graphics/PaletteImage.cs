@@ -5,6 +5,7 @@ using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Graphics
 {
@@ -58,7 +59,7 @@ namespace Helion.Core.Graphics
                 Vec2I offset = (reader.Short(), reader.Short());
 
                 if (offset.X < 0 || offset.Y < 0)
-                    return Optional<PaletteImage>.Empty();
+                    return Empty;
 
                 int[] offsets = new int[width];
                 for (int i = 0; i < width; i++)
@@ -98,7 +99,7 @@ namespace Helion.Core.Graphics
             }
             catch
             {
-                return Optional<PaletteImage>.Empty();
+                return Empty;
             }
         }
 
@@ -130,7 +131,7 @@ namespace Helion.Core.Graphics
                 height = 128;
                 break;
             default:
-                return Optional<PaletteImage>.Empty();
+                return Empty;
             }
 
             int area = width * height;

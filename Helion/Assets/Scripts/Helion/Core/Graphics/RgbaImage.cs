@@ -5,6 +5,7 @@ using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
 using Helion.Core.Util.Logging;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Graphics
 {
@@ -79,7 +80,7 @@ namespace Helion.Core.Graphics
         public static Optional<RgbaImage> From(int width, int height, Color[] pixels)
         {
             if (width <= 0 || height <= 0 || pixels.Length != width * height)
-                return Optional<RgbaImage>.Empty();
+                return Empty;
             return new RgbaImage(width, height, pixels);
         }
 

@@ -6,6 +6,7 @@ using Helion.Core.Resource.Decorate.Definitions.Types;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Decorate
 {
@@ -17,7 +18,7 @@ namespace Helion.Core.Resource.Decorate
         private static readonly ActorFlowControl stop = new ActorFlowControl(ActorStateBranch.Stop);
         private static readonly ActorFlowControl wait = new ActorFlowControl(ActorStateBranch.Wait);
         private static ActorFrameProperties MakeProperties() => new ActorFrameProperties();
-        private static Optional<ActorActionFunction> MakeNoAction() => Optional<ActorActionFunction>.Empty();
+        private static Optional<ActorActionFunction> MakeNoAction() => Empty;
 
         /// <summary>
         /// Creates a list of new default definitions that are critical to the
@@ -48,7 +49,7 @@ namespace Helion.Core.Resource.Decorate
             Optional<ActorActionFunction> genericFreezeDeath = new ActorActionFunction("A_GenericFreezeDeath");
             Optional<ActorActionFunction> freezeDeathChunks = new ActorActionFunction("A_FreezeDeathChunks");
 
-            ActorDefinition actor = new ActorDefinition("ACTOR", Optional<ActorDefinition>.Empty());
+            ActorDefinition actor = new ActorDefinition("ACTOR", Empty);
             actor.States.Labels.Add("SPAWN", 0);
             actor.States.Frames.Add(new ActorFrame(0, "TNT1A", -1, MakeProperties(), MakeNoAction(), stop, 0));
             actor.States.Labels.Add("NULL", 1);

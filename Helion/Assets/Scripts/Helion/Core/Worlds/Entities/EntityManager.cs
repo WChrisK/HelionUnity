@@ -14,6 +14,7 @@ using Helion.Core.Util.Logging;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds.Entities
 {
@@ -48,16 +49,16 @@ namespace Helion.Core.Worlds.Entities
             if (players.ContainsKey(playerNumber))
             {
                 Log.Warn("Trying to create multiple players for player ", playerNumber);
-                return Optional<Entity>.Empty();
+                return Empty;
             }
 
             Optional<ActorDefinition> actorDefinition = DecorateManager.Find("DOOMPLAYER");
             if (!actorDefinition)
-                return Optional<Entity>.Empty();
+                return Empty;
 
             Vector2? position = SpawnPoints.Coop(playerNumber);
             if (position == null)
-                return Optional<Entity>.Empty();
+                return Empty;
 
             Entity entity = CreateEntity(actorDefinition.Value, position.Value);
 

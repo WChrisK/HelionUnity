@@ -18,15 +18,11 @@ namespace Helion.Core.Archives
         public static Optional<IArchive> ReadFile(string path)
         {
             if (path.EndsWith(".wad", StringComparison.OrdinalIgnoreCase))
-            {
-                Optional<Wad> wad = Wad.From(path);
-                return wad ? wad.Value : Optional<IArchive>.Empty();
-            }
+                return Wad.FromArchive(path);
 
             // Note that by not searching for PK3 only, we indirectly support
             // reading anything that is a zip archive.
-            Optional<PK3> pk3 = PK3.From(path);
-            return pk3 ? pk3.Value : Optional<IArchive>.Empty();
+            return PK3.FromArchive(path);
         }
     }
 }

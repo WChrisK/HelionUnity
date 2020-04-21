@@ -6,6 +6,7 @@ using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
+using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Resource.Maps.Doom
 {
@@ -51,7 +52,7 @@ namespace Helion.Core.Resource.Maps.Doom
         public static Optional<IMap> From(MapComponents components)
         {
             if (!components.IsValid() || components.MapType != MapType.Doom)
-                return Optional<IMap>.Empty();
+                return Empty;
 
             try
             {
@@ -71,7 +72,7 @@ namespace Helion.Core.Resource.Maps.Doom
             }
             catch
             {
-                return Optional<IMap>.Empty();
+                return Empty;
             }
         }
 
