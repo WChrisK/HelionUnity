@@ -66,6 +66,9 @@ namespace Helion.Core.Worlds.Entities
             player.Attach(entity);
             players[playerNumber] = player;
 
+            // TODO: TEMPORARY!
+            world.ConsolePlayerEntity = entity;
+
             return entity;
         }
 

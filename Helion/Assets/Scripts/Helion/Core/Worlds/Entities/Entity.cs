@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Helion.Core.Resource.Decorate.Definitions;
+using Helion.Core.Util.Geometry;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
@@ -36,23 +37,12 @@ namespace Helion.Core.Worlds.Entities
         /// </summary>
         public Vector3 Velocity;
 
-        /// <summary>
-        /// The bit angle, where 0 is east, 65536/4 is north, 65536/2 is west,
-        /// and 65536*3/4 is south.
-        /// </summary>
-        public ushort AngleBits;
+        public BitAngle Angle;
 
         // TODO: The following sucks, we may need to extract this out so we can get a constructor...
         internal LinkedListNode<Entity> entityNode;
         internal World world;
         internal FrameTracker frameTracker;
-
-        /// <summary>
-        /// Gets the angle but in radians. East in the world (or the positive X
-        /// axis) is considered zero and this rotates counter-clockwise if we
-        /// were looking down along the X/Z plane in a birds eye view.
-        /// </summary>
-        public float AngleRadians => AngleBits * Mathf.PI / ushort.MaxValue;
 
         void Update()
         {
@@ -94,11 +84,15 @@ namespace Helion.Core.Worlds.Entities
             if (!meshRenderer)
                 return;
 
-            meshRenderer.sharedMaterial = frameTracker.Frame.SpriteRotations[0];
+            if (!world.ConsolePlayerEntity)
+                return;
 
-            // MeshFilter meshFilter = GetComponent<MeshFilter>();
-            // if (!meshFilter)
-            //     return;
+            int rotation = 0; //BitAngle.CalculateSpriteRotation(this, world.ConsolePlayerEntity);
+            meshRenderer.sharedMaterial = frameTracker.Frame.SpriteRotations[rotation];
+
+            MeshFilter meshFilter = GetComponent<MeshFilter>();
+            if (!meshFilter)
+                return;
         }
     }
 }

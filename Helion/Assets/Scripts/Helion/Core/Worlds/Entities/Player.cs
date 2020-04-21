@@ -1,7 +1,6 @@
 ﻿using Helion.Core.Resource;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
