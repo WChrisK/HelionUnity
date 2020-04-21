@@ -4,6 +4,22 @@ using UnityEngine;
 namespace Helion.Core.Util
 {
     /// <summary>
+    /// A simple class to invoke the Optional constructor with better
+    /// readability.
+    /// </summary>
+    public class OptionalHelper
+    {
+        /// <summary>
+        /// The instance to use for creating optionals.
+        /// </summary>
+        public static readonly OptionalHelper Empty = new OptionalHelper();
+
+        private OptionalHelper()
+        {
+        }
+    }
+
+    /// <summary>
     /// Indicates an element may or may not be present.
     /// </summary>
     /// <remarks>
@@ -58,6 +74,17 @@ namespace Helion.Core.Util
         /// <param name="self">The optional value.</param>
         /// <returns>True if it has a value, false if empty.</returns>
         public static implicit operator bool(Optional<T> self) => self.HasValue;
+
+        /// <summary>
+        /// A simple way to allow for more readable empty optionals. This way
+        /// you can assign the OptionalHelper.Empty to an optional field and
+        /// import the class statically so it is less cluttered instead of
+        /// calling Optional[T].Empty() to make an empty optional.
+        /// </summary>
+        /// <param name="helper">A reference that will create an empty
+        /// optional.</param>
+        /// <returns>The empty optional.</returns>
+        public static implicit operator Optional<T>(OptionalHelper helper) => new Optional<T>(null);
 
         /// <summary>
         /// A conversion value from an object to an optional.
