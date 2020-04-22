@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Helion.Core.Resource.Maps.Doom;
+using Helion.Core.Resource.MapsNew;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;

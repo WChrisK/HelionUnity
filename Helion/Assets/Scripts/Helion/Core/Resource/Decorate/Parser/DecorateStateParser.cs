@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using Helion.Core.Resource.Decorate.Definitions.States;
-using Helion.Core.Resource.Maps.Actions;
+using Helion.Core.Resource.MapsNew.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;

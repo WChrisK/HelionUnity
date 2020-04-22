@@ -4,6 +4,7 @@ using Helion.Core.Archives;
 using Helion.Core.Configs;
 using Helion.Core.Resource.Decorate;
 using Helion.Core.Resource.Maps;
+using Helion.Core.Resource.MapsNew;
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Resource.Textures;
 using Helion.Core.Resource.Textures.Definitions;

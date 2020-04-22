@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Core.Resource.Maps.Shared;
+using Helion.Core.Resource.MapsNew;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Geometry;
