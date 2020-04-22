@@ -1,4 +1,5 @@
 ﻿using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Geometry.Segments;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry.Bsp

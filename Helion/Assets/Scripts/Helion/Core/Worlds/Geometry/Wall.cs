@@ -4,6 +4,7 @@ using Helion.Core.Resource.Textures;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Geometry.Segments;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Geometry.Lines;
 using UnityEngine;

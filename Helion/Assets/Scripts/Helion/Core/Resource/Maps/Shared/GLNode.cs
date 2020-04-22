@@ -1,5 +1,6 @@
 ﻿using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Geometry.Segments;
 using UnityEngine;
 
 namespace Helion.Core.Resource.Maps.Shared

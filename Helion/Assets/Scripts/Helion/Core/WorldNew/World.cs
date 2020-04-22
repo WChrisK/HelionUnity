@@ -54,8 +54,8 @@ namespace Helion.Core.WorldNew
                 // TODO: BSP build here.
                 world = new World(map, worldGameObject);
 
-                WorldUpdater worldUpdater = worldGameObject.AddComponent<WorldUpdater>();
-                worldUpdater.World = world;
+                WorldMonoBehaviour worldMonoBehaviour = worldGameObject.AddComponent<WorldMonoBehaviour>();
+                worldMonoBehaviour.World = world;
 
                 return true;
             }

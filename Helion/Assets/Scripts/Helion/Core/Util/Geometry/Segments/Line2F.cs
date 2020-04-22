@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.Contracts;
 using UnityEngine;
 
-namespace Helion.Core.Util.Geometry
+namespace Helion.Core.Util.Geometry.Segments
 {
+    // TODO: Delete this when we're done and make Seg2F.
+
     /// <summary>
     /// A two dimensional line.
     /// </summary>

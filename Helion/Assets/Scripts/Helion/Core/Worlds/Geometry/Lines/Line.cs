@@ -2,6 +2,7 @@
 using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Geometry.Segments;
 using UnityEngine;
 using static Helion.Core.Util.OptionalHelper;
 

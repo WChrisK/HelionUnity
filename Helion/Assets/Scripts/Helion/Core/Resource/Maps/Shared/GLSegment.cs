@@ -1,6 +1,7 @@
 ﻿using Helion.Core.Resource.Maps.Doom;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
+using Helion.Core.Util.Geometry.Segments;
 
 namespace Helion.Core.Resource.Maps.Shared
 {

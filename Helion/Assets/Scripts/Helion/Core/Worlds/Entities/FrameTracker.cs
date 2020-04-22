@@ -2,7 +2,6 @@
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.WorldNew;
-using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities
 {

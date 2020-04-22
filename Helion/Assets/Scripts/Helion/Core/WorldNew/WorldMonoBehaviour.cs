@@ -6,7 +6,7 @@ namespace Helion.Core.WorldNew
     /// A component that tells a game object to update the world it is attached
     /// to.
     /// </summary>
-    public class WorldUpdater : MonoBehaviour
+    public class WorldMonoBehaviour : MonoBehaviour
     {
         /// <summary>
         /// The world to update.
