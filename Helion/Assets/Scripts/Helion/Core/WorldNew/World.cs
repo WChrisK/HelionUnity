@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace Helion.Core.WorldNew
 {
+    /// <summary>
+    /// A world that runs a simulation.
+    /// </summary>
     public class World : ITickable, IDisposable
     {
         public readonly CameraManager CameraManager;
@@ -28,6 +31,20 @@ namespace Helion.Core.WorldNew
             timer.Start();
         }
 
+        /// <summary>
+        /// Tries to create a world from the map provided.
+        /// </summary>
+        /// <remarks>
+        /// This should never fail, as that indicates something has gone
+        /// terribly wrong since the map data should be vetted to make sure
+        /// it's all valid. Any BSP failure should be reported to developers
+        /// since they should not be happening either.
+        /// </remarks>
+        /// <param name="map">The map to create the world from.</param>
+        /// <param name="world">The created world (or null on failure).</param>
+        /// <param name="worldGameObject">The game object that is made for
+        /// applying ticking monobehaviours to (or null on failure).</param>
+        /// <returns>True on success, false on failure.</returns>
         public static bool TryCreateWorld(MapData map, out World world, out GameObject worldGameObject)
         {
             worldGameObject = new GameObject($"World ({map.Name})");
