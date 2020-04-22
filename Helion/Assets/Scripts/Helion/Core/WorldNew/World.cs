@@ -1,4 +1,6 @@
 ﻿using System;
+using Helion.Bsp;
+using Helion.Bsp.Node;
 using Helion.Core.Resource.MapsNew;
 using Helion.Core.Util;
 using Helion.Core.Util.Timing;
@@ -51,7 +53,6 @@ namespace Helion.Core.WorldNew
 
             try
             {
-                // TODO: BSP build here.
                 world = new World(map, worldGameObject);
 
                 WorldMonoBehaviour worldMonoBehaviour = worldGameObject.AddComponent<WorldMonoBehaviour>();

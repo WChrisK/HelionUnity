@@ -1,10 +1,11 @@
-﻿using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
+﻿using Helion.Bsp.Geometry;
+using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 
 namespace Helion.Core.Resource.MapsNew.Components
 {
-    public class MapLinedef
+    public class MapLinedef : IBspUsableLine
     {
-        public readonly int Index;
+        public int Index { get; }
         public int StartVertex;
         public int EndVertex;
         public int FrontSide;
@@ -70,6 +71,9 @@ namespace Helion.Core.Resource.MapsNew.Components
         public int HealthGroup;
         public bool DamageInvokesSpecial;
         public bool DeathInvokesSpecial;
+
+        // Helper interface functions.
+        public bool OneSided => BackSide != null;
 
         public MapLinedef(int index)
         {

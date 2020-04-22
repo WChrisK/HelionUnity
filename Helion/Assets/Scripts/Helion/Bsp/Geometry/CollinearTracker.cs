@@ -1,0 +1,119 @@
+using System.Collections.Generic;
+using Helion.Core.Util.Geometry.Grid;
+using Helion.Core.Util.Geometry.Vectors;
+
+namespace Helion.Bsp.Geometry
+{
+    /// <summary>
+    /// Responsible for assigning all segments to a unique index where any line
+    /// segment that has the same index as another segment implies they are
+    /// collinear.
+    /// </summary>
+    /// <remarks>
+    /// Intended to make it so we skip looking at lines that are collinear to
+    /// another when we've already determined the splitting cost, as it will
+    /// be wasted work to check a collinear line since it'd yield the same
+    /// split cost. This reduces the work done at the bulky O(n^2) step.
+    /// </remarks>
+    public class CollinearTracker
+    {
+        private readonly Dictionary<double, int> verticalIndices = new Dictionary<double, int>();
+        private readonly Dictionary<double, int> horizontalIndices = new Dictionary<double, int>();
+        private readonly QuantizedGrid<int> slopeInterceptToIndex;
+        private int nextAvailableIndex;
+
+        /// <summary>
+        /// Gets how many indices have been allocated.
+        /// </summary>
+        /// <remarks>
+        /// Intended to be used when creating bit arrays so it knows the max
+        /// values to accomodate.
+        /// </remarks>
+        public int Count => nextAvailableIndex;
+
+        /// <summary>
+        /// Creates a tracker which has a resolution of sloped lines by the
+        /// epsilon provided.
+        /// </summary>
+        /// <param name="epsilon">How far apart the slope or y-intercept can be
+        /// before they are considered the same.</param>
+        public CollinearTracker(double epsilon)
+        {
+            slopeInterceptToIndex = new QuantizedGrid<int>(epsilon);
+        }
+
+        private static double CalculatePointIndependentSlope(in Vec2D start, in Vec2D end)
+        {
+            // We want to always evaluate in one direction. This way if we swap
+            // start with end at all, then we will always get the same slope.
+            if (start.X < end.X)
+                return (end.Y - start.Y) / (end.X - start.X);
+            return (start.Y - end.Y) / (start.X - end.X);
+        }
+
+        /// <summary>
+        /// Either gets an existing index for the values provided, or will
+        /// allocate a new one if such a combination does not exist.
+        /// </summary>
+        /// <param name="start">The starting vertex.</param>
+        /// <param name="end">The ending vertex.</param>
+        /// <returns>The index for the slope/intercept combo.</returns>
+        public int GetOrCreateIndex(Vec2D start, Vec2D end)
+        {
+            // We are looking for exactness here, which is why equality is used
+            // when comparing. We also assume it is never +/-inf or NaN.
+            if (start.X == end.X)
+                return LookupVerticalIndex(start.X);
+            if (start.Y == end.Y)
+                return LookupHorizontalIndex(start.Y);
+
+            return LookupSlopeIndex(start, end);
+        }
+
+        /// <summary>
+        /// Either gets an existing index for the values provided, or will
+        /// allocate a new one if such a combination does not exist.
+        /// </summary>
+        /// <param name="start">The starting vertex.</param>
+        /// <param name="end">The ending vertex.</param>
+        /// <returns>The index for the slope/intercept combo.</returns>
+        public int GetOrCreateIndex(Vector2D start, Vector2D end)
+        {
+            return GetOrCreateIndex(start.Struct(), end.Struct());
+        }
+
+        private int LookupVerticalIndex(double x)
+        {
+            if (verticalIndices.TryGetValue(x, out int index))
+                return index;
+
+            int newIndex = nextAvailableIndex++;
+            verticalIndices[x] = newIndex;
+            return newIndex;
+        }
+
+        private int LookupHorizontalIndex(double y)
+        {
+            if (horizontalIndices.TryGetValue(y, out int index))
+                return index;
+
+            int newIndex = nextAvailableIndex++;
+            horizontalIndices[y] = newIndex;
+            return newIndex;
+        }
+
+        private int LookupSlopeIndex(in Vec2D start, in Vec2D end)
+        {
+            // These are just y = mx + b. However we do the abs of the slope as
+            // we want both directions to map onto the same index.
+            double m = CalculatePointIndependentSlope(start, end);
+            double yIntercept = start.Y - (m * start.X);
+
+            int index = slopeInterceptToIndex.GetExistingOrAdd(m, yIntercept, nextAvailableIndex);
+            if (index == nextAvailableIndex)
+                nextAvailableIndex++;
+
+            return index;
+        }
+    }
+}

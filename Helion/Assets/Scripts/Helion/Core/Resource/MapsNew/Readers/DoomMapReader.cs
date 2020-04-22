@@ -60,12 +60,7 @@ namespace Helion.Core.Resource.MapsNew.Readers
             int count = reader.Length / BytesPerVertex;
             for (int index = 0; index < count; index++)
             {
-                MapVertex vertex = new MapVertex(index)
-                {
-                    X = reader.Short(),
-                    Y = reader.Short()
-                };
-
+                MapVertex vertex = new MapVertex(index, reader.Short(), reader.Short());
                 map.Vertices.Add(vertex);
             }
         }
