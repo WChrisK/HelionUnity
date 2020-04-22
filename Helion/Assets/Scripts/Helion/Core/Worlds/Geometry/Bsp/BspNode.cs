@@ -12,14 +12,14 @@ namespace Helion.Core.Worlds.Geometry.Bsp
 
         public readonly uint LeftChild;
         public readonly uint RightChild;
-        public readonly Line2 Splitter;
+        public readonly Line2F Splitter;
 
         public bool IsLeftSubsector => (LeftChild & ChildBit) == ChildBit;
         public bool IsRightSubsector => (RightChild & ChildBit) == ChildBit;
         public int LeftSubsectorIndex => (int)(LeftChild & ~ChildBit);
         public int RightSubsectorIndex => (int)(RightChild & ~ChildBit);
 
-        public BspNode(uint leftBits, uint rightBits, Line2 splitter)
+        public BspNode(uint leftBits, uint rightBits, Line2F splitter)
         {
             LeftChild = leftBits;
             RightChild = rightBits;

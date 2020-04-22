@@ -12,7 +12,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <summary>
         /// The span of the segment.
         /// </summary>
-        public Line2 Segment;
+        public Line2F Segment;
 
         /// <summary>
         /// If this is on the front side of the line.
@@ -43,7 +43,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <param name="sidedef">The sidedef this references.</param>
         /// <param name="front">True if it's on the front of the line, false if
         /// on the back.</param>
-        public GLSegment(Line2 segment, bool front, Optional<DoomLinedef> linedef, Optional<DoomSidedef> sidedef)
+        public GLSegment(Line2F segment, bool front, Optional<DoomLinedef> linedef, Optional<DoomSidedef> sidedef)
         {
             Segment = segment;
             Front = front;

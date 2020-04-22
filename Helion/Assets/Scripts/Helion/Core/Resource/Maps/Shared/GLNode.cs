@@ -17,7 +17,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <summary>
         /// The partitioning line.
         /// </summary>
-        public Line2 Partition;
+        public Line2F Partition;
 
         /// <summary>
         /// The right bounding box.
@@ -49,7 +49,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// </summary>
         public Optional<GLSubsector> RightSubsector;
 
-        public GLNode(int index, Line2 partition, Rect rightBox, Rect leftBox)
+        public GLNode(int index, Line2F partition, Rect rightBox, Rect leftBox)
         {
             Index = index;
             Partition = partition;

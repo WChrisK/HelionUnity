@@ -52,7 +52,7 @@ namespace Helion.Core.Worlds.Geometry
         {
             Sector sector = Side.Sector;
             float height = upperPlane.Height - lowerPlane.Height;
-            Line2 segment = isFront ? line.Segment : line.Segment.Reverse;
+            Line2F segment = isFront ? line.Segment : line.Segment.Reverse;
 
             Material material = TextureManager.Material(textureName, ResourceNamespace.Textures);
             Texture texture = material.mainTexture;
@@ -85,7 +85,7 @@ namespace Helion.Core.Worlds.Geometry
             meshCollider.sharedMesh = mesh;
         }
 
-        private static Vector3[] CreateVertices(Line line, Line2 segment, SectorPlane lowerPlane,
+        private static Vector3[] CreateVertices(Line line, Line2F segment, SectorPlane lowerPlane,
             SectorPlane upperPlane, Texture texture, WallSection section)
         {
             // TODO: Need to clip the geometry to the opening.
@@ -122,7 +122,7 @@ namespace Helion.Core.Worlds.Geometry
             };
         }
 
-        private static Vector2[] CreateUVCoordinates(Line line, Side side, Line2 segment, float height,
+        private static Vector2[] CreateUVCoordinates(Line line, Side side, Line2F segment, float height,
             SectorPlane upperPlane, SectorPlane lowerPlane, Texture texture, WallSection section)
         {
             // An important note for all of the following functions:
@@ -159,7 +159,7 @@ namespace Helion.Core.Worlds.Geometry
             }
         }
 
-        private static Vector2[] CreateUVCoordinatesTwoSidedLower(Line line, Side side, Line2 segment,
+        private static Vector2[] CreateUVCoordinatesTwoSidedLower(Line line, Side side, Line2F segment,
             float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
         {
             Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
@@ -195,7 +195,7 @@ namespace Helion.Core.Worlds.Geometry
             };
         }
 
-        private static Vector2[] CreateUVCoordinatesOneSidedMiddle(Line line, Side side, Line2 segment,
+        private static Vector2[] CreateUVCoordinatesOneSidedMiddle(Line line, Side side, Line2F segment,
             float height, Texture texture)
         {
             Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
@@ -230,7 +230,7 @@ namespace Helion.Core.Worlds.Geometry
             };
         }
 
-        private static Vector2[] CreateUVCoordinatesTwoSidedMiddle(Line line, Side side, Line2 segment,
+        private static Vector2[] CreateUVCoordinatesTwoSidedMiddle(Line line, Side side, Line2F segment,
             float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
         {
             Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);
@@ -247,7 +247,7 @@ namespace Helion.Core.Worlds.Geometry
             };
         }
 
-        private static Vector2[] CreateUVCoordinatesTwoSidedUpper(Line line, Side side, Line2 segment,
+        private static Vector2[] CreateUVCoordinatesTwoSidedUpper(Line line, Side side, Line2F segment,
             float height, SectorPlane lowerPlane, SectorPlane upperPlane, Texture texture)
         {
             Vector2 invDimensions = new Vector2(1.0f / texture.width, 1.0f / texture.height);

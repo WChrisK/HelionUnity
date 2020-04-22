@@ -6,7 +6,7 @@ namespace Helion.Core.Util.Geometry
     /// <summary>
     /// A two dimensional line.
     /// </summary>
-    public struct Line2
+    public struct Line2F
     {
         /// <summary>
         /// The starting point.
@@ -31,14 +31,14 @@ namespace Helion.Core.Util.Geometry
         /// <summary>
         /// Creates a new line that is the reversed version of this line.
         /// </summary>
-        public Line2 Reverse => new Line2(End, Start);
+        public Line2F Reverse => new Line2F(End, Start);
 
         /// <summary>
         /// Creates a line.
         /// </summary>
         /// <param name="start">The starting point.</param>
         /// <param name="end">The ending point.</param>
-        public Line2(Vector2 start, Vector2 end)
+        public Line2F(Vector2 start, Vector2 end)
         {
             Start = start;
             End = end;
@@ -52,7 +52,7 @@ namespace Helion.Core.Util.Geometry
         /// <param name="startY">The starting coordinate.</param>
         /// <param name="endX">The ending coordinate.</param>
         /// <param name="endY">The ending coordinate.</param>
-        public Line2(float startX, float startY, float endX, float endY) :
+        public Line2F(float startX, float startY, float endX, float endY) :
             this(new Vector2(startX, startY), new Vector2(endX, endY))
         {
         }

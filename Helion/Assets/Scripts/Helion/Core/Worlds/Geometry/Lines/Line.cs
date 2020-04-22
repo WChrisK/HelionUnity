@@ -10,7 +10,7 @@ namespace Helion.Core.Worlds.Geometry.Lines
     public class Line
     {
         public readonly int Index;
-        public readonly Line2 Segment;
+        public readonly Line2F Segment;
         public readonly Unpeg Unpeg;
         public readonly Side Front;
         public readonly Optional<Side> Back = Empty;
@@ -18,7 +18,7 @@ namespace Helion.Core.Worlds.Geometry.Lines
         public Line(DoomLinedef linedef, IList<Sector> sectors, GameObject parentGameObject)
         {
             Index = linedef.Index;
-            Segment = new Line2(linedef.Start.Vector, linedef.End.Vector);
+            Segment = new Line2F(linedef.Start.Vector, linedef.End.Vector);
             Unpeg = CalculateUnpegged(linedef.Flags);
             Front = new Side(this, true, linedef, linedef.Front, sectors, parentGameObject);
 

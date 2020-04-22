@@ -76,7 +76,7 @@ namespace Helion.Core.Resource.Maps.Shared
             {
                 OldMapVertex start = GetMapVertexV2(reader.UShort(), vertices, glVertices);
                 OldMapVertex end = GetMapVertexV2(reader.UShort(), vertices, glVertices);
-                Line2 line = new Line2(start.Vector, end.Vector);
+                Line2F line = new Line2F(start.Vector, end.Vector);
                 ushort linedefIndex = reader.UShort();
                 bool onRightSide = reader.UShort() == 0;
                 var (linedef, sidedef) = GetLineAndSide(linedefIndex, onRightSide, linedefs, sidedefs);
@@ -150,7 +150,7 @@ namespace Helion.Core.Resource.Maps.Shared
                 short y = reader.Short();
                 short dx = reader.Short();
                 short dy = reader.Short();
-                Line2 partition = new Line2(x, y, x + dx, y + dy);
+                Line2F partition = new Line2F(x, y, x + dx, y + dy);
                 Rect rightBox = ReadNodeBox(reader);
                 Rect leftBox = ReadNodeBox(reader);
 
