@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Helion.Core.Resource.Decorate.Definitions;
 using Helion.Core.Util.Geometry;
+using Helion.Core.WorldNew;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Entities

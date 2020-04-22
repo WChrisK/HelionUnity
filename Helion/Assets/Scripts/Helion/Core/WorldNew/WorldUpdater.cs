@@ -1,0 +1,29 @@
+﻿using UnityEngine;
+
+namespace Helion.Core.WorldNew
+{
+    /// <summary>
+    /// A component that tells a game object to update the world it is attached
+    /// to.
+    /// </summary>
+    public class WorldUpdater : MonoBehaviour
+    {
+        /// <summary>
+        /// The world to update.
+        /// </summary>
+        public World World;
+
+        void Update()
+        {
+            if (World == null)
+                return;
+
+            // TODO
+        }
+
+        private void FixedUpdate()
+        {
+            World?.Tick();
+        }
+    }
+}

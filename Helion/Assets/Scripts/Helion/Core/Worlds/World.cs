@@ -3,6 +3,7 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Timing;
 using Helion.Core.Util.Unity;
+using Helion.Core.WorldNew;
 using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
 using UnityEngine;
