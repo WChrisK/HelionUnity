@@ -84,9 +84,6 @@ namespace Helion.Core.Worlds.Entities
             if (!meshRenderer)
                 return;
 
-            if (!world.ConsolePlayerEntity)
-                return;
-
             int rotation = 0; //BitAngle.CalculateSpriteRotation(this, world.ConsolePlayerEntity);
             meshRenderer.sharedMaterial = frameTracker.Frame.SpriteRotations[rotation];
 

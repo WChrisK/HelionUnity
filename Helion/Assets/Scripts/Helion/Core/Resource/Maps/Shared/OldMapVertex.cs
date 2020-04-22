@@ -5,7 +5,7 @@ namespace Helion.Core.Resource.Maps.Shared
     /// <summary>
     /// A vertex in a map.
     /// </summary>
-    public class MapVertex
+    public class OldMapVertex
     {
         /// <summary>
         /// The X coordinate.
@@ -27,7 +27,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
-        public MapVertex(float x, float y)
+        public OldMapVertex(float x, float y)
         {
             X = x;
             Y = y;
@@ -38,7 +38,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// </summary>
         /// <param name="other">The other map vertex.</param>
         /// <returns>The distance from this vertex to the other.</returns>
-        public float Distance(MapVertex other) => (Vector - other.Vector).magnitude;
+        public float Distance(OldMapVertex other) => (Vector - other.Vector).magnitude;
 
         public override string ToString() => $"{X}, {Y}";
     }

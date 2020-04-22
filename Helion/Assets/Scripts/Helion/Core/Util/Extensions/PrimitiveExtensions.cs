@@ -235,7 +235,7 @@ namespace Helion.Core.Util.Extensions
         /// <param name="bitmask">The bits to check.</param>
         /// <returns>True if all the bits in bitmask are set on value, false
         /// otherwise.</returns>
-        public static bool AreBitsSet(this int value, int bitmask) => (value & bitmask) == bitmask;
+        public static bool HasBits(this int value, int bitmask) => (value & bitmask) == bitmask;
 
         /// <summary>
         /// Checks if the bits in the bitmask is set on the value.
@@ -247,7 +247,7 @@ namespace Helion.Core.Util.Extensions
         /// <param name="bitmask">The bits to check.</param>
         /// <returns>True if all the bits in bitmask are set on value, false
         /// otherwise.</returns>
-        public static bool AreBitsSet(this uint value, uint bitmask) => (value & bitmask) == bitmask;
+        public static bool HasBits(this uint value, uint bitmask) => (value & bitmask) == bitmask;
 
         /// <summary>
         /// Gets the value without the bits from bitmask.
@@ -340,5 +340,25 @@ namespace Helion.Core.Util.Extensions
         /// <param name="number">The number to scale.</param>
         /// <returns>The scaled number.</returns>
         public static float MapUnit(this float number) => number * Constants.MapUnit;
+
+        /// <summary>
+        /// Checks if the integer is in the range provided. Equal to checking
+        /// if value is in [low, high].
+        /// </summary>
+        /// <param name="i">The number.</param>
+        /// <param name="low">The lower bound (inclusive).</param>
+        /// <param name="high">The upper bound (inclusive).</param>
+        /// <returns>True if in range, false if outside.</returns>
+        public static bool InRangeInclusive(this int i, int low, int high) => i >= low && i <= high;
+
+        /// <summary>
+        /// Checks if the integer is in the range provided. Equal to checking
+        /// if value is in [low, high).
+        /// </summary>
+        /// <param name="i">The number.</param>
+        /// <param name="low">The lower bound (inclusive).</param>
+        /// <param name="high">The upper bound (exclusive).</param>
+        /// <returns>True if in range, false if outside.</returns>
+        public static bool InRangeExclusive(this int i, int low, int high) => i >= low && i < high;
     }
 }

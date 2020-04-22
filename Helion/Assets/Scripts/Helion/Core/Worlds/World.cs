@@ -16,8 +16,6 @@ namespace Helion.Core.Worlds
     public class World : ITickable, IDisposable
     {
         public int GameTick { get; private set; }
-        public int ConsolePlayerNumber = 1;
-        public Entity ConsolePlayerEntity = null;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
         private readonly GameObject gameObject;

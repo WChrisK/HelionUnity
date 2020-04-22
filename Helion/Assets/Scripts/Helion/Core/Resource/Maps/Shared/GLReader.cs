@@ -28,9 +28,9 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <returns>A list of GL vertices.</returns>
         /// <exception cref="Exception">If it is not compiled to match the V2
         /// specification of GLBSP nodes.</exception>
-        public static IList<MapVertex> ReadGLVertices(MapComponents components)
+        public static IList<OldMapVertex> ReadGLVertices(MapComponents components)
         {
-            IList<MapVertex> glVertices = new List<MapVertex>();
+            IList<OldMapVertex> glVertices = new List<OldMapVertex>();
 
             ByteReader reader = ByteReader.From(ByteOrder.Little, components.GLVertices.Value.Data);
 
@@ -43,7 +43,7 @@ namespace Helion.Core.Resource.Maps.Shared
             {
                 float x = new Fixed(reader.Int()).Float();
                 float y = new Fixed(reader.Int()).Float();
-                MapVertex vertex = new MapVertex(x, y);
+                OldMapVertex vertex = new OldMapVertex(x, y);
                 glVertices.Add(vertex);
             }
 
@@ -62,7 +62,7 @@ namespace Helion.Core.Resource.Maps.Shared
         /// <exception cref="Exception">If it is not compiled to match the V2
         /// specification of GLBSP nodes.</exception>
         public static IList<GLSegment> ReadGLSegments(MapComponents components,
-            IList<MapVertex> vertices, IList<MapVertex> glVertices, IList<DoomLinedef> linedefs,
+            IList<OldMapVertex> vertices, IList<OldMapVertex> glVertices, IList<DoomLinedef> linedefs,
             IList<DoomSidedef> sidedefs)
         {
             IList<GLSegment> segments = new List<GLSegment>();
@@ -73,8 +73,8 @@ namespace Helion.Core.Resource.Maps.Shared
             int count = reader.Length / BytesPerGLSegV1;
             for (int i = 0; i < count; i++)
             {
-                MapVertex start = GetMapVertexV2(reader.UShort(), vertices, glVertices);
-                MapVertex end = GetMapVertexV2(reader.UShort(), vertices, glVertices);
+                OldMapVertex start = GetMapVertexV2(reader.UShort(), vertices, glVertices);
+                OldMapVertex end = GetMapVertexV2(reader.UShort(), vertices, glVertices);
                 Line2 line = new Line2(start.Vector, end.Vector);
                 ushort linedefIndex = reader.UShort();
                 bool onRightSide = reader.UShort() == 0;
@@ -195,7 +195,7 @@ namespace Helion.Core.Resource.Maps.Shared
             return nodes;
         }
 
-        private static MapVertex GetMapVertexV2(ushort index, IList<MapVertex> vertices, IList<MapVertex> glVertices)
+        private static OldMapVertex GetMapVertexV2(ushort index, IList<OldMapVertex> vertices, IList<OldMapVertex> glVertices)
         {
             return (index & GLVertexIsGLV2) == GLVertexIsGLV2 ?
                 glVertices[index & ~GLVertexIsGLV2] :

@@ -2,12 +2,14 @@
 
 namespace Helion.Core.Resource.MapsNew.Components
 {
-    public class Linedef
+    public class MapLinedef
     {
         public readonly int Index;
-        public int LineID;
-        public int FrontSideID;
-        public int? BackSideID;
+        public int StartVertex;
+        public int EndVertex;
+        public int FrontSide;
+        public int? BackSide;
+        public int? LineID;
         public bool BlockThings;
         public bool BlockMonsters;
         public bool UpperUnpegged;
@@ -30,11 +32,11 @@ namespace Helion.Core.Resource.MapsNew.Components
         public bool ProjectileCanCross;
         public bool RepeatableSpecial;
         public int SpecialNumber;
-        public int arg0;
-        public int arg1;
-        public int arg2;
-        public int arg3;
-        public int arg4;
+        public int Arg0;
+        public int Arg1;
+        public int Arg2;
+        public int Arg3;
+        public int Arg4;
         public string Comment = string.Empty;
 
         // ZDoom specific.
@@ -69,7 +71,7 @@ namespace Helion.Core.Resource.MapsNew.Components
         public bool DamageInvokesSpecial;
         public bool DeathInvokesSpecial;
 
-        public Linedef(int index)
+        public MapLinedef(int index)
         {
             Index = index;
         }

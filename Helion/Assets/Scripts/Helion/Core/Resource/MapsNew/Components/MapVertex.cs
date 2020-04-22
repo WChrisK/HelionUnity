@@ -1,6 +1,6 @@
 ﻿namespace Helion.Core.Resource.MapsNew.Components
 {
-    public class Vertex
+    public class MapVertex
     {
         public readonly int Index;
         public float X;
@@ -10,7 +10,7 @@
         public float? FloorZ;
         public float? CeilingZ;
 
-        public Vertex(int index)
+        public MapVertex(int index)
         {
             Index = index;
         }

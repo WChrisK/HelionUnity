@@ -23,9 +23,9 @@ namespace Helion.Core.Worlds.Entities
 
         private void HandleSpriteIfConsolePlayer()
         {
-            MeshRenderer MeshRenderer = GetComponent<MeshRenderer>();
-            if (MeshRenderer)
-                MeshRenderer.enabled = (entity.world.ConsolePlayerNumber != PlayerNumber);
+            // MeshRenderer MeshRenderer = GetComponent<MeshRenderer>();
+            // if (MeshRenderer)
+            //     MeshRenderer.enabled = (entity.world.ConsolePlayerNumber != PlayerNumber);
         }
 
         void FixedUpdate()
