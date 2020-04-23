@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Helion.Core.WorldNew
+namespace Helion.Core.Worlds
 {
     /// <summary>
     /// Manages the camera for the world so the renderer knows what to render

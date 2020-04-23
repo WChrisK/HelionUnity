@@ -1,13 +1,12 @@
 ﻿using Helion.Core.Configs;
 using Helion.Core.Configs.Fields;
 using Helion.Core.Resource;
-using Helion.Core.Resource.Maps;
+using Helion.Core.Resource.MapsNew;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Logging.Targets;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds;
-using Helion.Core.Worlds.Entities;
 using UnityEngine;
 
 namespace Helion.Unity
@@ -26,7 +25,6 @@ namespace Helion.Unity
         private static readonly Log Log = LogManager.Instance();
 
         private World world;
-        private Entity player;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -72,9 +70,9 @@ namespace Helion.Unity
             if (world == null || Camera.main == null)
                 return;
 
-            Vector3 pos = player.InterpolatedPosition(world.GameTickFraction);
-            pos.y += player.Definition.Properties.PlayerViewHeight;
-            Camera.main.transform.position = pos.MapUnit();
+            // Vector3 pos = player.InterpolatedPosition(world.GameTickFraction);
+            // pos.y += player.Definition.Properties.PlayerViewHeight;
+            // Camera.main.transform.position = pos.MapUnit();
         }
 
         void FixedUpdate()
@@ -150,16 +148,15 @@ namespace Helion.Unity
                     return "Usage: map <NAME>";
 
                 string mapName = args[0];
-                if (!Data.TryFindMap(mapName, out IMap map))
+                if (!Data.TryFindMap(mapName, out MapData map))
                     return $"Cannot find {mapName}";
 
-                Optional<World> worldOpt = World.From(map);
-                if (!worldOpt)
+                if (!World.TryCreateWorld(map, out World newWorld, out GameObject worldGameObject))
                     return $"Unable to load corrupt world data for {mapName}";
 
                 world?.Dispose();
-                world = worldOpt.Value;
-                player = world.Entities.SpawnPlayer(1).Value;
+                world = newWorld;
+                // player = world.Entities.SpawnPlayer(1).Value;
 
                 return $"Loaded {mapName}";
             });

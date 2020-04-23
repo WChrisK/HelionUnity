@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Helion.Core.WorldNew
+namespace Helion.Core.Worlds
 {
     /// <summary>
     /// A component that tells a game object to update the world it is attached

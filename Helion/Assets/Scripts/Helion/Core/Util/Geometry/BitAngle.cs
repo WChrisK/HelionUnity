@@ -1,5 +1,4 @@
 ﻿using System;
-using Helion.Core.Worlds.Entities;
 using UnityEngine;
 
 namespace Helion.Core.Util.Geometry
@@ -112,12 +111,13 @@ namespace Helion.Core.Util.Geometry
             return (uint)(DiamondScale * (3 + (pos.x / (pos.x - pos.y))));
         }
 
-        public static int CalculateSpriteRotation(Entity viewer, Entity target)
-        {
-            uint viewAngle = ToDiamondAngle(viewer.Position, target.Position);
-            uint entityAngle = DiamondAngleFromRadians(viewer.Angle.Radians);
-            return (int)CalculateSpriteRotation(viewAngle, entityAngle);
-        }
+        // TODO
+        // public static int CalculateSpriteRotation(Entity viewer, Entity target)
+        // {
+        //     uint viewAngle = ToDiamondAngle(viewer.Position, target.Position);
+        //     uint entityAngle = DiamondAngleFromRadians(viewer.Angle.Radians);
+        //     return (int)CalculateSpriteRotation(viewAngle, entityAngle);
+        // }
 
         private static uint CalculateSpriteRotation(uint viewAngle, uint entityAngle)
         {

@@ -188,9 +188,11 @@ namespace Helion.Core.Util.Geometry.Vectors
         /// null.</returns>
         public static bool operator ==(Vector2D self, Vector2D other)
         {
-            if (self == null && other == null)
+            bool selfNull = ReferenceEquals(self, null);
+            bool otherNull = ReferenceEquals(other, null);
+            if (selfNull && otherNull)
                 return true;
-            if (self == null || other == null)
+            if (selfNull || otherNull)
                 return false;
             return self.X == other.X && self.Y == other.Y;
         }

@@ -83,7 +83,7 @@ namespace Helion.Bsp.States.Miniseg
                 Junction junction = vertexJunctionPair.Value;
 
                 if (junction.HasUnexpectedSegCount())
-                    Log.Warn("BSP junction at ({0}) has wrong amount of one-sided lines, BSP tree likely to be malformed", vertex);
+                    Log.Warn($"BSP junction at ({vertex}) has wrong amount of one-sided lines, BSP tree likely to be malformed");
 
                 junction.GenerateWedges();
             }

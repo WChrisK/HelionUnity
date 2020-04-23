@@ -1,4 +1,4 @@
-﻿namespace Helion.Core.WorldNew
+﻿namespace Helion.Core.Worlds
 {
     /// <summary>
     /// Indicates the object can be ticked.

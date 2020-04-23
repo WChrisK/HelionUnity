@@ -144,7 +144,16 @@ namespace Helion.Core.Util.Geometry.Vectors
         /// <param name="self">The left side vector.</param>
         /// <param name="other">The right side vector.</param>
         /// <returns>True if they are equal, false if not.</returns>
-        public static bool operator ==(in Vector3D self, in Vector3D other) => self.X == other.X && self.Y == other.Y && self.Z == other.Z;
+        public static bool operator ==(Vector3D self, Vector3D other)
+        {
+            bool selfNull = ReferenceEquals(self, null);
+            bool otherNull = ReferenceEquals(other, null);
+            if (selfNull && otherNull)
+                return true;
+            if (selfNull || otherNull)
+                return false;
+            return self.X == other.X && self.Y == other.Y && self.Z == other.Z;
+        }
 
         /// <summary>
         /// Checks for bitwise inequality between components.
@@ -152,7 +161,7 @@ namespace Helion.Core.Util.Geometry.Vectors
         /// <param name="self">The left side vector.</param>
         /// <param name="other">The right side vector.</param>
         /// <returns>True if they are not equal, false if they are.</returns>
-        public static bool operator !=(in Vector3D self, in Vector3D other) => !(self == other);
+        public static bool operator !=(Vector3D self, Vector3D other) => !(self == other);
 
         /// <summary>
         /// Takes some radian value and calculates the unit circle vector. This

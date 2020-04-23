@@ -1,13 +1,11 @@
 ﻿using System;
-using Helion.Core.Resource.Maps;
+using Helion.Core.Resource.MapsNew;
 using Helion.Core.Util;
 using Helion.Core.Util.Timing;
 using Helion.Core.Util.Unity;
-using Helion.Core.WorldNew;
 using Helion.Core.Worlds.Entities;
 using Helion.Core.Worlds.Geometry;
 using UnityEngine;
-using static Helion.Core.Util.OptionalHelper;
 
 namespace Helion.Core.Worlds
 {
@@ -16,55 +14,77 @@ namespace Helion.Core.Worlds
     /// </summary>
     public class World : ITickable, IDisposable
     {
-        public int GameTick { get; private set; }
+        public readonly CameraManager CameraManager;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
-        private readonly GameObject gameObject;
+        public int GameTick { get; private set; }
         private readonly Ticker timer = new Ticker(Constants.TickRateMillis);
+        private readonly GameObject gameObject;
 
-        /// <summary>
-        /// A normalized value of the gametick. For example, if each tick is
-        /// 28ms and the world has run for 14ms, then this returns 0.5f. This
-        /// can go over 1.0f.
-        /// </summary>
-        public float GameTickFraction => timer.TickFraction;
-
-        private World(IMap map)
+        private World(MapData map, GameObject gameObj)
         {
-            gameObject = new GameObject($"World ({map.Name})");
-            Geometry = new MapGeometry(gameObject, map);
-            Entities = new EntityManager(this, gameObject, Geometry, map);
+            gameObject = gameObj;
+            CameraManager = new CameraManager(this);
+            Geometry = new MapGeometry(map);
+            Entities = new EntityManager(map);
 
             timer.Start();
         }
 
         /// <summary>
-        /// Creates a world from a map.
+        /// Tries to create a world from the map provided.
         /// </summary>
-        /// <param name="map">The map to create a world from.</param>
-        /// <returns>The world for the map, or an empty value if there was an
-        /// error creating the world.</returns>
-        public static Optional<World> From(IMap map)
+        /// <remarks>
+        /// This should never fail, as that indicates something has gone
+        /// terribly wrong since the map data should be vetted to make sure
+        /// it's all valid. Any BSP failure should be reported to developers
+        /// since they should not be happening either.
+        /// </remarks>
+        /// <param name="map">The map to create the world from.</param>
+        /// <param name="world">The created world (or null on failure).</param>
+        /// <param name="worldGameObject">The game object that is made for
+        /// applying ticking monobehaviours to (or null on failure).</param>
+        /// <returns>True on success, false on failure.</returns>
+        public static bool TryCreateWorld(MapData map, out World world, out GameObject worldGameObject)
         {
+            worldGameObject = new GameObject($"World ({map.Name})");
+
             try
             {
-                return new World(map);
+                world = new World(map, worldGameObject);
+
+                WorldMonoBehaviour worldMonoBehaviour = worldGameObject.AddComponent<WorldMonoBehaviour>();
+                worldMonoBehaviour.World = world;
+
+                return true;
             }
-            catch
+            catch (Exception e)
             {
-                return Empty;
+                Debug.Log("Warning: There may be lingering game objects that were not cleaned up!");
+                Debug.Log("This should not happen. Contact a developer!");
+                Debug.Log($"Reason: {e.Message}");
+
+                GameObjectHelper.Destroy(worldGameObject);
+                world = null;
+                worldGameObject = null;
+                return false;
             }
         }
 
         public void Tick()
         {
+            Entities.Tick();
+
             GameTick++;
             timer.Restart();
         }
 
         public void Dispose()
         {
+            CameraManager.Dispose();
             Entities.Dispose();
+            Geometry.Dispose();
+
             GameObjectHelper.Destroy(gameObject);
         }
     }

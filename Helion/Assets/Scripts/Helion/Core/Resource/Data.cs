@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Helion.Core.Archives;
 using Helion.Core.Configs;
 using Helion.Core.Resource.Decorate;
-using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.MapsNew;
-using Helion.Core.Resource.Maps.Doom;
+using Helion.Core.Resource.MapsNew.Readers;
 using Helion.Core.Resource.Textures;
 using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Resource.Textures.Sprites;
@@ -126,10 +124,8 @@ namespace Helion.Core.Resource
         /// <param name="map">The found map, or null if none was found.</param>
         /// <returns>The map, or an empty optional if no map name matches.
         /// </returns>
-        public static bool TryFindMap(UpperString name, out IMap map)
+        public static bool TryFindMap(UpperString name, out MapData map)
         {
-            map = null;
-
             for (int i = Archives.Count - 1; i >= 0; i--)
             {
                 foreach (MapComponents mapComponents in Archives[i].GetMaps())
@@ -137,22 +133,18 @@ namespace Helion.Core.Resource
                     if (mapComponents.Name != name)
                         continue;
 
-                    switch (mapComponents.MapType)
-                    {
-                    case MapType.Doom:
-                        Optional<IMap> doomMap = DoomMap.From(mapComponents);
-                        map = doomMap.Value;
-                        return doomMap.HasValue;
-                    case MapType.Hexen:
-                        return false;
-                    case MapType.UDMF:
-                        return false;
-                    default:
-                        throw new ArgumentOutOfRangeException($"Unexpected map type when finding map {name}");
-                    }
+                    if (MapReader.TryRead(mapComponents, out map))
+                        return true;
+
+                    // If we find the map but its corrupt, we won't keep
+                    // looking for other maps since that will be really
+                    // confusing to the caller.
+                    map = null;
+                    return false;
                 }
             }
 
+            map = null;
             return false;
         }
 
