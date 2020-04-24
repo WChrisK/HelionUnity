@@ -1,4 +1,5 @@
-﻿using Helion.Core.Util.Geometry.Vectors;
+﻿using System.Numerics;
+using Helion.Core.Util.Geometry.Vectors;
 
 namespace Helion.Core.Resource.MapsNew.Components
 {

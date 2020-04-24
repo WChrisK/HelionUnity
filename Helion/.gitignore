@@ -1,6 +1,7 @@
 # Helion specific
 
 .idea/
+cache/
 .commandlineargs
 helion.log
 helion.cfg

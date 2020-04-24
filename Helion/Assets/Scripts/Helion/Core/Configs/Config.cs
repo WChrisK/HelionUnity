@@ -45,7 +45,8 @@ namespace Helion.Core.Configs
         {
             try
             {
-                return FromText(File.ReadAllText(path));
+                string text = File.ReadAllText(path);
+                return FromText(text);
             }
             catch
             {

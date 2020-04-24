@@ -73,7 +73,7 @@ namespace Helion.Core.Resource.MapsNew.Components
         public bool DeathInvokesSpecial;
 
         // Helper interface functions.
-        public bool OneSided => BackSide != null;
+        public bool OneSided => BackSide == null;
 
         public MapLinedef(int index)
         {

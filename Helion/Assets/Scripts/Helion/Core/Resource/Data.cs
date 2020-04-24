@@ -39,12 +39,14 @@ namespace Helion.Core.Resource
 
             foreach (string uri in uris)
             {
-                Optional<IArchive> archive = ArchiveReader.ReadFile(uri);
+                string path = $"{Config.Resources.GetBaseDirectory()}{uri}";
+
+                Optional<IArchive> archive = ArchiveReader.ReadFile(path);
                 if (archive)
                     archiveList.Add(archive.Value);
                 else
                 {
-                    Log.Error($"Unable to open or read archive: {uri}");
+                    Log.Error($"Unable to open or read archive: {path}");
                     return false;
                 }
             }

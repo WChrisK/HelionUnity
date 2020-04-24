@@ -58,7 +58,7 @@ namespace Helion.Unity
         {
             RegisterConsoleCommands();
 
-            if (!Data.Load(CommandLineArgs.FullFilePaths))
+            if (!Data.Load(CommandLineArgs.Files))
             {
                 Log.Error("Failure loading archive data, aborting!");
                 Application.Quit(1);
@@ -82,7 +82,8 @@ namespace Helion.Unity
 
         void OnApplicationQuit()
         {
-            Data.Config.Save($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}");
+            // TODO: This is buggy and saves an empty one, no idea why yet...
+            //Data.Config.Save($"{CommandLineArgs.BaseDirectory}{Config.DefaultConfigName}")
             LogManager.Dispose();
         }
 

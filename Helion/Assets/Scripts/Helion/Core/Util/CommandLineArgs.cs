@@ -21,12 +21,6 @@ namespace Helion.Core.Util
         private readonly List<string> args = new List<string>();
 
         /// <summary>
-        /// A helper function to get all the files with their full path in
-        /// array format.
-        /// </summary>
-        public string[] FullFilePaths => Files.Select(f => $"{BaseDirectory}{f}").ToArray();
-
-        /// <summary>
         /// When constructed, carries out parsing of the command line arguments
         /// for the game.
         /// </summary>
