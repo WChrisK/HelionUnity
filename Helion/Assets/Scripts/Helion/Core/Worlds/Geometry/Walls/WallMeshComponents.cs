@@ -151,7 +151,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
 
             Vector3[] vertices = CalculateVertices(floor, ceiling);
             Vector3[] normals = CalculateNormals(vertices[0], vertices[1]);
-            Vector2[] uvCoords = CalculateUVCoordinates(floor, ceiling);
+            Vector2[] uvCoords = CalculateUVCoordinates(floor, ceiling, vertices);
             Color[] colors = CalculateColors();
 
             return new Mesh
@@ -203,7 +203,8 @@ namespace Helion.Core.Worlds.Geometry.Walls
             };
         }
 
-        private Vector2[] CalculateUVCoordinates(SectorPlane floor, SectorPlane ceiling)
+        private Vector2[] CalculateUVCoordinates(SectorPlane floor, SectorPlane ceiling,
+            Vector3[] vertices)
         {
             Vector2 start = new Vector2(0, 0);
             Vector2 end = new Vector2(1, 1);
@@ -211,12 +212,16 @@ namespace Helion.Core.Worlds.Geometry.Walls
             switch (wall.Section)
             {
             case WallSection.Lower:
+                CalculateTwoSidedLowerUV(floor, ceiling, ref start, ref end);
                 break;
             case WallSection.Middle:
                 if (wall.Line.OneSided)
                     CalculateOneSidedMiddleUV(floor, ceiling, ref start, ref end);
+                else
+                    CalculateTwoSidedMiddleUV(floor, ceiling, vertices, ref start, ref end);
                 break;
             case WallSection.Upper:
+                CalculateTwoSidedUpperUV(floor, ceiling, ref start, ref end);
                 break;
             default:
                 throw new Exception($"Unexpected wall section for UV calculations: {wall.Section}");
@@ -233,7 +238,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
             };
         }
 
-        private void CalculateOneSidedMiddleUV(SectorPlane floor, SectorPlane ceiling,
+        private void CalculateTwoSidedLowerUV(SectorPlane floor, SectorPlane ceiling,
             ref Vector2 start, ref Vector2 end)
         {
             int height = ceiling.Height - floor.Height;
@@ -241,8 +246,27 @@ namespace Helion.Core.Worlds.Geometry.Walls
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
             Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
 
-            start.x = offsetUV.x;
-            end.x = (lineLength * invDimension.x) + offsetUV.x;
+            // If it's upper, draw from the top of the ceiling down.
+            if (wall.Line.Unpegged.HasUpper())
+            {
+                // TODO: This is wrong, draw from the top down to the location (we need more args).
+                start = new Vector2(0.0f, 1.0f) + offsetUV;
+                end = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+            }
+            else
+            {
+                start = offsetUV;
+                end = offsetUV + spanUV;
+            }
+        }
+
+        private void CalculateOneSidedMiddleUV(SectorPlane floor, SectorPlane ceiling,
+            ref Vector2 start, ref Vector2 end)
+        {
+            int height = ceiling.Height - floor.Height;
+            Vector2 invDimension = texture.InverseDimension;
+            Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
+            Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
 
             // If it's lower, draw from the floor up. Otherwise, top down.
             if (wall.Line.Unpegged.HasLower())
@@ -254,6 +278,42 @@ namespace Helion.Core.Worlds.Geometry.Walls
             {
                 start = offsetUV;
                 end = offsetUV + spanUV;
+            }
+        }
+
+        private void CalculateTwoSidedMiddleUV(SectorPlane floor, SectorPlane ceiling,
+            Vector3[] vertices, ref Vector2 start, ref Vector2 end)
+        {
+            // TODO: Should probably turn this into a data structure to avoid these cryptic references.
+            float height = vertices[2].y - vertices[0].y;
+
+            Vector2 invDimension = texture.InverseDimension;
+            Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
+            Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
+
+            // TODO: Draw it to the proper clipped spot.
+            start = new Vector2(offsetUV.x, 1);
+            end = new Vector2(offsetUV.x + spanUV.x, 0);
+        }
+
+        private void CalculateTwoSidedUpperUV(SectorPlane floor, SectorPlane ceiling,
+            ref Vector2 start, ref Vector2 end)
+        {
+            int height = ceiling.Height - floor.Height;
+            Vector2 invDimension = texture.InverseDimension;
+            Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
+            Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
+
+            // If it's upper, draw it from the top down.
+            if (wall.Line.Unpegged.HasUpper())
+            {
+                start = offsetUV;
+                end = offsetUV + spanUV;
+            }
+            else
+            {
+                start = new Vector2(0.0f, 1.0f) + offsetUV;
+                end = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
             }
         }
 
