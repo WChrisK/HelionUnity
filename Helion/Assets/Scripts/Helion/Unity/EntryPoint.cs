@@ -8,6 +8,7 @@ using Helion.Core.Util.Logging.Targets;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 namespace Helion.Unity
 {
@@ -63,12 +64,37 @@ namespace Helion.Unity
                 Log.Error("Failure loading archive data, aborting!");
                 Application.Quit(1);
             }
+
+            ConsoleCommandsRepository.Instance.ExecuteCommand("map", new[] { "map01" });
         }
 
         void Update()
         {
-            if (world == null || Camera.main == null)
+            const float sens = 100.0f;
+            const float move = 0.125f;
+
+            Camera main = Camera.main;
+            if (world == null || main == null)
                 return;
+
+            //=================================================================
+            float horizontal = Input.GetAxisRaw("Mouse X") * sens * Time.deltaTime;
+            float vertical = Input.GetAxisRaw("Mouse Y") * sens * Time.deltaTime;
+            main.transform.RotateAround(main.transform.position, Vector3.up, horizontal);
+
+            if (Input.GetKey(KeyCode.W))
+                main.transform.Translate(main.transform.forward * move);
+            if (Input.GetKey(KeyCode.A))
+                main.transform.Translate(-main.transform.right * move);
+            if (Input.GetKey(KeyCode.S))
+                main.transform.Translate(-main.transform.forward * move);
+            if (Input.GetKey(KeyCode.D))
+                main.transform.Translate(main.transform.right * move);
+            if (Input.GetKey(KeyCode.Space))
+                main.transform.Translate(main.transform.up * move);
+            if (Input.GetKey(KeyCode.C))
+                main.transform.Translate(-main.transform.up * move);
+            //=================================================================
 
             // Vector3 pos = player.InterpolatedPosition(world.GameTickFraction);
             // pos.y += player.Definition.Properties.PlayerViewHeight;
@@ -157,7 +183,6 @@ namespace Helion.Unity
 
                 world?.Dispose();
                 world = newWorld;
-                // player = world.Entities.SpawnPlayer(1).Value;
 
                 return $"Loaded {mapName}";
             });

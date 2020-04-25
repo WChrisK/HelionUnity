@@ -1,4 +1,4 @@
-﻿namespace Helion.Core.Worlds.Geometry.Enums
+﻿namespace Helion.Core.Worlds.Geometry.Walls
 {
     public enum WallSection
     {

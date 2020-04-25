@@ -2,7 +2,7 @@
 using Helion.Core.Resource.MapsNew.Components;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
-using Helion.Core.Worlds.Geometry.Enums;
+using Helion.Core.Worlds.Geometry.Walls;
 
 namespace Helion.Core.Worlds.Geometry
 {
@@ -13,9 +13,9 @@ namespace Helion.Core.Worlds.Geometry
         public readonly List<Wall> Walls = new List<Wall>();
         public Line Line { get; internal set; }
         public Vec2I Offset;
-        public UpperString LowerTextureName;
-        public UpperString MiddleTextureName;
-        public UpperString UpperTextureName;
+        internal readonly UpperString LowerTextureName;
+        internal readonly UpperString MiddleTextureName;
+        internal readonly UpperString UpperTextureName;
 
         public Side(int index, MapSidedef sidedef, Sector sector)
         {

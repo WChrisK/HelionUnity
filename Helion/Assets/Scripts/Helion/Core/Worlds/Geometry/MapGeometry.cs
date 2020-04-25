@@ -5,7 +5,7 @@ using Helion.Bsp.Node;
 using Helion.Core.Resource.MapsNew;
 using Helion.Core.Resource.MapsNew.Components;
 using Helion.Core.Util.Logging;
-using Helion.Core.Worlds.Geometry.Enums;
+using Helion.Core.Worlds.Geometry.Walls;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
@@ -25,7 +25,7 @@ namespace Helion.Core.Worlds.Geometry
             CreateSectorsAndPlanes(map);
             CreateSides(map);
             CreateLines(map);
-            CreateWalls(map);
+            CreateWalls();
             CreateSubsectorsAndBspTree(map);
         }
 
@@ -40,11 +40,11 @@ namespace Helion.Core.Worlds.Geometry
             foreach (MapSector mapSector in map.Sectors)
             {
                 SectorPlane floor = new SectorPlane(SectorPlanes.Count, false,
-                    mapSector.FloorHeight, mapSector.FloorTexture, mapSector.LightLevel);
+                    mapSector.FloorHeight, mapSector.FloorTexture);
                 SectorPlanes.Add(floor);
 
                 SectorPlane ceiling = new SectorPlane(SectorPlanes.Count, true,
-                    mapSector.CeilingHeight, mapSector.CeilingTexture, mapSector.LightLevel);
+                    mapSector.CeilingHeight, mapSector.CeilingTexture);
                 SectorPlanes.Add(ceiling);
 
                 Sector sector = new Sector(Sectors.Count, mapSector, floor, ceiling);
@@ -77,8 +77,9 @@ namespace Helion.Core.Worlds.Geometry
             }
         }
 
-        private void CreateWalls(MapData map)
+        private void CreateWalls()
         {
+            // TODO: Will break on sidedef compressed maps: sides can be shared, geometry will be missing.
             foreach (Side side in Sides)
             {
                 Wall middle = new Wall(Walls.Count, side, WallSection.Middle);
