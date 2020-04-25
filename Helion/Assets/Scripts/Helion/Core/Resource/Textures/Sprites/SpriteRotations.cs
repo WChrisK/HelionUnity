@@ -1,5 +1,4 @@
 ﻿using Helion.Core.Util;
-using UnityEngine;
 
 namespace Helion.Core.Resource.Textures.Sprites
 {
@@ -10,32 +9,32 @@ namespace Helion.Core.Resource.Textures.Sprites
     {
         public readonly UpperString Name;
         public readonly bool Mirrored;
-        private readonly Material[] materials;
+        private readonly Texture[] textures;
 
-        public SpriteRotations(UpperString name, Material frame0)
+        public SpriteRotations(UpperString name, Texture frame0)
         {
             Name = name;
             Mirrored = false;
-            materials = new[] { frame0, frame0, frame0, frame0, frame0, frame0, frame0, frame0 };
+            textures = new[] { frame0, frame0, frame0, frame0, frame0, frame0, frame0, frame0 };
         }
 
-        public SpriteRotations(UpperString name, Material frame1, Material frame2and8,
-            Material frame3and7, Material frame4and6, Material frame5)
+        public SpriteRotations(UpperString name, Texture frame1, Texture frame2and8,
+            Texture frame3and7, Texture frame4and6, Texture frame5)
         {
             Name = name;
             Mirrored = true;
-            materials = new[] { frame1, frame2and8, frame3and7, frame4and6, frame5, frame4and6, frame3and7, frame2and8 };
+            textures = new[] { frame1, frame2and8, frame3and7, frame4and6, frame5, frame4and6, frame3and7, frame2and8 };
         }
 
-        public SpriteRotations(UpperString name, Material frame1, Material frame2,
-            Material frame3, Material frame4, Material frame5, Material frame6, Material frame7,
-            Material frame8)
+        public SpriteRotations(UpperString name, Texture frame1, Texture frame2,
+            Texture frame3, Texture frame4, Texture frame5, Texture frame6, Texture frame7,
+            Texture frame8)
         {
             Name = name;
             Mirrored = false;
-            materials = new[] { frame1, frame2, frame3, frame4, frame5, frame6, frame7, frame8 };
+            textures = new[] { frame1, frame2, frame3, frame4, frame5, frame6, frame7, frame8 };
         }
 
-        public Material this[int index] => materials[index];
+        public Texture this[int index] => textures[index];
     }
 }

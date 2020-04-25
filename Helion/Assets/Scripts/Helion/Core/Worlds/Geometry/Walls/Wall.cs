@@ -3,6 +3,7 @@ using Helion.Core.Resource.Textures;
 using Helion.Core.Util;
 using Helion.Core.Util.Unity;
 using UnityEngine;
+using Texture = Helion.Core.Resource.Textures.Texture;
 
 namespace Helion.Core.Worlds.Geometry.Walls
 {
@@ -11,7 +12,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
         public readonly int Index;
         public readonly Side Side;
         public readonly WallSection Section;
-        public Material Material { get; private set; }
+        public Texture Texture { get; private set; }
         private readonly GameObject gameObject;
         private readonly WallMeshComponents meshComponents;
         private UpperString textureName;
@@ -27,9 +28,9 @@ namespace Helion.Core.Worlds.Geometry.Walls
             Side = side;
             Section = section;
             textureName = GetTextureNameFrom(side, section);
-            Material = TextureManager.Material(textureName);
+            Texture = TextureManager.Texture(textureName);
             gameObject = new GameObject($"Wall {index} ({section}) [Line {side.Line.Index}, Side {side.Index}]");
-            meshComponents = new WallMeshComponents(this, gameObject, Material);
+            meshComponents = new WallMeshComponents(this, gameObject, Texture);
 
             AttachToSectorPlanes();
             side.Walls.Add(this);
@@ -45,8 +46,8 @@ namespace Helion.Core.Worlds.Geometry.Walls
         public void SetTexture(UpperString newTextureName)
         {
             textureName = newTextureName;
-            Material = TextureManager.Material(newTextureName);
-            meshComponents.SetMaterial(Material);
+            Texture = TextureManager.Texture(newTextureName);
+            meshComponents.SetTexture(Texture);
         }
 
         public void Dispose()

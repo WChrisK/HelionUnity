@@ -5,6 +5,7 @@ using Helion.Core.Util;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Geometry.Walls;
 using UnityEngine;
+using Texture = Helion.Core.Resource.Textures.Texture;
 
 namespace Helion.Core.Worlds.Geometry
 {
@@ -51,7 +52,7 @@ namespace Helion.Core.Worlds.Geometry
         /// <summary>
         /// The material used for rendering the subsectors with.
         /// </summary>
-        public Material Material { get; private set; }
+        public Texture Texture { get; private set; }
 
         /// <summary>
         /// This is a list of walls that want to listen to any height changes
@@ -94,7 +95,7 @@ namespace Helion.Core.Worlds.Geometry
                 if (value != null)
                 {
                     textureName = value;
-                    Material = TextureManager.Material(value);
+                    Texture = TextureManager.Texture(value);
                     // TODO: Update all subsectors!
                 }
             }
@@ -106,7 +107,7 @@ namespace Helion.Core.Worlds.Geometry
             IsCeiling = isCeiling;
             height = verticalHeight;
             TextureName = texture;
-            Material = TextureManager.Material(texture);
+            Texture = TextureManager.Texture(texture);
             gameObject = CreateGameObject(index, isCeiling, height);
         }
 

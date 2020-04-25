@@ -2,7 +2,6 @@
 using System.Text;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
-using UnityEngine;
 
 namespace Helion.Core.Resource.Textures.Sprites
 {
@@ -15,7 +14,7 @@ namespace Helion.Core.Resource.Textures.Sprites
         /// Get a rotational sprite with null textures. Always will exist and
         /// can be supplied to any actor frame safely.
         /// </summary>
-        public static readonly SpriteRotations NullRotations = new SpriteRotations("NULL", TextureManager.NullMaterial);
+        public static readonly SpriteRotations NullRotations = new SpriteRotations("NULL", TextureManager.NullTexture);
         private static readonly Dictionary<UpperString, SpriteRotations> spriteRotations = new Dictionary<UpperString, SpriteRotations>();
 
         public static void Clear()
@@ -55,12 +54,12 @@ namespace Helion.Core.Resource.Textures.Sprites
 
         private static SpriteRotations CreateSpriteFrom(UpperString name)
         {
-            Material none = TextureManager.NullMaterial;
-            Material[] frames = { none, none, none, none, none, none, none, none };
+            Texture none = TextureManager.NullTexture;
+            Texture[] frames = { none, none, none, none, none, none, none, none };
 
             // If we have a default rotation, set it to be the rotations for
             // everything and let other valid matches override it later.
-            if (TextureManager.TryGetMaterial(name + '0', ResourceNamespace.Sprites, out Material frame0))
+            if (TextureManager.TryGetTexture(name + '0', ResourceNamespace.Sprites, out Texture frame0))
                 frames = new[] { frame0, frame0, frame0, frame0, frame0, frame0, frame0, frame0 };
 
             // Track how many 2,8 / 3,7 / 4,6 rotations we find. Write them if
@@ -80,21 +79,21 @@ namespace Helion.Core.Resource.Textures.Sprites
             return new SpriteRotations(name, frames[0], frames[1], frames[2], frames[3], frames[4], frames[5], frames[6], frames[7]);
         }
 
-        private static void AddSingleFrameIfExists(UpperString name, char first, Material[] frames)
+        private static void AddSingleFrameIfExists(UpperString name, char first, Texture[] frames)
         {
             UpperString lookupName = name + first;
-            if (TextureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
-                frames[first - '1'] = material;
+            if (TextureManager.TryGetTexture(lookupName, ResourceNamespace.Sprites, out Texture texture))
+                frames[first - '1'] = texture;
         }
 
         private static void AddMirrorFrameIfExists(UpperString name, char first, char second,
-            Material[] frames, ref int mirrorsFound)
+            Texture[] frames, ref int mirrorsFound)
         {
             UpperString lookupName = MakeRotation(name, first, second);
-            if (TextureManager.TryGetMaterial(lookupName, ResourceNamespace.Sprites, out Material material))
+            if (TextureManager.TryGetTexture(lookupName, ResourceNamespace.Sprites, out Texture texture))
             {
-                frames[first - '1'] = material;
-                frames[second - '1'] = material;
+                frames[first - '1'] = texture;
+                frames[second - '1'] = texture;
                 mirrorsFound++;
             }
         }

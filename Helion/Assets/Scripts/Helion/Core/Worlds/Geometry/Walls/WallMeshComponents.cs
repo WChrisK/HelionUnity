@@ -3,6 +3,7 @@ using Helion.Core.Util;
 using Helion.Core.Util.Unity;
 using Helion.Core.Worlds.Geometry.Enums;
 using UnityEngine;
+using Texture = Helion.Core.Resource.Textures.Texture;
 
 namespace Helion.Core.Worlds.Geometry.Walls
 {
@@ -27,19 +28,19 @@ namespace Helion.Core.Worlds.Geometry.Walls
         public readonly MeshRenderer Renderer;
         private readonly Wall wall;
         private readonly float lineLength;
-        private Material material;
+        private Texture texture;
         private bool isDisabled;
 
-        public WallMeshComponents(Wall wall, GameObject gameObject, Material material)
+        public WallMeshComponents(Wall wall, GameObject gameObject, Texture texture)
         {
             this.wall = wall;
-            this.material = material;
+            this.texture = texture;
             this.lineLength = wall.Line.Segment.Length;
             this.Renderer = gameObject.AddComponent<MeshRenderer>();
             this.Filter = gameObject.AddComponent<MeshFilter>();
             this.Mesh = CreateMesh();
 
-            Renderer.sharedMaterial = material;
+            Renderer.sharedMaterial = texture.Material;
             Filter.sharedMesh = Mesh;
         }
 
@@ -66,20 +67,17 @@ namespace Helion.Core.Worlds.Geometry.Walls
             GameObjectHelper.Destroy(Renderer);
         }
 
-        internal void SetMaterial(Material newMaterial)
+        internal void SetTexture(Texture newTexture)
         {
-            material = newMaterial;
+            texture = newTexture;
         }
 
         private void UpdateEnabledStatus(SectorPlane floor, SectorPlane ceiling)
         {
-            Debug.Log($"Wall {wall.Index}");
-
             if (wall.Section == WallSection.Middle &&
                 wall.Line.TwoSided &&
                 wall.TextureName == Constants.NoTexture)
             {
-                Debug.Log($"    No middle");
                 Disable();
                 isDisabled = true;
                 return;
@@ -178,7 +176,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
 
             if (wall.Section == WallSection.Middle && wall.Line.TwoSided)
             {
-                float imageHeight = material.mainTexture.height;
+                float imageHeight = texture.Height;
                 float texTop = top;
                 float texBottom = bottom;
 
@@ -239,7 +237,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
             ref Vector2 start, ref Vector2 end)
         {
             int height = ceiling.Height - floor.Height;
-            Vector2 invDimension = new Vector2(1.0f / material.mainTexture.width, 1.0f / material.mainTexture.height);
+            Vector2 invDimension = texture.InverseDimension;
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
             Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
 
