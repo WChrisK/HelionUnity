@@ -118,11 +118,11 @@ namespace Helion.Core.Worlds.Geometry.Walls
         private (SectorPlane floor, SectorPlane ceiling) FindBoundingPlane()
         {
             Line line = wall.Line;
-            Sector facingSector = line.Front.Sector;
+            Sector facingSector = wall.Side.Sector;
             if (line.OneSided)
                 return (facingSector.Floor, facingSector.Ceiling);
 
-            Sector partnerSector = line.Back.Value.Sector;
+            Sector partnerSector = wall.Side.PartnerSide.Value.Sector;
             if (wall.OnBackSide)
                 (facingSector, partnerSector) = (partnerSector, facingSector);
 
@@ -136,7 +136,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
             case WallSection.Lower:
                 return (facingFloor, partnerFloor);
             case WallSection.Middle:
-                return (facingFloor.Height <= partnerFloor.Height ? facingFloor : partnerFloor,
+                return (facingFloor.Height >= partnerFloor.Height ? facingFloor : partnerFloor,
                         facingCeiling.Height <= partnerCeiling.Height ? facingCeiling : partnerCeiling);
             case WallSection.Upper:
                 return (partnerCeiling, facingCeiling);
@@ -206,9 +206,33 @@ namespace Helion.Core.Worlds.Geometry.Walls
         private Vector2[] CalculateUVCoordinates(SectorPlane floor, SectorPlane ceiling,
             Vector3[] vertices)
         {
+            if (wall.Index == 113)
+                Debug.Log(":)");
+
             Vector2 start = new Vector2(0, 0);
             Vector2 end = new Vector2(1, 1);
 
+            // An important note for all of the following functions:
+            // Remember that the texture was uploaded such that the
+            // 0.0 -> 1.0 coordinates look like:
+            //
+            // (0.0, 0.0)      (1.0, 0.0)
+            //         o--------E
+            //         |  Top   |      S = start
+            //         |        |      E = end
+            //         |        |
+            //         |        |
+            //         | Bottom |
+            //         S--------o
+            // (0.0, 1.0)      (1.0, 1.0)
+            //
+            // This means when we are drawing from the bottom up, we want to
+            // start out at the bottom UV and subtract the X/Y span and offsets
+            // to go upwards. Likewise if we are drawing from the top down, we
+            // want to start at the top two coordinates and add the span and
+            // offset to go down.
+            // In short, the coordinate system looks exactly like the image
+            // origin system.
             switch (wall.Section)
             {
             case WallSection.Lower:
@@ -227,14 +251,13 @@ namespace Helion.Core.Worlds.Geometry.Walls
                 throw new Exception($"Unexpected wall section for UV calculations: {wall.Section}");
             }
 
-            // We need to flip the V coordinates because of how textures are
-            // loaded in from the top rather than the bottom.
+            // This follows easily from the comment/ASCII-art above.
             return new[]
             {
-                new Vector2(start.x, end.y),
-                new Vector2(end.x, end.y),
                 new Vector2(start.x, start.y),
-                new Vector2(end.x, start.y)
+                new Vector2(end.x, start.y),
+                new Vector2(start.x, end.y),
+                new Vector2(end.x, end.y)
             };
         }
 
@@ -268,7 +291,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
             Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
 
-            // If it's lower, draw from the floor up. Otherwise, top down.
+            // If it's lower, draw from the floor up.
             if (wall.Line.Unpegged.HasLower())
             {
                 start = new Vector2(0.0f, 1.0f) + offsetUV;

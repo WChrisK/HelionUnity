@@ -17,6 +17,8 @@ namespace Helion.Core.Worlds.Geometry
         internal readonly UpperString MiddleTextureName;
         internal readonly UpperString UpperTextureName;
 
+        public Optional<Side> PartnerSide => ReferenceEquals(Line.Front, this) ? Line.Back : Line.Front;
+
         public Side(int index, MapSidedef sidedef, Sector sector)
         {
             Index = index;

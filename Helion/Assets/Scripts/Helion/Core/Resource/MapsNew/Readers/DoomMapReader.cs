@@ -116,8 +116,13 @@ namespace Helion.Core.Resource.MapsNew.Readers
             }
         }
 
-        private static void SetLineSpecial(MapLinedef linedef, ushort flags, ushort type, ushort sectorTag)
+        private static void SetLineSpecial(MapLinedef linedef, int flags, ushort type, ushort sectorTag)
         {
+            if (flags.HasBits(0x0008))
+                linedef.UpperUnpegged = true;
+            if (flags.HasBits(0x0010))
+                linedef.LowerUnpegged = true;
+
             // TODO
         }
 
