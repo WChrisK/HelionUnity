@@ -1,5 +1,5 @@
 ﻿using System;
-using Helion.Core.Resource.MapsNew;
+using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Timing;
 using Helion.Core.Util.Unity;

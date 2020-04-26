@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Helion.Core.Archives.Wads;
-using Helion.Core.Resource.MapsNew;
+using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 
 namespace Helion.Core.Archives.PK3s

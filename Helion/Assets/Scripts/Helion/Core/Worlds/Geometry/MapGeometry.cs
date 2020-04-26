@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Helion.Bsp;
 using Helion.Bsp.Node;
-using Helion.Core.Resource.MapsNew;
-using Helion.Core.Resource.MapsNew.Components;
+using Helion.Core.Resource.Maps;
+using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util.Logging;
 using Helion.Core.Worlds.Geometry.Walls;
 using UnityEngine;

@@ -3,7 +3,7 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using static Helion.Core.Util.OptionalHelper;
 
-namespace Helion.Core.Resource.MapsNew
+namespace Helion.Core.Resource.Maps
 {
     /// <summary>
     /// A lightweight collection of map components when reading through maps.

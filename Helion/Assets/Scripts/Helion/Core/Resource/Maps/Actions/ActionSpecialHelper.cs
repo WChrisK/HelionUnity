@@ -1,6 +1,6 @@
 ﻿using Helion.Core.Util;
 
-namespace Helion.Core.Resource.MapsNew.Actions
+namespace Helion.Core.Resource.Maps.Actions
 {
     public static class ActionSpecialHelper
     {

@@ -2,7 +2,7 @@
 using Helion.Core.Util.Geometry;
 using UnityEngine;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapSidedef
     {

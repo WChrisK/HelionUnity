@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Helion.Core.Resource.MapsNew.Components;
+using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util;
 
-namespace Helion.Core.Resource.MapsNew
+namespace Helion.Core.Resource.Maps
 {
     /// <summary>
     /// Data for a map that is verified to be well-formed.

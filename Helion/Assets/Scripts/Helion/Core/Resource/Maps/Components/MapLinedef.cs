@@ -1,7 +1,7 @@
 ﻿using Helion.Bsp.Geometry;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapLinedef : IBspUsableLine
     {

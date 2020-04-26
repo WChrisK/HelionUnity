@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Helion.Core.Resource.MapsNew;
+using Helion.Core.Resource.Maps;
 
 namespace Helion.Core.Archives
 {

@@ -1,6 +1,6 @@
 ﻿using Helion.Core.Util;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapSector
     {

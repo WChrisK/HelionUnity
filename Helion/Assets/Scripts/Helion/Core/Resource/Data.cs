@@ -2,8 +2,8 @@
 using Helion.Core.Archives;
 using Helion.Core.Configs;
 using Helion.Core.Resource.Decorate;
-using Helion.Core.Resource.MapsNew;
-using Helion.Core.Resource.MapsNew.Readers;
+using Helion.Core.Resource.Maps;
+using Helion.Core.Resource.Maps.Readers;
 using Helion.Core.Resource.Textures;
 using Helion.Core.Resource.Textures.Definitions;
 using Helion.Core.Resource.Textures.Sprites;

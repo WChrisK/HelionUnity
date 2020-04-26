@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Helion.Core.Resource.MapsNew.Components;
+using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util;
 using Helion.Core.Util.Geometry;
 using Helion.Core.Worlds.Geometry.Walls;

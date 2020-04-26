@@ -1,7 +1,7 @@
 ﻿using Helion.Core.Resource.Maps;
 using UnityEngine;
 
-namespace Helion.Core.Resource.MapsNew.Readers
+namespace Helion.Core.Resource.Maps.Readers
 {
     /// <summary>
     /// Handles reading maps.

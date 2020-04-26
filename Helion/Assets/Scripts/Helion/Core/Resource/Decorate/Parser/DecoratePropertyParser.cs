@@ -4,7 +4,7 @@ using Helion.Core.Graphics;
 using Helion.Core.Resource.Decorate.Definitions.Flags;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
-using Helion.Core.Resource.MapsNew.Actions;
+using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
 using UnityEngine;

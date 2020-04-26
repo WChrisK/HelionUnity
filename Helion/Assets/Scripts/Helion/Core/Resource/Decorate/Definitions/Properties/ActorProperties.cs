@@ -2,7 +2,7 @@
 using System.Linq;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Core.Resource.Decorate.Definitions.Properties.Types;
-using Helion.Core.Resource.MapsNew.Actions;
+using Helion.Core.Resource.Maps.Actions;
 using Helion.Core.Util;
 using MoreLinq;
 using UnityEngine;

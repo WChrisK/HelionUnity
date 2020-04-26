@@ -1,13 +1,13 @@
 ﻿using System;
 using Helion.Core.Resource.Maps;
-using Helion.Core.Resource.MapsNew.Components;
+using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util;
 using Helion.Core.Util.Bytes;
 using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry;
 using UnityEngine;
 
-namespace Helion.Core.Resource.MapsNew.Readers
+namespace Helion.Core.Resource.Maps.Readers
 {
     /// <summary>
     /// A reader of doom maps.

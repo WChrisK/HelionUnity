@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Helion.Core.Resource.MapsNew.Actions
+namespace Helion.Core.Resource.Maps.Actions
 {
     /// <summary>
     /// A collection of the standard five numbers associated with specials.

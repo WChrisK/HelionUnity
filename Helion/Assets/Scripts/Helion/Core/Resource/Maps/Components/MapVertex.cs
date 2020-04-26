@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Helion.Core.Util.Geometry.Vectors;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapVertex : Vector2D
     {

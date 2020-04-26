@@ -1,7 +1,7 @@
 ﻿using Helion.Core.Resource.Decorate.Definitions.Properties.Enums;
 using UnityEngine;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapThing
     {

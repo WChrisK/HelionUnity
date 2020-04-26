@@ -1,4 +1,4 @@
-﻿namespace Helion.Core.Resource.MapsNew.Components
+﻿namespace Helion.Core.Resource.Maps.Components
 {
     public class MapNode
     {

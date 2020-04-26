@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Helion.Core.Util.Geometry.Segments;
 
-namespace Helion.Core.Resource.MapsNew.Components
+namespace Helion.Core.Resource.Maps.Components
 {
     public class MapSubsector
     {

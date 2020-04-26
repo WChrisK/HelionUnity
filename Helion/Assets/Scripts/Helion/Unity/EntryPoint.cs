@@ -1,7 +1,7 @@
 ﻿using Helion.Core.Configs;
 using Helion.Core.Configs.Fields;
 using Helion.Core.Resource;
-using Helion.Core.Resource.MapsNew;
+using Helion.Core.Resource.Maps;
 using Helion.Core.Util;
 using Helion.Core.Util.Logging;
 using Helion.Core.Util.Logging.Targets;
