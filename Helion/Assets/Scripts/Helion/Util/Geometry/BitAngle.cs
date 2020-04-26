@@ -61,9 +61,9 @@ namespace Helion.Util.Geometry
             Bits = DiamondAngleFromRadians(radians);
         }
 
-        public static BitAngle FromDegrees(int degrees)
+        public static BitAngle FromDegrees(double degrees)
         {
-            return new BitAngle((uint)((ulong)degrees * uint.MaxValue / 360));
+            return new BitAngle((uint)(degrees * uint.MaxValue / 360));
         }
 
         public static BitAngle FromByteAngle(int byteAngle)
@@ -156,5 +156,7 @@ namespace Helion.Util.Geometry
             // three bits into the angle rotation between 0 - 7.
             return unchecked((viewAngle - entityAngle + SpriteFrameRotationAngle) >> 29);
         }
+
+        public override string ToString() => Degrees.ToString();
     }
 }

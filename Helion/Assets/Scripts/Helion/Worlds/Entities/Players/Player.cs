@@ -3,7 +3,9 @@ using Helion.Resource;
 using Helion.Resource.Decorate.Definitions.Properties;
 using Helion.Util;
 using Helion.Util.Extensions;
+using Helion.Util.Geometry;
 using UnityEngine;
+using static Helion.Util.Unity.UnityHelper;
 
 namespace Helion.Worlds.Entities.Players
 {
@@ -15,8 +17,8 @@ namespace Helion.Worlds.Entities.Players
         public readonly Entity Entity;
         public readonly Camera Camera;
         private readonly GameObject gameObject;
-        private float pitch;
-        private float yaw;
+        private float pitchDegrees;
+        private float yawDegrees;
 
         public Player(int playerNumber, Entity entity)
         {
@@ -25,6 +27,7 @@ namespace Helion.Worlds.Entities.Players
             gameObject = new GameObject($"Player {playerNumber} camera");
             entity.GameObject.SetChild(gameObject, false);
             Camera = CreateCamera();
+            yawDegrees = DoomToUnityAngle(entity.Angle.Degrees);
 
             SetGameObjectTransform();
         }
@@ -44,16 +47,16 @@ namespace Helion.Worlds.Entities.Players
                 y = Input.GetAxis("Mouse Y");
             }
 
-            yaw += x * Data.Config.Mouse.Yaw * Data.Config.Mouse.Sensitivity;
-            pitch += y * Data.Config.Mouse.Pitch * Data.Config.Mouse.Sensitivity;
+            yawDegrees += x * Data.Config.Mouse.Yaw * Data.Config.Mouse.Sensitivity;
+            pitchDegrees += y * Data.Config.Mouse.Pitch * Data.Config.Mouse.Sensitivity;
 
-            while (yaw > 360)
-                yaw -= 360;
-            while (yaw < 360)
-                yaw += 360;
-            pitch = pitch.Clamp(-90, 90);
+            yawDegrees %= 360.0f;
+            pitchDegrees = pitchDegrees.Clamp(-90, 90);
 
-            gameObject.transform.rotation = Quaternion.Euler(-pitch, yaw, 0);
+            gameObject.transform.rotation = Quaternion.Euler(-pitchDegrees, yawDegrees, 0);
+
+            Entity.Angle = BitAngle.FromDegrees(DoomToUnityAngle(yawDegrees));
+            Debug.Log($">>> {Entity.Angle}");
         }
 
         public void Update(float tickFraction)
