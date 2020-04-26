@@ -33,6 +33,7 @@ namespace Helion.Resource.Decorate
             return new List<ActorDefinition>
             {
                 actorBase,
+                CreateUnknown(actorBase),
                 inventory,
                 CreateBaseSpawnPoint(actorBase),
                 CreatePlayerPawn(actorBase),
@@ -61,6 +62,22 @@ namespace Helion.Resource.Decorate
             actor.States.Frames.Add(new ActorFrame(4, "POL5A", -1, MakeProperties(), MakeNoAction(), stop, 0));
 
             return actor;
+        }
+
+        private static ActorDefinition CreateUnknown(ActorDefinition actorBase)
+        {
+            ActorDefinition unknown = new ActorDefinition("UNKNOWN", actorBase);
+            unknown.Properties.Height = 56;
+            unknown.Properties.Radius = 32;
+            unknown.Flags.Set(ActorFlagType.DontSplash, true);
+            unknown.Flags.Set(ActorFlagType.NoBlockmap, true);
+            unknown.Flags.Set(ActorFlagType.NoGravity, true);
+
+            int totalFrames = unknown.States.Frames.Count;
+            unknown.States.Labels.Add("SPAWN", totalFrames);
+            unknown.States.Frames.Add(new ActorFrame(totalFrames, "UNKNA", -1, MakeProperties(), MakeNoAction(), stop, 0));
+
+            return unknown;
         }
 
         private static ActorDefinition CreateBaseSpawnPoint(ActorDefinition actorBase)

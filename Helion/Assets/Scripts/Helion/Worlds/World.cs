@@ -14,7 +14,6 @@ namespace Helion.Worlds
     /// </summary>
     public class World : ITickable, IDisposable
     {
-        public readonly CameraManager CameraManager;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
         public int GameTick { get; private set; }
@@ -24,9 +23,8 @@ namespace Helion.Worlds
         private World(MapData map, GameObject gameObj)
         {
             gameObject = gameObj;
-            CameraManager = new CameraManager(this);
             Geometry = new MapGeometry(map);
-            Entities = new EntityManager(map);
+            Entities = new EntityManager(this, map);
 
             timer.Start();
         }
@@ -81,7 +79,6 @@ namespace Helion.Worlds
 
         public void Dispose()
         {
-            CameraManager.Dispose();
             Entities.Dispose();
             Geometry.Dispose();
 

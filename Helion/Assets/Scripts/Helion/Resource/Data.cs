@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Helion.Archives;
 using Helion.Configs;
 using Helion.Resource.Decorate;
@@ -200,8 +201,9 @@ namespace Helion.Resource
 
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Log.Error($"Unexpected error when reading archive: {e.Message}");
                 return false;
             }
         }

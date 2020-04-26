@@ -20,12 +20,14 @@ namespace Helion.Resource.Decorate
         private static readonly List<ActorDefinition> actors = new List<ActorDefinition>();
         private static readonly Dictionary<int, ActorDefinition> editorIDToDefinition = new Dictionary<int, ActorDefinition>();
         private static readonly Dictionary<UpperString, ActorDefinition> nameToDefinition = new Dictionary<UpperString, ActorDefinition>();
+        private static readonly UpperString missingActorName = "UNKNOWN";
+        private static ActorDefinition missingActorDefinition;
 
         internal static ActorDefinition BaseActorDefinition => actors.First();
 
         static DecorateManager()
         {
-            AddDefinitions(DefaultDefinitionFactory.CreateAllDefaultDefinitions());
+            ResetCoreDefinitions();
         }
 
         public static void Clear()
@@ -34,7 +36,7 @@ namespace Helion.Resource.Decorate
             editorIDToDefinition.Clear();
             nameToDefinition.Clear();
 
-            AddDefinitions(DefaultDefinitionFactory.CreateAllDefaultDefinitions());
+            ResetCoreDefinitions();
         }
 
         /// <summary>
@@ -60,21 +62,42 @@ namespace Helion.Resource.Decorate
         /// Looks up a definition by name.
         /// </summary>
         /// <param name="name">The name to look up.</param>
-        /// <returns>The definition if it exists, or an empty value.</returns>
-        public static Optional<ActorDefinition> Find(UpperString name) => nameToDefinition.Find(name);
+        /// <returns>The definition if it exists, or the 'missing' definition.
+        /// </returns>
+        public static ActorDefinition Find(UpperString name)
+        {
+            if (nameToDefinition.TryGetValue(name, out ActorDefinition definition))
+                return definition;
+            return missingActorDefinition;
+        }
 
         /// <summary>
         /// Looks up a definition by editor ID.
         /// </summary>
         /// <param name="editorID">The ID to look up.</param>
-        /// <returns>The definition if it exists, or an empty value.</returns>
-        public static Optional<ActorDefinition> Find(int editorID) => editorIDToDefinition.Find(editorID);
+        /// <returns>The definition if it exists, or the 'missing' definition.
+        /// </returns>
+        public static ActorDefinition Find(int editorID)
+        {
+            if (editorIDToDefinition.TryGetValue(editorID, out ActorDefinition definition))
+                return definition;
+            return missingActorDefinition;
+        }
 
         internal static void AttachSpriteRotationsToFrames()
         {
             foreach (ActorDefinition definition in actors)
                 foreach (ActorFrame frame in definition.States.Frames)
                     frame.SpriteRotations = SpriteManager.Rotations(frame.Sprite);
+        }
+
+        private static void ResetCoreDefinitions()
+        {
+            AddDefinitions(DefaultDefinitionFactory.CreateAllDefaultDefinitions());
+
+            missingActorDefinition = nameToDefinition.Find(missingActorName).Value;
+            if (missingActorDefinition == null)
+                throw new NullReferenceException($"Core definition for unknown '{missingActorName}' missing");
         }
 
         private static void AddDefinitions(IEnumerable<ActorDefinition> definitions)

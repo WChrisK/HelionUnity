@@ -8,7 +8,6 @@ using Helion.Util.Logging.Targets;
 using Helion.Util.Unity;
 using Helion.Worlds;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 
 namespace Helion.Unity
 {
