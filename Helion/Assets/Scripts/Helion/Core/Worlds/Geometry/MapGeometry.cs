@@ -6,6 +6,7 @@ using Helion.Core.Resource.Maps;
 using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util.Logging;
 using Helion.Core.Worlds.Geometry.Bsp;
+using Helion.Core.Worlds.Geometry.Subsectors;
 using Helion.Core.Worlds.Geometry.Walls;
 using UnityEngine;
 
@@ -39,7 +40,6 @@ namespace Helion.Core.Worlds.Geometry
         public void Dispose()
         {
             BspTree.Dispose();
-            SectorPlanes.ForEach(secPlane => secPlane.Dispose());
             Walls.ForEach(wall => wall.Dispose());
         }
 

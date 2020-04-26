@@ -4,6 +4,7 @@ using System.Linq;
 using Helion.Bsp.Geometry;
 using Helion.Bsp.Node;
 using Helion.Core.Util.Geometry.Segments;
+using Helion.Core.Worlds.Geometry.Subsectors;
 using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry.Bsp
@@ -14,6 +15,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
     public class BspTree : IDisposable
     {
         public readonly List<Subsector> Subsectors = new List<Subsector>();
+        public readonly List<SubsectorPlane> SubsectorPlanes = new List<SubsectorPlane>();
         private readonly List<CompactBspNode> nodes = new List<CompactBspNode>();
         private readonly MapGeometry geometry;
 
@@ -78,7 +80,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
 
         public void Dispose()
         {
-            Subsectors.ForEach(subsector => subsector.Dispose());
+            SubsectorPlanes.ForEach(subsectorPlane => subsectorPlane.Dispose());
         }
 
         private static Seg2F MakeFloatSplitter(BspSegment segment)
@@ -133,8 +135,14 @@ namespace Helion.Core.Worlds.Geometry.Bsp
             if (sector == null)
                 throw new Exception("Encountered a fully miniseg subsector, this should never happen");
 
+            SubsectorPlane floor = new SubsectorPlane(SubsectorPlanes.Count, sector.Floor, edges);
+            SubsectorPlanes.Add(floor);
+
+            SubsectorPlane ceiling = new SubsectorPlane(SubsectorPlanes.Count, sector.Ceiling, edges);
+            SubsectorPlanes.Add(ceiling);
+
             int index = Subsectors.Count;
-            Subsector subsector = new Subsector(index, sector, edges);
+            Subsector subsector = new Subsector(index, sector, floor, ceiling);
             Subsectors.Add(subsector);
 
             return (uint)index | CompactBspNode.IsSubsectorBit;

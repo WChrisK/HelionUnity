@@ -2,6 +2,7 @@
 using Helion.Core.Resource.Maps.Components;
 using Helion.Core.Util;
 using Helion.Core.Util.Extensions;
+using Helion.Core.Worlds.Geometry.Subsectors;
 
 namespace Helion.Core.Worlds.Geometry
 {

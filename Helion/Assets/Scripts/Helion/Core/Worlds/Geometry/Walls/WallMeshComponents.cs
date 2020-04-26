@@ -70,6 +70,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
         internal void SetTexture(Texture newTexture)
         {
             texture = newTexture;
+            Renderer.sharedMaterial = newTexture.Material;
         }
 
         private void UpdateEnabledStatus(SectorPlane floor, SectorPlane ceiling)

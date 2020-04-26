@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Helion.Core.Resource.Textures;
 using Helion.Core.Util;
-using Helion.Core.Util.Unity;
+using Helion.Core.Worlds.Geometry.Subsectors;
 using Helion.Core.Worlds.Geometry.Walls;
-using UnityEngine;
 using Texture = Helion.Core.Resource.Textures.Texture;
 
 namespace Helion.Core.Worlds.Geometry
@@ -13,7 +11,7 @@ namespace Helion.Core.Worlds.Geometry
     /// A plane that belongs to a sector. This can either be a floor, ceiling,
     /// or something like a 3D floor/transfer heights plane.
     /// </summary>
-    public class SectorPlane : IDisposable
+    public class SectorPlane
     {
         /// <summary>
         /// The index in a list of sector planes.
@@ -40,7 +38,7 @@ namespace Helion.Core.Worlds.Geometry
             set
             {
                 height = value;
-                Subsectors.ForEach(subsector => subsector.UpdateMeshes());
+                SubsectorPlanes.ForEach(subsectorPlane => subsectorPlane.UpdateMeshes());
                 WallListeners.ForEach(wall => wall.UpdateWallMesh());
             }
         }
@@ -71,9 +69,8 @@ namespace Helion.Core.Worlds.Geometry
         /// All of the subsectors that use this sector plane and should listen
         /// for any height changes.
         /// </summary>
-        public readonly List<Subsector> Subsectors = new List<Subsector>();
+        public readonly List<SubsectorPlane> SubsectorPlanes = new List<SubsectorPlane>();
 
-        private readonly GameObject gameObject;
         private UpperString textureName;
         private int height;
 
@@ -120,21 +117,6 @@ namespace Helion.Core.Worlds.Geometry
             height = verticalHeight;
             TextureName = texture;
             Texture = TextureManager.Texture(texture);
-            gameObject = CreateGameObject(index, isCeiling, height);
-        }
-
-        public void Dispose()
-        {
-            GameObjectHelper.Destroy(gameObject);
-        }
-
-        private static GameObject CreateGameObject(int index, bool isCeiling, int height)
-        {
-            string facingText = isCeiling ? "Ceiling" : "Floor";
-            GameObject gameObj = new GameObject($"Sector plane {index} ({facingText})");
-            gameObj.transform.position = new Vector3(0, height, 0).MapUnit();
-
-            return gameObj;
         }
     }
 }
