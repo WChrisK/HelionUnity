@@ -7,6 +7,7 @@ using Helion.Util.Logging;
 using Helion.Util.Logging.Targets;
 using Helion.Util.Unity;
 using Helion.Worlds;
+using Helion.Worlds.Entities.Players;
 using Helion.Worlds.Info;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ namespace Helion.Unity
         private static readonly Log Log = LogManager.Instance();
 
         private World world;
+        private Player player;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -188,6 +190,7 @@ namespace Helion.Unity
 
                 world?.Dispose();
                 world = newWorld;
+                player = world.Entities.SpawnPlayer(1);
 
                 return $"Loaded {mapName}";
             });
