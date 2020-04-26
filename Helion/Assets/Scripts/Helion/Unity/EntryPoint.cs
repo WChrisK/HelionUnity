@@ -166,8 +166,17 @@ namespace Helion.Unity
                 player = world.Entities.SpawnPlayer(1);
 
                 if (Camera.main != null)
+                {
                     Camera.main.enabled = false;
+                    GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
+                    if (cameraObject)
+                    {
+                        AudioListener audioListener = cameraObject.GetComponent<AudioListener>();
+                        Destroy(audioListener);
+                    }
+                }
                 player.Camera.enabled = true;
+                player.GameObject.AddComponent<AudioListener>();
 
                 return $"Loaded {mapName}";
             });

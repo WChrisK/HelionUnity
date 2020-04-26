@@ -16,7 +16,7 @@ namespace Helion.Worlds.Entities.Players
         public readonly int PlayerNumber;
         public readonly Entity Entity;
         public readonly Camera Camera;
-        private readonly GameObject gameObject;
+        public readonly GameObject GameObject;
         private float pitchDegrees;
         private float yawDegrees;
 
@@ -24,8 +24,8 @@ namespace Helion.Worlds.Entities.Players
         {
             PlayerNumber = playerNumber;
             Entity = entity;
-            gameObject = new GameObject($"Player {playerNumber} camera");
-            entity.GameObject.SetChild(gameObject, false);
+            GameObject = new GameObject($"Player {playerNumber} camera");
+            entity.GameObject.SetChild(GameObject, false);
             Camera = CreateCamera();
             yawDegrees = DoomToUnityAngle(entity.Angle.Degrees);
 
@@ -53,10 +53,9 @@ namespace Helion.Worlds.Entities.Players
             yawDegrees %= 360.0f;
             pitchDegrees = pitchDegrees.Clamp(-90, 90);
 
-            gameObject.transform.rotation = Quaternion.Euler(-pitchDegrees, yawDegrees, 0);
+            GameObject.transform.rotation = Quaternion.Euler(-pitchDegrees, yawDegrees, 0);
 
             Entity.Angle = BitAngle.FromDegrees(DoomToUnityAngle(yawDegrees));
-            Debug.Log($">>> {Entity.Angle}");
         }
 
         public void Update(float tickFraction)
@@ -66,7 +65,7 @@ namespace Helion.Worlds.Entities.Players
 
         private Camera CreateCamera()
         {
-            Camera camera = gameObject.AddComponent<Camera>();
+            Camera camera = GameObject.AddComponent<Camera>();
 
             ActorProperties props = Entity.Definition.Properties;
             camera.nearClipPlane = Math.Min(props.Radius, props.Height / 2).MapUnit();
@@ -77,12 +76,12 @@ namespace Helion.Worlds.Entities.Players
 
         private void SetGameObjectTransform()
         {
-            Vector3 pos = gameObject.transform.position;
+            Vector3 pos = GameObject.transform.position;
             pos.y += Entity.Definition.Properties.PlayerViewHeight.MapUnit();
 
             Quaternion rotate = Entity.Angle.Quaternion;
 
-            gameObject.transform.SetPositionAndRotation(pos, rotate);
+            GameObject.transform.SetPositionAndRotation(pos, rotate);
         }
     }
 }
