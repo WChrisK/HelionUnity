@@ -30,14 +30,14 @@ namespace Helion.Core.Worlds.Geometry.Bsp
         /// The splitter used to determine the side to branch on when doing a
         /// BSP traversal.
         /// </summary>
-        public readonly Line2F Splitter;
+        public readonly Seg2F Splitter;
 
         public bool LeftIsSubsector => LeftChildBits.HasBits(IsSubsectorBit);
         public bool RightIsSubsector => RightChildBits.HasBits(IsSubsectorBit);
         public uint LeftChildWithoutBit => LeftChildBits & ~IsSubsectorBit;
         public uint RightChildWithoutBit => RightChildBits & ~IsSubsectorBit;
 
-        public CompactBspNode(uint leftChildBits, uint rightChildBits, Line2F splitter)
+        public CompactBspNode(uint leftChildBits, uint rightChildBits, Seg2F splitter)
         {
             LeftChildBits = leftChildBits;
             RightChildBits = rightChildBits;

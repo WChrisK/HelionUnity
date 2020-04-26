@@ -13,7 +13,7 @@ namespace Helion.Core.Worlds.Geometry
         public readonly int Index;
         public readonly Sector Sector;
 
-        public Subsector(int index, Sector sector, List<Line2F> edges)
+        public Subsector(int index, Sector sector, List<Seg2F> edges)
         {
             Index = index;
             Sector = sector;

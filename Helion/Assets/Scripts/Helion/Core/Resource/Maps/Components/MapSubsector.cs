@@ -7,7 +7,7 @@ namespace Helion.Core.Resource.Maps.Components
     {
         public readonly int Index;
         public int SectorIndex;
-        public List<Line2F> Edges = new List<Line2F>();
+        public List<Seg2F> Edges = new List<Seg2F>();
 
         public MapSubsector(int index)
         {

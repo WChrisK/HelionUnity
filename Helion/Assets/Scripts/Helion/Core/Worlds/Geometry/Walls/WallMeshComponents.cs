@@ -35,7 +35,7 @@ namespace Helion.Core.Worlds.Geometry.Walls
         {
             this.wall = wall;
             this.texture = texture;
-            this.lineLength = wall.Line.Segment.Length;
+            this.lineLength = wall.Line.Segment.Length();
             this.Renderer = gameObject.AddComponent<MeshRenderer>();
             this.Filter = gameObject.AddComponent<MeshFilter>();
             this.Mesh = CreateMesh();

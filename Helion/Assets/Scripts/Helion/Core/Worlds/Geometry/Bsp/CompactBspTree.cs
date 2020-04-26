@@ -28,16 +28,16 @@ namespace Helion.Core.Worlds.Geometry.Bsp
             Subsectors.ForEach(subsector => subsector.Dispose());
         }
 
-        private static Line2F MakeFloatSplitter(BspSegment segment)
+        private static Seg2F MakeFloatSplitter(BspSegment segment)
         {
-            return new Line2F(segment.StartVertex.Float(), segment.EndVertex.Float());
+            return new Seg2F(segment.StartVertex.Float(), segment.EndVertex.Float());
         }
 
-        private static Line2F EdgeToLine(SubsectorEdge edge)
+        private static Seg2F EdgeToLine(SubsectorEdge edge)
         {
             Vector2 start = new Vector2((float)edge.Start.X, (float)edge.Start.Y);
             Vector2 end = new Vector2((float)edge.End.X, (float)edge.End.Y);
-            return new Line2F(start, end);
+            return new Seg2F(start, end);
         }
 
         private uint RecursivelyHandleNode(BspNode node)
@@ -51,7 +51,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
             uint rightIndex = RecursivelyHandleNode(node.Right);
 
             uint nodeIndex = (uint)nodes.Count;
-            Line2F splitter = MakeFloatSplitter(node.Splitter);
+            Seg2F splitter = MakeFloatSplitter(node.Splitter);
             CompactBspNode bspNode = new CompactBspNode(leftIndex, rightIndex, splitter);
             nodes.Add(bspNode);
 
@@ -61,7 +61,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
         private uint CreateSubsector(BspNode node)
         {
             Sector sector = null;
-            List<Line2F> edges = new List<Line2F>();
+            List<Seg2F> edges = new List<Seg2F>();
 
             foreach (SubsectorEdge edge in node.ClockwiseEdges)
             {
