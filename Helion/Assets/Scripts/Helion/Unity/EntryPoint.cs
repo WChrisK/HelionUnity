@@ -72,35 +72,7 @@ namespace Helion.Unity
 
         void Update()
         {
-            const float sens = 100.0f;
-            const float move = 0.125f;
-
-            Camera main = Camera.main;
-            if (world == null || main == null)
-                return;
-
-            //=================================================================
-            float horizontal = Input.GetAxisRaw("Mouse X") * sens * Time.deltaTime;
-            float vertical = Input.GetAxisRaw("Mouse Y") * sens * Time.deltaTime;
-            main.transform.RotateAround(main.transform.position, Vector3.up, horizontal);
-
-            if (Input.GetKey(KeyCode.W))
-                main.transform.Translate(main.transform.forward * move);
-            if (Input.GetKey(KeyCode.A))
-                main.transform.Translate(-main.transform.right * move);
-            if (Input.GetKey(KeyCode.S))
-                main.transform.Translate(-main.transform.forward * move);
-            if (Input.GetKey(KeyCode.D))
-                main.transform.Translate(main.transform.right * move);
-            if (Input.GetKey(KeyCode.Space))
-                main.transform.Translate(main.transform.up * move);
-            if (Input.GetKey(KeyCode.C))
-                main.transform.Translate(-main.transform.up * move);
-            //=================================================================
-
-            // Vector3 pos = player.InterpolatedPosition(world.GameTickFraction);
-            // pos.y += player.Definition.Properties.PlayerViewHeight;
-            // Camera.main.transform.position = pos.MapUnit();
+            world?.Update();
         }
 
         void FixedUpdate()
@@ -191,6 +163,10 @@ namespace Helion.Unity
                 world?.Dispose();
                 world = newWorld;
                 player = world.Entities.SpawnPlayer(1);
+
+                if (Camera.main != null)
+                    Camera.main.enabled = false;
+                player.Camera.enabled = true;
 
                 return $"Loaded {mapName}";
             });

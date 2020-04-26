@@ -198,7 +198,7 @@ namespace Helion.Resource.Maps.Readers
                 float x = new Fixed(reader.Short(), 0).Float();
                 float y = new Fixed(reader.Short(), 0).Float();
                 thing.Position = new Vector2(x, y);
-                thing.AngleDegrees = (int)(reader.UShort() * 65535.0 / 360.0);
+                thing.AngleDegrees = reader.UShort();
                 thing.EditorID = reader.UShort();
                 SetThingFlags(thing, reader.UShort());
 

@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Helion.Worlds;
+using UnityEngine;
 
 namespace Helion.Util.Interpolation
 {
     /// <summary>
     /// Handles an interpolatable vector value.
     /// </summary>
-    public struct Vector3Interpolation
+    public struct Vector3Interpolation : ITickable
     {
         /// <summary>
         /// The current position.

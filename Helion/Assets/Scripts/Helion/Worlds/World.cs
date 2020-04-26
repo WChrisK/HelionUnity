@@ -81,6 +81,15 @@ namespace Helion.Worlds
             timer.Restart();
         }
 
+        /// <summary>
+        /// To be called by Unity's Update() method, so we know to only update
+        /// rendering component interpolations.
+        /// </summary>
+        public void Update()
+        {
+            Entities.Update(timer.TickFraction);
+        }
+
         public void Dispose()
         {
             Entities.Dispose();

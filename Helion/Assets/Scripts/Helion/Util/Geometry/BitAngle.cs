@@ -26,11 +26,30 @@ namespace Helion.Util.Geometry
         public uint Bits;
 
         /// <summary>
+        /// Gets the angle but in degrees. East in the world (or the positive X
+        /// axis) is considered zero and this rotates counter-clockwise if we
+        /// were looking down along the X/Z plane in a birds eye view.
+        /// </summary>
+        public float Degrees => ((float)Bits * 360 / uint.MaxValue);
+
+        /// <summary>
         /// Gets the angle but in radians. East in the world (or the positive X
         /// axis) is considered zero and this rotates counter-clockwise if we
         /// were looking down along the X/Z plane in a birds eye view.
         /// </summary>
         public float Radians => (float)(Bits * Math.PI / uint.MaxValue);
+
+        /// <summary>
+        /// Gets the quaternion rotation for this angle.
+        /// </summary>
+        /// <remarks>
+        /// A rotation of zero is straight ahead along the Z axis.
+        /// Increasing the angle rotates right. This is the opposite of the
+        /// world where East is zero and it rotates left. Therefore we do a
+        /// right rotation of 90 degrees, and then go left by subtracting
+        /// the degrees.
+        /// </remarks>
+        public Quaternion Quaternion => Quaternion.Euler(0, 90 - Degrees, 0);
 
         public BitAngle(uint bits)
         {

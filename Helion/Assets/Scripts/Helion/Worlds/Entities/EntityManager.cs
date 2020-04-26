@@ -99,5 +99,11 @@ namespace Helion.Worlds.Entities
 
             return entity;
         }
+
+        public void Update(float tickFraction)
+        {
+            Entities.ForEach(entity => entity.Update(tickFraction));
+            players.Values.ForEach(player => player.Update(tickFraction));
+        }
     }
 }
