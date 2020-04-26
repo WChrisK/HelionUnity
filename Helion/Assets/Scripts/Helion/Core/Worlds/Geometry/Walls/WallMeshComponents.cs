@@ -206,9 +206,6 @@ namespace Helion.Core.Worlds.Geometry.Walls
         private Vector2[] CalculateUVCoordinates(SectorPlane floor, SectorPlane ceiling,
             Vector3[] vertices)
         {
-            if (wall.Index == 113)
-                Debug.Log(":)");
-
             Vector2 start = new Vector2(0, 0);
             Vector2 end = new Vector2(1, 1);
 
@@ -217,13 +214,13 @@ namespace Helion.Core.Worlds.Geometry.Walls
             // 0.0 -> 1.0 coordinates look like:
             //
             // (0.0, 0.0)      (1.0, 0.0)
-            //         o--------E
+            //         S--------o
             //         |  Top   |      S = start
             //         |        |      E = end
             //         |        |
             //         |        |
             //         | Bottom |
-            //         S--------o
+            //         o--------E
             // (0.0, 1.0)      (1.0, 1.0)
             //
             // This means when we are drawing from the bottom up, we want to
@@ -251,13 +248,14 @@ namespace Helion.Core.Worlds.Geometry.Walls
                 throw new Exception($"Unexpected wall section for UV calculations: {wall.Section}");
             }
 
-            // This follows easily from the comment/ASCII-art above.
+            // This follows easily from the comment/ASCII-art above, along with
+            // the vertex locations from the class documentation.
             return new[]
             {
-                new Vector2(start.x, start.y),
-                new Vector2(end.x, start.y),
                 new Vector2(start.x, end.y),
-                new Vector2(end.x, end.y)
+                new Vector2(end.x, end.y),
+                new Vector2(start.x, start.y),
+                new Vector2(end.x, start.y)
             };
         }
 
@@ -272,9 +270,18 @@ namespace Helion.Core.Worlds.Geometry.Walls
             // If it's upper, draw from the top of the ceiling down.
             if (wall.Line.Unpegged.HasUpper())
             {
-                // TODO: This is wrong, draw from the top down to the location (we need more args).
-                start = new Vector2(0.0f, 1.0f) + offsetUV;
-                end = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+                // Remember that this draws from the very top, so we need to
+                // know the sector height that will act as the top. Drawing the
+                // other pieces
+                float maxHeight = wall.Side.Sector.Ceiling.Height;
+
+                // We need to find the V coordinates from the top to do these
+                // correctly.
+                float topV = (maxHeight - ceiling.Height) * invDimension.y;
+                float bottomV = (maxHeight - floor.Height) * invDimension.y;
+
+                start = new Vector2(offsetUV.x, topV + offsetUV.y);
+                end = new Vector2(offsetUV.x + spanUV.x, bottomV + offsetUV.y);
             }
             else
             {
@@ -294,8 +301,8 @@ namespace Helion.Core.Worlds.Geometry.Walls
             // If it's lower, draw from the floor up.
             if (wall.Line.Unpegged.HasLower())
             {
-                start = new Vector2(0.0f, 1.0f) + offsetUV;
-                end = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+                end = new Vector2(spanUV.x + offsetUV.x, 1.0f - offsetUV.y);
+                start = new Vector2(offsetUV.x, end.y - spanUV.y);
             }
             else
             {
@@ -315,8 +322,8 @@ namespace Helion.Core.Worlds.Geometry.Walls
             Vector2 offsetUV = wall.Side.Offset.Float() * invDimension;
 
             // TODO: Draw it to the proper clipped spot.
-            start = new Vector2(offsetUV.x, 1);
-            end = new Vector2(offsetUV.x + spanUV.x, 0);
+            start = new Vector2(offsetUV.x, 0);
+            end = new Vector2(offsetUV.x + spanUV.x, 1);
         }
 
         private void CalculateTwoSidedUpperUV(SectorPlane floor, SectorPlane ceiling,
@@ -335,8 +342,8 @@ namespace Helion.Core.Worlds.Geometry.Walls
             }
             else
             {
-                start = new Vector2(0.0f, 1.0f) + offsetUV;
-                end = new Vector2(spanUV.x, 1.0f - spanUV.y) + offsetUV;
+                end = new Vector2(spanUV.x + offsetUV.x, 1.0f - offsetUV.y);
+                start = new Vector2(offsetUV.x, end.y - spanUV.y);
             }
         }
 
