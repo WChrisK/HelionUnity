@@ -7,6 +7,7 @@ using Helion.Resource.Decorate.Definitions.Properties.Types;
 using Helion.Resource.Maps.Actions;
 using Helion.Util;
 using Helion.Util.Extensions;
+using Helion.Worlds.Info;
 using UnityEngine;
 
 namespace Helion.Resource.Decorate.Parser
@@ -711,18 +712,18 @@ namespace Helion.Resource.Decorate.Parser
             }
         }
 
-        private SpawnGameMode ReadSpawnType()
+        private GameMode ReadSpawnType()
         {
             string spawnName = ConsumeString();
 
             switch (spawnName.ToUpper())
             {
             case "COOPERATIVE":
-                return SpawnGameMode.Cooperative;
+                return GameMode.Cooperative;
             case "DEATHMATCH":
-                return SpawnGameMode.Deathmatch;
+                return GameMode.Deathmatch;
             case "TEAM":
-                return SpawnGameMode.Team;
+                return GameMode.Team;
             default:
                 throw MakeException($"Unknown spawn type: {spawnName}");
             }

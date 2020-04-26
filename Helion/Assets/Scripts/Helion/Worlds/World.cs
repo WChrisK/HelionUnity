@@ -5,6 +5,7 @@ using Helion.Util.Timing;
 using Helion.Util.Unity;
 using Helion.Worlds.Entities;
 using Helion.Worlds.Geometry;
+using Helion.Worlds.Info;
 using UnityEngine;
 
 namespace Helion.Worlds
@@ -14,14 +15,16 @@ namespace Helion.Worlds
     /// </summary>
     public class World : ITickable, IDisposable
     {
+        public readonly WorldInfo Info;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
         public int GameTick { get; private set; }
         private readonly Ticker timer = new Ticker(Constants.TickRateMillis);
         private readonly GameObject gameObject;
 
-        private World(MapData map, GameObject gameObj)
+        private World(WorldInfo info, MapData map, GameObject gameObj)
         {
+            Info = info;
             gameObject = gameObj;
             Geometry = new MapGeometry(map);
             Entities = new EntityManager(this, map);
@@ -38,18 +41,19 @@ namespace Helion.Worlds
         /// it's all valid. Any BSP failure should be reported to developers
         /// since they should not be happening either.
         /// </remarks>
+        /// <param name="info">The world information.</param>
         /// <param name="map">The map to create the world from.</param>
         /// <param name="world">The created world (or null on failure).</param>
         /// <param name="worldGameObject">The game object that is made for
         /// applying ticking monobehaviours to (or null on failure).</param>
         /// <returns>True on success, false on failure.</returns>
-        public static bool TryCreateWorld(MapData map, out World world, out GameObject worldGameObject)
+        public static bool TryCreateWorld(WorldInfo info, MapData map, out World world, out GameObject worldGameObject)
         {
             worldGameObject = new GameObject($"World ({map.Name})");
 
             try
             {
-                world = new World(map, worldGameObject);
+                world = new World(info, map, worldGameObject);
 
                 WorldMonoBehaviour worldMonoBehaviour = worldGameObject.AddComponent<WorldMonoBehaviour>();
                 worldMonoBehaviour.World = world;

@@ -7,6 +7,7 @@ using Helion.Util.Logging;
 using Helion.Util.Logging.Targets;
 using Helion.Util.Unity;
 using Helion.Worlds;
+using Helion.Worlds.Info;
 using UnityEngine;
 
 namespace Helion.Unity
@@ -177,7 +178,12 @@ namespace Helion.Unity
                 if (!Data.TryFindMap(mapName, out MapData map))
                     return $"Cannot find {mapName}";
 
-                if (!World.TryCreateWorld(map, out World newWorld, out GameObject worldGameObject))
+                WorldInfo info = new WorldInfo(mapName, 0)
+                {
+                    Skill = Skill.Hard,
+                    Mode = GameMode.Cooperative
+                };
+                if (!World.TryCreateWorld(info, map, out World newWorld, out GameObject _))
                     return $"Unable to load corrupt world data for {mapName}";
 
                 world?.Dispose();

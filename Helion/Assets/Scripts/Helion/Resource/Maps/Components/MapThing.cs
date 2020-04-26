@@ -6,7 +6,7 @@ namespace Helion.Resource.Maps.Components
     public class MapThing
     {
         public readonly int Index;
-        public int ThingID;
+        public int EditorID;
         public Vector2 Position;
         public float? AbsoluteHeight; // We added this for Hexen support.
         public float? RelativeHeight;
