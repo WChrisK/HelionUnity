@@ -72,6 +72,7 @@ namespace Helion.Unity
 
         void Update()
         {
+            player?.ApplyPlayerCameraInput();
             world?.Update();
         }
 

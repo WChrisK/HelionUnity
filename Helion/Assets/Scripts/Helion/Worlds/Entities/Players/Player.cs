@@ -1,4 +1,5 @@
 ﻿using System;
+using Helion.Resource;
 using Helion.Resource.Decorate.Definitions.Properties;
 using Helion.Util;
 using Helion.Util.Extensions;
@@ -14,6 +15,8 @@ namespace Helion.Worlds.Entities.Players
         public readonly Entity Entity;
         public readonly Camera Camera;
         private readonly GameObject gameObject;
+        private float pitch;
+        private float yaw;
 
         public Player(int playerNumber, Entity entity)
         {
@@ -24,6 +27,33 @@ namespace Helion.Worlds.Entities.Players
             Camera = CreateCamera();
 
             SetGameObjectTransform();
+        }
+
+        public void ApplyPlayerCameraInput()
+        {
+            float x;
+            float y;
+            if (Data.Config.Mouse.UseRawInput)
+            {
+                x = Input.GetAxisRaw("Mouse X");
+                y = Input.GetAxisRaw("Mouse Y");
+            }
+            else
+            {
+                x = Input.GetAxis("Mouse X");
+                y = Input.GetAxis("Mouse Y");
+            }
+
+            yaw += x * Data.Config.Mouse.Yaw * Data.Config.Mouse.Sensitivity;
+            pitch += y * Data.Config.Mouse.Pitch * Data.Config.Mouse.Sensitivity;
+
+            while (yaw > 360)
+                yaw -= 360;
+            while (yaw < 360)
+                yaw += 360;
+            pitch = pitch.Clamp(-90, 90);
+
+            gameObject.transform.rotation = Quaternion.Euler(-pitch, yaw, 0);
         }
 
         public void Update(float tickFraction)
