@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Helion.Core.Util.Geometry.Graphs;
-using Helion.Core.Util.Geometry.Vectors;
+using Helion.Util.Geometry.Graphs;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Bsp.Geometry
 {

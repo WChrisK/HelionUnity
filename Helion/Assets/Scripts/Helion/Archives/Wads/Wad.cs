@@ -1,0 +1,174 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Helion.Resource;
+using Helion.Util;
+using Helion.Util.Bytes;
+using Helion.Util.Extensions;
+using static Helion.Util.OptionalHelper;
+
+namespace Helion.Archives.Wads
+{
+    /// <summary>
+    /// The encapsulation of a Wad archive.
+    /// </summary>
+    public class Wad : IArchive
+    {
+        public string Uri { get; }
+        private readonly List<WadEntry> entries = new List<WadEntry>();
+        private readonly Dictionary<UpperString, List<WadEntry>> nameToEntry = new Dictionary<UpperString, List<WadEntry>>();
+
+        private Wad(string uri, List<WadEntry> wadEntries)
+        {
+            Uri = uri;
+            entries.AddRange(wadEntries);
+
+            wadEntries.ForEach(entry =>
+            {
+                if (nameToEntry.TryGetValue(entry.Name, out List<WadEntry> existingEntries))
+                    existingEntries.Add(entry);
+                else
+                    nameToEntry[entry.Name] = new List<WadEntry> { entry };
+            });
+        }
+
+        /// <summary>
+        /// Reads a wad file from a path provided.
+        /// </summary>
+        /// <param name="path">The path to read from.</param>
+        /// <returns>The wad file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<Wad> From(string path)
+        {
+            try
+            {
+                byte[] data = File.ReadAllBytes(path);
+                List<WadEntry> entries = ReadEntriesOrThrow(data);
+                return new Wad(path, entries);
+            }
+            catch
+            {
+                return Empty;
+            }
+        }
+
+        /// <summary>
+        /// A helper method that reads a wad file but returns the interface
+        /// type.
+        /// </summary>
+        /// <param name="path">The path to read the wad from.</param>
+        /// <returns>The wad file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<IArchive> FromArchive(string path)
+        {
+            return From(path).Map(val => (IArchive)val);
+        }
+
+        /// <summary>
+        /// Reads a wad file from a path provided.
+        /// </summary>
+        /// <param name="uri">The resource identifier to apply to the wad if
+        /// created.</param>
+        /// <param name="data">The data for the wad.</param>
+        /// <returns>The wad file, or an empty optional if it cannot be read
+        /// from.</returns>
+        public static Optional<Wad> From(string uri, byte[] data)
+        {
+            try
+            {
+                List<WadEntry> entries = ReadEntriesOrThrow(data);
+                return new Wad(uri, entries);
+            }
+            catch
+            {
+                return Empty;
+            }
+        }
+
+        public Optional<IEntry> Find(UpperString name)
+        {
+            if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
+                return existingEntries.FirstOrDefault();
+            return Empty;
+        }
+
+        public Optional<IEntry> Find(UpperString name, ResourceNamespace type)
+        {
+            if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
+                foreach (WadEntry entry in existingEntries.Reversed())
+                    if (entry.Namespace == type)
+                        return entry;
+
+            return Empty;
+        }
+
+        public Optional<IEntry> FindPath(UpperString path) => Find(path);
+
+        public IEnumerable<IEntry> FindAll(UpperString name)
+        {
+            if (nameToEntry.TryGetValue(name, out List<WadEntry> existingEntries))
+                return existingEntries;
+            return new List<IEntry>();
+        }
+
+        public IArchiveMapIterator GetMaps() => new WadArchiveMapIterator(this);
+
+        public IEnumerator<IEntry> GetEnumerator() => entries.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private static List<WadEntry> ReadEntriesOrThrow(byte[] wadData)
+        {
+            ByteReader reader = ByteReader.From(ByteOrder.Little, wadData);
+
+            // The header must exist fully or else we can't read it.
+            if (!reader.HasRemaining(12))
+                throw new Exception("Cannot read Wad");
+
+            WadResourceNamespaceTracker namespaceTracker = new WadResourceNamespaceTracker();
+            List<WadEntry> entries = new List<WadEntry>();
+
+            WadHeader header = ReadHeader(reader);
+            reader.Offset = header.DirectoryTableOffset;
+
+            for (int i = 0; i < header.EntryCount; i++)
+            {
+                WadDirectoryEntry dirEntry = ReadWadEntry(reader);
+
+                ResourceNamespace resourceNamespace = namespaceTracker.Update(dirEntry);
+                byte[] data = reader.Bytes(dirEntry.Size, dirEntry.Offset);
+
+                // Unfortunately binary readers can silently fail and just
+                // consume the remaining data. We want to let the caller
+                // know the wad is in fact corrupt if it can't read enough.
+                if (data.Length != dirEntry.Size)
+                    throw new Exception("Malformed wad entry length");
+
+                WadEntry entry = new WadEntry(dirEntry.Name, resourceNamespace, data);
+                entries.Add(entry);
+            }
+
+            return entries;
+        }
+
+        private static WadHeader ReadHeader(ByteReader reader)
+        {
+            bool iwad = reader.String(4).ToUpper() == "IWAD";
+            int entryCount = reader.Int();
+            int dirOffset = reader.Int();
+
+            return new WadHeader(iwad, entryCount, dirOffset);
+        }
+
+        private static WadDirectoryEntry ReadWadEntry(ByteReader reader)
+        {
+            int offset = reader.Int();
+            int size = reader.Int();
+            UpperString name = reader.StringWithoutNulls(8);
+
+            return new WadDirectoryEntry(offset, size, name);
+        }
+    }
+}

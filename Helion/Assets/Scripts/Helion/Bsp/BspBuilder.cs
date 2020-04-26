@@ -7,10 +7,10 @@ using Helion.Bsp.States.Convex;
 using Helion.Bsp.States.Miniseg;
 using Helion.Bsp.States.Partition;
 using Helion.Bsp.States.Split;
-using Helion.Core.Resource.Maps;
-using Helion.Core.Resource.Maps.Components;
-using Helion.Core.Util.Extensions;
-using Helion.Core.Util.Geometry.Segments;
+using Helion.Resource.Maps;
+using Helion.Resource.Maps.Components;
+using Helion.Util.Extensions;
+using Helion.Util.Geometry.Segments;
 using UnityEngine;
 
 namespace Helion.Bsp

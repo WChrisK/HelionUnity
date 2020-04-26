@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Bsp.Geometry;
-using Helion.Core.Util.Extensions;
-using Helion.Core.Util.Geometry.Segments;
+using Helion.Util.Extensions;
+using Helion.Util.Geometry.Segments;
 using UnityEngine;
 
 namespace Helion.Bsp.States.Convex

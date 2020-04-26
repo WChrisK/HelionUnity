@@ -1,0 +1,32 @@
+﻿using Helion.Util;
+using Helion.Util.Geometry;
+
+namespace Helion.Resource.Decorate.Definitions.States
+{
+    public class ActorFrameProperties
+    {
+        public bool? Bright;
+        public bool? CanRaise;
+        public bool? Fast;
+        public Optional<UpperString> Light;
+        public bool? NoDelay;
+        public Vec2I? Offset;
+        public bool? Slow;
+
+        public ActorFrameProperties()
+        {
+            Light = new Optional<UpperString>();
+        }
+
+        public ActorFrameProperties(ActorFrameProperties other)
+        {
+            Bright = other.Bright;
+            CanRaise = other.CanRaise;
+            Fast = other.Fast;
+            Light = new Optional<UpperString>(other.Light.Value);
+            NoDelay = other.NoDelay;
+            Offset = other.Offset;
+            Slow = other.Slow;
+        }
+    }
+}

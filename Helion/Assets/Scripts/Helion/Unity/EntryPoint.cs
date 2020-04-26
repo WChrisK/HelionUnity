@@ -1,12 +1,12 @@
-﻿using Helion.Core.Configs;
-using Helion.Core.Configs.Fields;
-using Helion.Core.Resource;
-using Helion.Core.Resource.Maps;
-using Helion.Core.Util;
-using Helion.Core.Util.Logging;
-using Helion.Core.Util.Logging.Targets;
-using Helion.Core.Util.Unity;
-using Helion.Core.Worlds;
+﻿using Helion.Configs;
+using Helion.Configs.Fields;
+using Helion.Resource;
+using Helion.Resource.Maps;
+using Helion.Util;
+using Helion.Util.Logging;
+using Helion.Util.Logging.Targets;
+using Helion.Util.Unity;
+using Helion.Worlds;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 

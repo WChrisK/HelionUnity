@@ -1,5 +1,5 @@
 using Helion.Bsp.Geometry;
-using Helion.Core.Util.Geometry.Segments;
+using Helion.Util.Geometry.Segments;
 
 namespace Helion.Bsp.States.Convex
 {

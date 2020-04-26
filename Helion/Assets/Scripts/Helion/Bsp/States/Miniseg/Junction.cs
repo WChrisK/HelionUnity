@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Helion.Bsp.Geometry;
-using Helion.Core.Util.Extensions;
-using Helion.Core.Util.Geometry.Vectors;
+using Helion.Util.Extensions;
+using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 
 namespace Helion.Bsp.States.Miniseg

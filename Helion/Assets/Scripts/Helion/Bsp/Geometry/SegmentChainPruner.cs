@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Helion.Core.Util.Extensions;
-using Helion.Core.Util.Logging;
+using Helion.Util.Extensions;
+using Helion.Util.Logging;
 using MoreLinq;
 using UnityEngine;
 

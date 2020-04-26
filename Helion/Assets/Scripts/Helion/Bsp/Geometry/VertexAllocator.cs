@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Helion.Core.Util.Geometry.Boxes;
-using Helion.Core.Util.Geometry.Grid;
-using Helion.Core.Util.Geometry.Vectors;
+using Helion.Util.Geometry.Boxes;
+using Helion.Util.Geometry.Grid;
+using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 
 namespace Helion.Bsp.Geometry

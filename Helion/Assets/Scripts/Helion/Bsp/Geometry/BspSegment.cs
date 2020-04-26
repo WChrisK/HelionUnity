@@ -1,8 +1,8 @@
-using Helion.Core.Util;
-using Helion.Core.Util.Geometry.Graphs;
-using Helion.Core.Util.Geometry.Segments;
+using Helion.Util;
+using Helion.Util.Geometry.Graphs;
+using Helion.Util.Geometry.Segments;
 using UnityEngine;
-using static Helion.Core.Util.OptionalHelper;
+using static Helion.Util.OptionalHelper;
 
 namespace Helion.Bsp.Geometry
 {

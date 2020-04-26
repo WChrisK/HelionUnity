@@ -2,8 +2,8 @@
 using System.Linq;
 using Helion.Bsp.Geometry;
 using Helion.Bsp.States.Convex;
-using Helion.Core.Util.Geometry.Segments;
-using Helion.Core.Util.Geometry.Vectors;
+using Helion.Util.Geometry.Segments;
+using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 
 namespace Helion.Bsp.Node

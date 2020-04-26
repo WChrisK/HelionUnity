@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Helion.Bsp.Geometry;
-using Helion.Core.Util.Logging;
+using Helion.Util.Logging;
 using UnityEngine;
 
 namespace Helion.Bsp.States.Miniseg
