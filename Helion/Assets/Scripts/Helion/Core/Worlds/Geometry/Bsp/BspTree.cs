@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Bsp.Geometry;
 using Helion.Bsp.Node;
 using Helion.Core.Util.Geometry.Segments;
@@ -16,11 +17,63 @@ namespace Helion.Core.Worlds.Geometry.Bsp
         private readonly List<CompactBspNode> nodes = new List<CompactBspNode>();
         private readonly MapGeometry geometry;
 
+        private CompactBspNode root => nodes.LastOrDefault();
+
+        /// <summary>
+        /// Creates and builds a BSP tree.
+        /// </summary>
+        /// <remarks>
+        /// Depending on the size of the tree, this may be a slow operation.
+        /// </remarks>
+        /// <param name="mapGeometry">The owning object.</param>
+        /// <param name="root">The tree root to build from.</param>
         public BspTree(MapGeometry mapGeometry, BspNode root)
         {
             geometry = mapGeometry;
 
             RecursivelyHandleNode(root);
+        }
+
+        /// <summary>
+        /// Finds the sector at the point provided.
+        /// </summary>
+        /// <param name="point">The world location.</param>
+        /// <returns>The sector for the point.</returns>
+        public Sector Sector(in Vector2 point) => Subsector(point).Sector;
+
+        /// <summary>
+        /// Finds the sector at the point provided.
+        /// </summary>
+        /// <param name="point">The world location.</param>
+        /// <returns>The sector for the point.</returns>
+        public Sector Sector(in Vector3 point) => Sector(new Vector2(point.x, point.y));
+
+        /// <summary>
+        /// Finds the subsector at the point provided.
+        /// </summary>
+        /// <param name="point">The world location.</param>
+        /// <returns>The subsector for the point.</returns>
+        public Subsector Subsector(in Vector2 point)
+        {
+            CompactBspNode node = root;
+
+            while (true)
+            {
+                if (node.OnRight(point))
+                {
+                    if (node.RightIsSubsector)
+                        return Subsectors[(int)node.RightChildWithoutBit];
+
+                    node = nodes[(int)node.RightChildBits];
+                }
+                else
+                {
+                    if (node.LeftIsSubsector)
+                        return Subsectors[(int)node.LeftChildWithoutBit];
+
+                    node = nodes[(int)node.LeftChildBits];
+                }
+            }
         }
 
         public void Dispose()

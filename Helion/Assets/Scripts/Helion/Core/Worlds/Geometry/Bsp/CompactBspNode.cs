@@ -1,5 +1,6 @@
 ﻿using Helion.Core.Util.Extensions;
 using Helion.Core.Util.Geometry.Segments;
+using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry.Bsp
 {
@@ -43,5 +44,12 @@ namespace Helion.Core.Worlds.Geometry.Bsp
             RightChildBits = rightChildBits;
             Splitter = splitter;
         }
+
+        /// <summary>
+        /// Checks if a point is on the right side of this node's splitter.
+        /// </summary>
+        /// <param name="point">The point to check.</param>
+        /// <returns>True if so, false otherwise.</returns>
+        public bool OnRight(in Vector2 point) => Splitter.OnRight(point);
     }
 }

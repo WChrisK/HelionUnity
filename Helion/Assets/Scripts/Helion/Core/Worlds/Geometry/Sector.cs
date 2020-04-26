@@ -33,7 +33,7 @@ namespace Helion.Core.Worlds.Geometry
         public void SetLightLevel(int lightLevel)
         {
             LightLevel = lightLevel;
-            LightLevelNormalized = (lightLevel * Constants.InverseLightLevel).Clamp(0, 1);
+            LightLevelNormalized = WorldUtil.ToDoomLightLevel(lightLevel);
         }
     }
 }

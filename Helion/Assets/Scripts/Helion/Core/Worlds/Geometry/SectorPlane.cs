@@ -50,8 +50,10 @@ namespace Helion.Core.Worlds.Geometry
         /// light level is used, but if this is not null then this should be
         /// used in place of it.
         /// </summary>
-        // TODO: Setting this should update mesh colors.
-        public int? OverrideLightLevel;
+        // TODO: Setting this should update mesh colors and update `normalized`. Use custom setter.
+        public int? OverrideLightLevel { get; }
+
+        public float? OverrideLightLevelNormalized { get; private set; }
 
         /// <summary>
         /// The material used for rendering the subsectors with.
@@ -78,9 +80,15 @@ namespace Helion.Core.Worlds.Geometry
         /// <summary>
         /// Gets the light level that should be used. This will select the
         /// appropriate light level from either the sector, or the light level
-        /// specifically for this plane if overridden.
+        /// specifically for this plane if overridden. This should not be used
+        /// for rendering, use <see cref="LightLevelNormalized"/> instead.
         /// </summary>
         public int LightLevel => OverrideLightLevel ?? Sector.LightLevel;
+
+        /// <summary>
+        /// Gets the normalized light level.
+        /// </summary>
+        public float LightLevelNormalized => OverrideLightLevelNormalized ?? Sector.LightLevelNormalized;
 
         /// <summary>
         /// Checks if this is a floor or not.
