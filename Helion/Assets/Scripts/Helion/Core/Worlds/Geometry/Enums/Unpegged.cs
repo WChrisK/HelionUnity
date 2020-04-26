@@ -2,6 +2,9 @@
 
 namespace Helion.Core.Worlds.Geometry.Enums
 {
+    /// <summary>
+    /// An enumeration for how lines can be unpegged to do alignment.
+    /// </summary>
     [Flags]
     public enum Unpegged
     {
@@ -11,6 +14,9 @@ namespace Helion.Core.Worlds.Geometry.Enums
         UpperAndLower = Upper | Lower
     }
 
+    /// <summary>
+    /// Helper functions for the <see cref="Unpegged"/> enum.
+    /// </summary>
     public static class UnpeggedExtensions
     {
         /// <summary>

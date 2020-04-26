@@ -4,6 +4,10 @@ using Helion.Core.Util.Geometry.Segments;
 
 namespace Helion.Core.Worlds.Geometry
 {
+    /// <summary>
+    /// A convex polygon that is the leaf of a BSP tree. This also happens to
+    /// be the shape to which we can render a floor or ceiling.
+    /// </summary>
     public class Subsector : IDisposable
     {
         public readonly int Index;
@@ -15,6 +19,8 @@ namespace Helion.Core.Worlds.Geometry
             Sector = sector;
 
             // TODO: Make subsector floor/ceiling.
+
+            sector.Subsectors.Add(this);
         }
 
         public void UpdateMeshes()

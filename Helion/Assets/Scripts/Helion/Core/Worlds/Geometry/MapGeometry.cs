@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
 {
+    /// <summary>
+    /// Contains all of the map geometry (walls, ceilings, floors).
+    /// </summary>
     public class MapGeometry : IDisposable
     {
         private static readonly Log Log = LogManager.Instance();
@@ -21,6 +24,8 @@ namespace Helion.Core.Worlds.Geometry
         public readonly List<SectorPlane> SectorPlanes = new List<SectorPlane>();
         public readonly List<Side> Sides = new List<Side>();
         public readonly List<Wall> Walls = new List<Wall>();
+
+        public List<Subsector> Subsectors => BspTree.Subsectors;
 
         public MapGeometry(MapData map)
         {

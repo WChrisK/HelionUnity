@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry
 {
+    /// <summary>
+    /// A line in a map that contains one or two sides.
+    /// </summary>
     public class Line
     {
         public readonly int Index;

@@ -9,6 +9,10 @@ using Texture = Helion.Core.Resource.Textures.Texture;
 
 namespace Helion.Core.Worlds.Geometry
 {
+    /// <summary>
+    /// A plane that belongs to a sector. This can either be a floor, ceiling,
+    /// or something like a 3D floor/transfer heights plane.
+    /// </summary>
     public class SectorPlane : IDisposable
     {
         /// <summary>

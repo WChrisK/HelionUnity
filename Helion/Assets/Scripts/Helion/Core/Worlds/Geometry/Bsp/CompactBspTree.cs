@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace Helion.Core.Worlds.Geometry.Bsp
 {
+    /// <summary>
+    /// The BSP tree that contains all of the subsectors and nodes.
+    /// </summary>
     public class BspTree : IDisposable
     {
         public readonly List<Subsector> Subsectors = new List<Subsector>();
@@ -24,7 +27,7 @@ namespace Helion.Core.Worlds.Geometry.Bsp
         {
             Subsectors.ForEach(subsector => subsector.Dispose());
         }
-        
+
         private static Line2F MakeFloatSplitter(BspSegment segment)
         {
             return new Line2F(segment.StartVertex.Float(), segment.EndVertex.Float());

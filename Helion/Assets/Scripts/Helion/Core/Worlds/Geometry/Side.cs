@@ -6,6 +6,9 @@ using Helion.Core.Worlds.Geometry.Walls;
 
 namespace Helion.Core.Worlds.Geometry
 {
+    /// <summary>
+    /// A side of a Line object.
+    /// </summary>
     public class Side
     {
         public readonly int Index;
