@@ -97,31 +97,48 @@ namespace Helion.Core.Graphics
         /// </returns>
         public bool DrawOntoThis(RgbaImage image, Vec2I topLeft)
         {
-            // TODO: Can we get a library to do this? This is slow and doesn't have alpha support.
+            // We want to find the area we draw. This is effectively finding
+            // the rectangle overlap. If there is none, we exit early.
+            Vec2I drawStart = new Vec2I(Math.Max(0, topLeft.X), Math.Max(0, topLeft.Y));
+            Vec2I drawEnd = new Vec2I(Math.Min(topLeft.X + image.Width, Width), Math.Min(topLeft.Y + image.Height, Height));
+            Vec2I drawRange = drawEnd - drawStart;
+            if (drawRange.X <= 0 || drawRange.Y <= 0)
+                return false;
 
+            // The starting coordinate from the source image is usually from
+            // the top left corner, but if the offset is negative then we are
+            // going to have to draw from the insides of the source image.
+            Vec2I srcStart = Vec2I.Zero;
+            if (topLeft.X < 0)
+                srcStart = srcStart.WithX(-topLeft.X);
+            if (topLeft.Y < 0)
+                srcStart = srcStart.WithY(-topLeft.Y);
+
+            // The destination coordinate is usually at the top left coordinate
+            // provided, but if the top left is negative then we will start our
+            // drawing at the zero index for that axis. If we have no drawing
+            // overlap we'd have exited early before reaching this, so starting
+            // at zero is okay.
+            Vec2I destStart = topLeft;
+            if (destStart.X < 0)
+                destStart = destStart.WithX(0);
+            if (destStart.Y < 0)
+                destStart = destStart.WithY(0);
+
+            // Now we have enough info to draw.
             RgbaImage src = image;
             RgbaImage dest = this;
-            Vec2I destEnd = (image.Width + topLeft.X, image.Height + topLeft.Y);
-
-            // Until we get a proper library in, we'll have to clamp at the bounds...
-            destEnd = new Vec2I(Math.Min(destEnd.X, Width), Math.Min(destEnd.Y, Height));
-
-            Vec2I delta = destEnd - topLeft;
+            int srcOffset = (srcStart.Y * src.Width) + srcStart.X;
+            int destOffset = (destStart.Y * dest.Width) + destStart.X;
 
             try
             {
-                // We're always (for now) drawing from the top left corner of
-                // the inbound image. We start at the 'topLeft' for writing to
-                // the destination image.
-                int srcOffset = 0;
-                int destOffset = (topLeft.Y * dest.Width) + topLeft.X;
-
-                for (int y = 0; y < delta.Y; y++)
+                for (int y = 0; y < drawRange.Y; y++)
                 {
                     int srcIndex = srcOffset;
                     int destIndex = destOffset;
 
-                    for (int x = 0; x < delta.X; x++)
+                    for (int x = 0; x < drawRange.X; x++)
                     {
                         // For now, only draw the pixel if it is opaque. In the
                         // future we can do alpha blending.
