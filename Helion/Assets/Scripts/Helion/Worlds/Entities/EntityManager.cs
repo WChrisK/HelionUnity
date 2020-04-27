@@ -9,6 +9,7 @@ using Helion.Util;
 using Helion.Util.Geometry;
 using Helion.Worlds.Entities.Players;
 using Helion.Worlds.Entities.Spawns;
+using Helion.Worlds.Geometry;
 using MoreLinq;
 using UnityEngine;
 
@@ -91,7 +92,8 @@ namespace Helion.Worlds.Entities
 
         private Entity Spawn(ActorDefinition definition, Vector3 position, BitAngle angle)
         {
-            Entity entity = new Entity(nextEntityID++, definition, position, angle, this);
+            Sector sector = world.Geometry.BspTree.Sector(position);
+            Entity entity = new Entity(nextEntityID++, definition, position, angle, sector, this);
             entity.node = Entities.AddLast(entity);
 
             if (entity.Definition.ActorType.SpawnPoint)

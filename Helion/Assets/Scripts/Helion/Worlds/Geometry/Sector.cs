@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Helion.Resource.Maps.Components;
-using Helion.Util;
-using Helion.Util.Extensions;
 using Helion.Worlds.Geometry.Subsectors;
 
 namespace Helion.Worlds.Geometry
