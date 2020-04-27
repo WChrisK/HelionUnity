@@ -22,7 +22,7 @@ namespace Helion.Worlds.Geometry.Bsp
         public readonly uint LeftChildBits;
 
         /// <summary>
-        /// The right child. Use <see cref="LeftChildWithoutBit"/> for getting
+        /// The right child. Use <see cref="RightChildWithoutBit"/> for getting
         /// the index.
         /// </summary>
         public readonly uint RightChildBits;
