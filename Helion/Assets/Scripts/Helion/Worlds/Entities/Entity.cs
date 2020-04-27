@@ -32,7 +32,8 @@ namespace Helion.Worlds.Entities
         public readonly GameObject GameObject;
 
         /// <summary>
-        /// The bottom center position of the entity.
+        /// The bottom center position of the entity. Note that this uses the
+        /// Unity coordinate system (so Y is up/down).
         /// </summary>
         public Vector3Interpolation Position;
 

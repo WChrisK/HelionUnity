@@ -29,6 +29,7 @@ namespace Helion.Worlds.Entities
 
         public void Update(float tickFraction)
         {
+            // TODO: Proper rotation calculation here! (instead of index 0)
             Texture texture = entity.Frame.SpriteRotations[0];
             Renderer.sharedMaterial = texture.Material;
 
@@ -58,7 +59,7 @@ namespace Helion.Worlds.Entities
             //
             // This also uses the vertex layout as seen in `WallMeshComponent`.
             // See that class for documentation on vertex position choice.
-            float radius = Constants.MapUnit / 2;
+            const float radius = Constants.MapUnit / 2;
             Vector3[] vertices =
             {
                 new Vector3(-radius, -radius, 0),

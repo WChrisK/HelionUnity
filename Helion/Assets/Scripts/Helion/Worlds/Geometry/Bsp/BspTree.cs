@@ -46,9 +46,10 @@ namespace Helion.Worlds.Geometry.Bsp
         /// <summary>
         /// Finds the sector at the point provided.
         /// </summary>
-        /// <param name="point">The world location.</param>
+        /// <param name="point">The world location. This should be in the Unity
+        /// coordinate system, so we grab the X/Z position (not the Y).</param>
         /// <returns>The sector for the point.</returns>
-        public Sector Sector(in Vector3 point) => Sector(new Vector2(point.x, point.y));
+        public Sector Sector(in Vector3 point) => Sector(new Vector2(point.x, point.z));
 
         /// <summary>
         /// Finds the subsector at the point provided.
