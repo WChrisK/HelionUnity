@@ -17,9 +17,15 @@ namespace Helion.Resource.Textures.Sprites
         public static readonly SpriteRotations NullRotations = new SpriteRotations("NULL", TextureManager.NullTexture);
         private static readonly Dictionary<UpperString, SpriteRotations> spriteRotations = new Dictionary<UpperString, SpriteRotations>();
 
+        static SpriteManager()
+        {
+            AddNonRenderableRotations();
+        }
+
         public static void Clear()
         {
             spriteRotations.Clear();
+            AddNonRenderableRotations();
         }
 
         /// <summary>
@@ -41,6 +47,15 @@ namespace Helion.Resource.Textures.Sprites
             SpriteRotations newRotations = CreateSpriteFrom(spriteAndFrame);
             spriteRotations[spriteAndFrame] = newRotations;
             return newRotations;
+        }
+
+        private static void AddNonRenderableRotations()
+        {
+            // These two frame names should never have any rendering done with
+            // them. NULLA is from ZDoom (I believe), and TNT1A I think is...
+            // from TNT? Either way, they are meant to be a "do not draw".
+            foreach (string name in new[] { "NULLA", "TNT1A" })
+                spriteRotations[name] = new SpriteRotations(name);
         }
 
         private static UpperString MakeRotation(UpperString name, char first, char second)

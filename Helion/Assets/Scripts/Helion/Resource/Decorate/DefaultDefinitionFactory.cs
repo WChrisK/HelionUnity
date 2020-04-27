@@ -89,6 +89,10 @@ namespace Helion.Resource.Decorate
             spawnpoint.Flags.Set(ActorFlagType.NoBlockmap, true);
             spawnpoint.Flags.Set(ActorFlagType.NoGravity, true);
 
+            int totalFrames = spawnpoint.States.Frames.Count;
+            spawnpoint.States.Labels.Add("SPAWN", totalFrames);
+            spawnpoint.States.Frames.Add(new ActorFrame(totalFrames, "NULLA", -1, MakeProperties(), MakeNoAction(), stop, 0));
+
             return spawnpoint;
         }
 

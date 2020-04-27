@@ -1,6 +1,7 @@
 ﻿using Helion.Util;
 using Helion.Util.Geometry;
 using Helion.Util.Unity;
+using Helion.Worlds.Entities;
 using UnityEngine;
 using static Helion.Util.Unity.UnityHelper;
 
@@ -46,6 +47,24 @@ namespace Helion.Unity
 
             Position = Camera.transform.position / Constants.MapUnit;
             Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(Camera.transform.eulerAngles.y));
+        }
+
+        /// <summary>
+        /// Gets the rotational index between 0 - 7 for which sprite rotation
+        /// to use.
+        /// </summary>
+        /// <param name="entity">The entity we're looking at.</param>
+        /// <param name="tickFraction">The fraction for interpolation.</param>
+        /// <returns>The index to use as an offset in a sprite rotation object.
+        /// </returns>
+        public static int CalculateRotationIndex(Entity entity, float tickFraction)
+        {
+            // TODO: We keep doing pointless XYZ -> XZ conversions when we don't need to.
+            // TODO: Does not take interpolation of the camera position into account!
+            Vector2 eye = Position.XZ();
+            Vector2 other = entity.Position.Value(tickFraction).XZ();
+            uint bits = BitAngle.ToDiamondAngle(eye, other);
+            return (int)BitAngle.CalculateSpriteRotation(bits, entity.Angle.Bits);
         }
 
         private static Camera FindCamera()

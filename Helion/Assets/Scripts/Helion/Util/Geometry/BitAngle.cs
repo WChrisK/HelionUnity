@@ -51,26 +51,64 @@ namespace Helion.Util.Geometry
         /// </remarks>
         public Quaternion Quaternion => Quaternion.Euler(0, 90 - Degrees, 0);
 
+        /// <summary>
+        /// Creates a new angle from raw bits.
+        /// </summary>
+        /// <param name="bits">The bits to use.</param>
         public BitAngle(uint bits)
         {
             Bits = bits;
         }
 
+        /// <summary>
+        /// Creates a new angle from the radians provided. This is for the yaw
+        /// only.
+        /// </summary>
+        /// <param name="radians">The radians.</param>
         public BitAngle(float radians)
         {
             Bits = DiamondAngleFromRadians(radians);
         }
 
+        /// <summary>
+        /// Creates a new angle from degrees.
+        /// </summary>
+        /// <param name="degrees">The degree value, which should be between 0
+        /// and 360. Anything outside is undefined.</param>
+        /// <returns>The bit angle.</returns>
         public static BitAngle FromDegrees(double degrees)
         {
             return new BitAngle((uint)(degrees * uint.MaxValue / 360));
         }
 
+        /// <summary>
+        /// Creates a new angle from a byte angle.
+        /// </summary>
+        /// <param name="byteAngle">The degree value, which should be between
+        /// 0 and 255. Anything outside is undefined.</param>
+        /// <returns>The bit angle.</returns>
         public static BitAngle FromByteAngle(int byteAngle)
         {
             return new BitAngle((uint)((ulong)byteAngle * uint.MaxValue / 255));
         }
 
+        /// <summary>
+        /// Gets the diamond angle. See the remarks for ASCII art.
+        /// </summary>
+        /// <remarks>
+        ///             0.25 * MAX_INT
+        ///                   o
+        ///                  / \
+        ///                 /   \
+        /// 0.5 * MAX_INT  o     o  0
+        ///                 \   /
+        ///                  \ /
+        ///                   o
+        ///             0.75 * MAX_INT
+        ///
+        /// </remarks>
+        /// <param name="radians"></param>
+        /// <returns></returns>
         public static uint DiamondAngleFromRadians(double radians)
         {
             return unchecked((uint)(radians * RadiansToDiamondAngleFactor));
@@ -130,15 +168,7 @@ namespace Helion.Util.Geometry
             return (uint)(DiamondScale * (3 + (pos.x / (pos.x - pos.y))));
         }
 
-        // TODO
-        // public static int CalculateSpriteRotation(Entity viewer, Entity target)
-        // {
-        //     uint viewAngle = ToDiamondAngle(viewer.Position, target.Position);
-        //     uint entityAngle = DiamondAngleFromRadians(viewer.Angle.Radians);
-        //     return (int)CalculateSpriteRotation(viewAngle, entityAngle);
-        // }
-
-        private static uint CalculateSpriteRotation(uint viewAngle, uint entityAngle)
+        public static uint CalculateSpriteRotation(uint viewAngle, uint entityAngle)
         {
             // This works as follows:
             //

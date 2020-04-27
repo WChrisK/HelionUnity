@@ -1,4 +1,6 @@
 ﻿using System;
+using Helion.Resource.Textures.Sprites;
+using Helion.Unity;
 using Helion.Util;
 using Helion.Util.Extensions;
 using Helion.Util.Unity;
@@ -14,12 +16,15 @@ namespace Helion.Worlds.Entities
         public readonly MeshRenderer Renderer;
         private readonly Entity entity;
         private readonly GameObject gameObject;
+        private bool isDisabled;
 
         public EntityMeshComponents(Entity entity, GameObject entityGameObject)
         {
             this.entity = entity;
+
             gameObject = new GameObject("Sprite mesh");
             entityGameObject.SetChild(gameObject, false);
+
             Renderer = gameObject.AddComponent<MeshRenderer>();
             Filter = gameObject.AddComponent<MeshFilter>();
             Mesh = CreateMesh();
@@ -29,8 +34,19 @@ namespace Helion.Worlds.Entities
 
         public void Update(float tickFraction)
         {
-            // TODO: Proper rotation calculation here! (instead of index 0)
-            Texture texture = entity.Frame.SpriteRotations[0];
+            SpriteRotations rotations = entity.Frame.SpriteRotations;
+
+            if (rotations.DoNotRender)
+            {
+                EnsureDisabled();
+                return;
+            }
+
+            EnsureEnabled();
+
+            // TODO: Need to flip UV coordinates on the mesh or something if mirrored.
+            int index = CameraManager.CalculateRotationIndex(entity, tickFraction);
+            Texture texture = entity.Frame.SpriteRotations[index];
             Renderer.sharedMaterial = texture.Material;
 
             float y = texture.Height.MapUnit() / 2;
@@ -79,6 +95,24 @@ namespace Helion.Worlds.Entities
                 uv = uvCoords,
                 colors = colors
             };
+        }
+
+        private void EnsureEnabled()
+        {
+            if (!isDisabled)
+                return;
+
+            Renderer.enabled = true;
+            isDisabled = false;
+        }
+
+        private void EnsureDisabled()
+        {
+            if (isDisabled)
+                return;
+
+            Renderer.enabled = false;
+            isDisabled = true;
         }
     }
 }
