@@ -1,21 +1,38 @@
 ﻿using Helion.Util;
+using Helion.Util.Geometry;
 using Helion.Util.Unity;
 using UnityEngine;
+using static Helion.Util.Unity.UnityHelper;
 
 namespace Helion.Unity
 {
+    /// <summary>
+    /// A global manager of the camera.
+    /// </summary>
     public static class CameraManager
     {
-        public static Camera Camera;
-        public static Vector3 Position;
+        /// <summary>
+        /// The current camera we are looking through.
+        /// </summary>
+        public static Camera Camera { get; private set; }
+        public static BitAngle Angle { get; private set; }
+        public static Vector3 Position { get; private set; }
         internal static EntryPoint entryPoint;
 
+        /// <summary>
+        /// To be called right at initialization.
+        /// </summary>
+        /// <param name="gameEntryPoint">The entry point module.</param>
         public static void Initialize(EntryPoint gameEntryPoint)
         {
             entryPoint = gameEntryPoint;
             Camera = Camera.main;
         }
 
+        /// <summary>
+        /// To be called each frame. Should be done before we do any other
+        /// update calls.
+        /// </summary>
         public static void Update()
         {
             // This is a safeguard in case we have not initialized yet.
@@ -28,6 +45,7 @@ namespace Helion.Unity
             UpdateToNewCameraIfNeeded(camera);
 
             Position = Camera.transform.position / Constants.MapUnit;
+            Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(Camera.transform.eulerAngles.y));
         }
 
         private static Camera FindCamera()

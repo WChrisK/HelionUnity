@@ -26,6 +26,6 @@
         /// </summary>
         /// <param name="angle">The angle to convert.</param>
         /// <returns>The converted angle.</returns>
-        public static float DoomToUnityAngle(float angle) => 90 - angle;
+        public static float DoomUnityAngleConverter(float angle) => 90 - angle;
     }
 }

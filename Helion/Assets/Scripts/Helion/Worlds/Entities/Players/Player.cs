@@ -27,7 +27,7 @@ namespace Helion.Worlds.Entities.Players
             GameObject = new GameObject($"Player {playerNumber} camera");
             entity.GameObject.SetChild(GameObject, false);
             Camera = CreateCamera();
-            yawDegrees = DoomToUnityAngle(entity.Angle.Degrees);
+            yawDegrees = DoomUnityAngleConverter(entity.Angle.Degrees);
 
             SetGameObjectTransform();
         }
@@ -55,7 +55,7 @@ namespace Helion.Worlds.Entities.Players
 
             GameObject.transform.rotation = Quaternion.Euler(-pitchDegrees, yawDegrees, 0);
 
-            Entity.Angle = BitAngle.FromDegrees(DoomToUnityAngle(yawDegrees));
+            Entity.Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(yawDegrees));
         }
 
         public void Update(float tickFraction)
