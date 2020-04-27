@@ -54,10 +54,6 @@ namespace Helion.Worlds
             try
             {
                 world = new World(info, map, worldGameObject);
-
-                WorldMonoBehaviour worldMonoBehaviour = worldGameObject.AddComponent<WorldMonoBehaviour>();
-                worldMonoBehaviour.World = world;
-
                 return true;
             }
             catch (Exception e)
