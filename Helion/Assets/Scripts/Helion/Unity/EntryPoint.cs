@@ -26,8 +26,8 @@ namespace Helion.Unity
         public static readonly CommandLineArgs CommandLineArgs = new CommandLineArgs();
         private static readonly Log Log = LogManager.Instance();
 
-        private World world;
-        private Player player;
+        internal World world;
+        internal Player player;
 
         /// <summary>
         /// Called before anything in the game loads, which can be used to
@@ -59,6 +59,8 @@ namespace Helion.Unity
 
         void Start()
         {
+            CameraManager.Initialize(this);
+
             RegisterConsoleCommands();
 
             if (!Data.Load(CommandLineArgs.Files))
@@ -72,6 +74,8 @@ namespace Helion.Unity
 
         void Update()
         {
+            CameraManager.Update();
+
             player?.ApplyPlayerCameraInput();
             world?.Update();
         }
@@ -164,19 +168,6 @@ namespace Helion.Unity
                 world?.Dispose();
                 world = newWorld;
                 player = world.Entities.SpawnPlayer(1);
-
-                if (Camera.main != null)
-                {
-                    Camera.main.enabled = false;
-                    GameObject cameraObject = GameObject.FindGameObjectWithTag("MainCamera");
-                    if (cameraObject)
-                    {
-                        AudioListener audioListener = cameraObject.GetComponent<AudioListener>();
-                        Destroy(audioListener);
-                    }
-                }
-                player.Camera.enabled = true;
-                player.GameObject.AddComponent<AudioListener>();
 
                 return $"Loaded {mapName}";
             });

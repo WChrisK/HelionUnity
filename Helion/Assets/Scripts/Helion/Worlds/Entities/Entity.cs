@@ -84,11 +84,14 @@ namespace Helion.Worlds.Entities
         public void Tick()
         {
             Position.Tick();
+            Sector = World.Geometry.BspTree.Sector(Position.Current);
+
             frameTracker.Tick();
         }
 
         public void Dispose()
         {
+            meshComponents.Dispose();
             entityManager.Entities.Remove(node);
         }
 
