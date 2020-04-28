@@ -6,6 +6,7 @@ using Helion.Util.Unity;
 using Helion.Worlds.Entities;
 using Helion.Worlds.Geometry;
 using Helion.Worlds.Info;
+using UnityEditor;
 using UnityEngine;
 
 namespace Helion.Worlds

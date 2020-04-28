@@ -87,6 +87,11 @@ namespace Helion.Worlds.Entities
             Sector = World.Geometry.BspTree.Sector(Position.Current);
 
             frameTracker.Tick();
+
+            //=================================================================
+            const float Friction = 0.90625f;
+            Velocity *= Friction;
+            Position.Update(Position.Current + Velocity);
         }
 
         public void Dispose()

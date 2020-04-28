@@ -15,7 +15,7 @@ namespace Helion.Util
     {
         private const string CommandLineArgsDevPath = ".commandlineargs";
 
-        public readonly List<string> Files = new List<string>();
+        public readonly List<string> Files = new List<string> { Constants.RequiredPK3 };
         public string BaseDirectory { get; private set; } = "";
 
         private readonly List<string> args = new List<string>();

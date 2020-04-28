@@ -76,11 +76,16 @@ namespace Helion.Worlds.Entities
 
         public void Tick()
         {
+            // We want to
+            players.Values.ForEach(player => player.Tick());
+
             Entities.ForEach(entity => entity.Tick());
         }
 
         public void Dispose()
         {
+            players.Values.ForEach(player => player.Dispose());
+
             // Since logic may unhook it from the list we're iterating over, we
             // have to clone the entire list.
             Entities.ToList().ForEach(entity => entity.Dispose());

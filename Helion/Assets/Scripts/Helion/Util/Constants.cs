@@ -44,5 +44,10 @@
         /// The application version.
         /// </summary>
         public static readonly string ApplicationVersion = "0.1";
+
+        /// <summary>
+        /// The data file we must always load.
+        /// </summary>
+        public static readonly string RequiredPK3 = "helion.pk3";
     }
 }
