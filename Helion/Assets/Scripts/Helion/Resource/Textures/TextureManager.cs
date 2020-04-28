@@ -6,6 +6,7 @@ using Helion.Resource.Colors.Palettes;
 using Helion.Resource.Textures.Definitions;
 using Helion.Util;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Logging;
 using MoreLinq;
 using UnityEngine;

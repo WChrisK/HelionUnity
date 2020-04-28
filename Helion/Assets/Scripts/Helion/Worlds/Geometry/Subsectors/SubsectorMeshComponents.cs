@@ -70,7 +70,7 @@ namespace Helion.Worlds.Geometry.Subsectors
 
             for (int i = 0; i < vertexCount; i++)
             {
-                Vector2 vertex = edges[i].Start;
+                Vector2 vertex = edges[i].Start.UnityFloat();
                 vertices[i] = new Vector3(vertex.x, plane.Height, vertex.y).MapUnit();
                 uvCoords[i] = vertex * texture.InverseDimension;
             }

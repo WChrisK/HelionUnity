@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace Helion.Util.Geometry
+namespace Helion.Util.Geometry.Vectors
 {
-    public struct Vec2I
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public readonly struct Vec2I
     {
         /// <summary>
         /// A point at the origin.
@@ -170,6 +172,6 @@ namespace Helion.Util.Geometry
 
         public override bool Equals(object obj) => obj is Vec2I v && X == v.X && Y == v.Y;
 
-        public override int GetHashCode() => X ^ Y;
+        public override int GetHashCode() => HashCodes.Hash(X.GetHashCode(), Y.GetHashCode());
     }
 }

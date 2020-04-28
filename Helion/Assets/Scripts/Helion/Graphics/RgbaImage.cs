@@ -3,6 +3,7 @@ using Helion.Resource;
 using Helion.Util;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Logging;
 using UnityEngine;
 using static Helion.Util.OptionalHelper;

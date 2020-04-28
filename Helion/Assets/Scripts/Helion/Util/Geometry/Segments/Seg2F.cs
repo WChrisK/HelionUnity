@@ -2,8 +2,7 @@
 using System.Diagnostics.Contracts;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry.Boxes;
-using Helion.Util.Unity;
-using UnityEngine;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Util.Geometry.Segments
 {
@@ -16,23 +15,23 @@ namespace Helion.Util.Geometry.Segments
         /// <summary>
         /// The beginning point of the segment.
         /// </summary>
-        public readonly Vector2 Start;
+        public readonly Vec2F Start;
 
         /// <summary>
         /// The ending point of the segment.
         /// </summary>
-        public readonly Vector2 End;
+        public readonly Vec2F End;
 
         /// <summary>
         /// The difference between the start to the end. This means that
         /// Start + Delta = End.
         /// </summary>
-        public readonly Vector2 Delta;
+        public readonly Vec2F Delta;
 
         /// <summary>
         /// The inversed components of the delta.
         /// </summary>
-        public Vector2 DeltaInverse => new Vector2(1.0f / Delta.x, 1.0f / Delta.y);
+        public Vec2F DeltaInverse => new Vec2F(1.0f / Delta.X, 1.0f / Delta.Y);
 
         /// <summary>
         /// The bounding box of this segment.
@@ -52,7 +51,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="endX">The ending X coordinate.</param>
         /// <param name="endY">The ending Y coordinate.</param>
         public Seg2F(float startX, float startY, float endX, float endY) :
-            this(new Vector2(startX, startY), new Vector2(endX, endY))
+            this(new Vec2F(startX, startY), new Vec2F(endX, endY))
         {
         }
 
@@ -61,7 +60,7 @@ namespace Helion.Util.Geometry.Segments
         /// </summary>
         /// <param name="start">The starting point.</param>
         /// <param name="end">The ending point.</param>
-        public Seg2F(Vector2 start, Vector2 end)
+        public Seg2F(Vec2F start, Vec2F end)
         {
             Start = start;
             End = end;
@@ -73,14 +72,14 @@ namespace Helion.Util.Geometry.Segments
         /// </summary>
         /// <param name="pair">The tuple.</param>
         /// <returns>A new 2D segment.</returns>
-        public static implicit operator Seg2F(ValueTuple<Vector2, Vector2> pair) => new Seg2F(pair.Item1, pair.Item2);
+        public static implicit operator Seg2F(ValueTuple<Vec2F, Vec2F> pair) => new Seg2F(pair.Item1, pair.Item2);
 
         /// <summary>
         /// Gets the endpoint from the enumeration.
         /// </summary>
         /// <param name="endpoint">The endpoint to get.</param>
         /// <returns>The endpoint for the enumeration.</returns>
-        public Vector2 this[Endpoint endpoint] => endpoint == Endpoint.Start ? Start : End;
+        public Vec2F this[Endpoint endpoint] => endpoint == Endpoint.Start ? Start : End;
 
         /// <summary>
         /// Calculates the 'float triangle' area which is the triangle formed
@@ -90,9 +89,9 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="second">The second point.</param>
         /// <param name="third">The third point.</param>
         /// <returns>The floatd area of the triangles.</returns>
-        public static float floatTriArea(Vector2 first, Vector2 second, Vector2 third)
+        public static float floatTriArea(Vec2F first, Vec2F second, Vec2F third)
         {
-            return ((first.x - third.x) * (second.y - third.y)) - ((first.y - third.y) * (second.x - third.x));
+            return ((first.X - third.X) * (second.Y - third.Y)) - ((first.Y - third.Y) * (second.X - third.X));
         }
 
         /// <summary>
@@ -119,7 +118,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="epsilon">An optional comparison value.</param>
         /// <returns>The side the third point is on relative to the first and
         /// the second point.</returns>
-        public static Rotation GetRotation(Vector2 first, Vector2 second, Vector2 third, float epsilon = 0.00001f)
+        public static Rotation GetRotation(Vec2F first, Vec2F second, Vec2F third, float epsilon = 0.00001f)
         {
             return new Seg2F(first, second).ToSide(third, epsilon);
         }
@@ -130,7 +129,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="endpoint">The opposite endpoint to get.</param>
         /// <returns>The opposite endpoint for the enumeration.</returns>
         [Pure]
-        public Vector2 Opposite(Endpoint endpoint) => endpoint == Endpoint.Start ? End : Start;
+        public Vec2F Opposite(Endpoint endpoint) => endpoint == Endpoint.Start ? End : Start;
 
         /// <summary>
         /// Gets the time the point would have on the segment. This does not
@@ -143,11 +142,11 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="point">The point to get the time for.</param>
         /// <returns>The time the point is on this segment.</returns>
         [Pure]
-        public float ToTime(Vector2 point)
+        public float ToTime(Vec2F point)
         {
-            if (!Delta.x.ApproxZero())
-                return (point.x - Start.x) * DeltaInverse.x;
-            return (point.y - Start.y) * DeltaInverse.y;
+            if (!Delta.X.ApproxZero())
+                return (point.X - Start.X) * DeltaInverse.X;
+            return (point.Y - Start.Y) * DeltaInverse.Y;
         }
 
         /// <summary>
@@ -177,9 +176,9 @@ namespace Helion.Util.Geometry.Segments
             switch (Direction)
             {
             case SegmentDirection.Vertical:
-                return box.Min.x < Start.x && Start.x < box.Max.x;
+                return box.Min.X < Start.X && Start.X < box.Max.X;
             case SegmentDirection.Horizontal:
-                return box.Min.y < Start.y && Start.y < box.Max.y;
+                return box.Min.Y < Start.Y && Start.Y < box.Max.Y;
             case SegmentDirection.PositiveSlope:
                 return DifferentSides(box.TopLeft, box.BottomRight);
             case SegmentDirection.NegativeSlope:
@@ -196,7 +195,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="t">The time (where 0.0 = start and 1.0 = end).</param>
         /// <returns>The point from the time provided.</returns>
         [Pure]
-        public Vector2 FromTime(float t) => Start + (Delta * t);
+        public Vec2F FromTime(float t) => Start + (Delta * t);
 
         /// <summary>
         /// Checks if both segments go in the same direction, with respect for
@@ -216,7 +215,7 @@ namespace Helion.Util.Geometry.Segments
         /// <returns>True if they go the same direction, false otherwise.
         /// </returns>
         [Pure]
-        public bool SameDirection(Vector2 delta) => !Delta.x.DifferentSign(delta.x) && !Delta.y.DifferentSign(delta.y);
+        public bool SameDirection(Vec2F delta) => !Delta.X.DifferentSign(delta.X) && !Delta.Y.DifferentSign(delta.Y);
 
         /// <summary>
         /// Calculates the perpendicular dot product. This also may be known as
@@ -225,9 +224,9 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="point">The point to test against.</param>
         /// <returns>The perpendicular dot product.</returns>
         [Pure]
-        public float PerpDot(in Vector2 point)
+        public float PerpDot(in Vec2F point)
         {
-            return (Delta.x * (point.y - Start.y)) - (Delta.y * (point.x - Start.x));
+            return (Delta.X * (point.Y - Start.Y)) - (Delta.Y * (point.X - Start.X));
         }
 
         /// <summary>
@@ -237,9 +236,9 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="point">The point to test against.</param>
         /// <returns>The perpendicular dot product.</returns>
         [Pure]
-        public float PerpDot(in Vector3 point)
+        public float PerpDot(in Vec3F point)
         {
-            return (Delta.x * (point.y - Start.y)) - (Delta.y * (point.x - Start.x));
+            return (Delta.X * (point.Y - Start.Y)) - (Delta.Y * (point.X - Start.X));
         }
 
         /// <summary>
@@ -249,7 +248,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="epsilon">An optional epsilon for comparison.</param>
         /// <returns>The side it's on.</returns>
         [Pure]
-        public Rotation ToSide(Vector2 point, float epsilon = 0.00001f)
+        public Rotation ToSide(Vec2F point, float epsilon = 0.00001f)
         {
             float value = PerpDot(point);
             bool approxZero = value.ApproxZero(epsilon);
@@ -264,7 +263,7 @@ namespace Helion.Util.Geometry.Segments
         /// <returns>True if it's on the right (or on the line), false if on
         /// the left.</returns>
         [Pure]
-        public bool OnRight(in Vector2 point) => PerpDot(point) <= 0;
+        public bool OnRight(in Vec2F point) => PerpDot(point) <= 0;
 
         /// <summary>
         /// Checks if the point is on the right side of this segment (or on the
@@ -274,7 +273,7 @@ namespace Helion.Util.Geometry.Segments
         /// <returns>True if it's on the right (or on the line), false if on
         /// the left.</returns>
         [Pure]
-        public bool OnRight(in Vector3 point) => PerpDot(point) <= 0;
+        public bool OnRight(in Vec3F point) => PerpDot(point) <= 0;
 
         /// <summary>
         /// Checks if the segment has both endpoints on this or on the right of
@@ -303,7 +302,7 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="second">The second point.</param>
         /// <returns>True if they are, false if not.</returns>
         [Pure]
-        public bool DifferentSides(Vector2 first, Vector2 second) => OnRight(first) != OnRight(second);
+        public bool DifferentSides(Vec2F first, Vec2F second) => OnRight(first) != OnRight(second);
 
         /// <summary>
         /// Checks if the two points of the segment are on different sides of
@@ -328,7 +327,7 @@ namespace Helion.Util.Geometry.Segments
             // slopes are the same, meaning: d1y / d1x = d2y / d2x. Therefore
             // d1y * d2x == d2y * d1x. This also avoids weird division by zero
             // errors and all that fun stuff from any vertical lines.
-            return (Delta.y * seg.Delta.x).Approx(Delta.x * seg.Delta.y, epsilon);
+            return (Delta.Y * seg.Delta.X).Approx(Delta.X * seg.Delta.Y, epsilon);
         }
 
         /// <summary>
@@ -348,10 +347,10 @@ namespace Helion.Util.Geometry.Segments
         /// <param name="point">The point to evaluate.</param>
         /// <returns>The closest distance.</returns>
         [Pure]
-        public float ClosestDistance(Vector2 point)
+        public float ClosestDistance(Vec2F point)
         {
             // Source: https://math.stackexchange.com/questions/2193720/find-a-point-on-a-line-segment-which-is-the-closest-to-other-point-not-on-the-li
-            Vector2 pointToStartDelta = Start - point;
+            Vec2F pointToStartDelta = Start - point;
             float t = -Delta.Dot(pointToStartDelta) / Delta.Dot(Delta);
 
             if (t <= 0.0)
@@ -418,15 +417,15 @@ namespace Helion.Util.Geometry.Segments
         [Pure]
         public bool IntersectionAsLine(Seg2F seg, out float tThis)
         {
-            float determinant = (-seg.Delta.x * Delta.y) + (Delta.x * seg.Delta.y);
+            float determinant = (-seg.Delta.X * Delta.Y) + (Delta.X * seg.Delta.Y);
             if (determinant.ApproxZero())
             {
                 tThis = default;
                 return false;
             }
 
-            Vector2 startDelta = Start - seg.Start;
-            tThis = ((seg.Delta.x * startDelta.y) - (seg.Delta.y * startDelta.x)) / determinant;
+            Vec2F startDelta = Start - seg.Start;
+            tThis = ((seg.Delta.X * startDelta.Y) - (seg.Delta.Y * startDelta.X)) / determinant;
             return true;
         }
 
@@ -444,7 +443,7 @@ namespace Helion.Util.Geometry.Segments
         [Pure]
         public bool IntersectionAsLine(Seg2F seg, out float tThis, out float tOther)
         {
-            float determinant = (-seg.Delta.x * Delta.y) + (Delta.x * seg.Delta.y);
+            float determinant = (-seg.Delta.X * Delta.Y) + (Delta.X * seg.Delta.Y);
             if (determinant.ApproxZero())
             {
                 tThis = default;
@@ -452,10 +451,10 @@ namespace Helion.Util.Geometry.Segments
                 return false;
             }
 
-            Vector2 startDelta = Start - seg.Start;
+            Vec2F startDelta = Start - seg.Start;
             float inverseDeterminant = 1.0f / determinant;
-            tThis = ((seg.Delta.x * startDelta.y) - (seg.Delta.y * startDelta.x)) * inverseDeterminant;
-            tOther = ((-Delta.y * startDelta.x) + (Delta.x * startDelta.y)) * inverseDeterminant;
+            tThis = ((seg.Delta.X * startDelta.Y) - (seg.Delta.Y * startDelta.X)) * inverseDeterminant;
+            tOther = ((-Delta.Y * startDelta.X) + (Delta.X * startDelta.Y)) * inverseDeterminant;
             return true;
         }
 
@@ -479,30 +478,30 @@ namespace Helion.Util.Geometry.Segments
         /// </summary>
         /// <returns>The 90 degree right angle rotation of the delta.</returns>
         [Pure]
-        public Vector2 RightNormal() => Delta.Right90();
+        public Vec2F RightNormal() => Delta.Right90();
 
         public override string ToString() => $"({Start}), ({End})";
 
-        private static bool CollinearHelper(in Vector2 first, in Vector2 second, in Vector2 third)
+        private static bool CollinearHelper(in Vec2F first, in Vec2F second, in Vec2F third)
         {
-            float determinant = (first.x * (second.y - third.y)) +
-                                (second.x * (third.y - first.y)) +
-                                (third.x * (first.y - second.y));
+            float determinant = (first.X * (second.Y - third.Y)) +
+                                (second.X * (third.Y - first.Y)) +
+                                (third.X * (first.Y - second.Y));
             return determinant.ApproxZero();
         }
 
-        private static Box2F MakeBox(Vector2 start, Vector2 end)
+        private static Box2F MakeBox(Vec2F start, Vec2F end)
         {
             return new Box2F(
-                new Vector2(Math.Min(start.x, end.x), Math.Min(start.y, end.y)),
-                new Vector2(Math.Max(start.x, end.x), Math.Max(start.y, end.y)));
+                new Vec2F(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y)),
+                new Vec2F(Math.Max(start.X, end.X), Math.Max(start.Y, end.Y)));
         }
 
-        private static SegmentDirection CalculateDirection(Vector2 delta)
+        private static SegmentDirection CalculateDirection(Vec2F delta)
         {
-            return delta.x.ApproxZero() ? SegmentDirection.Vertical :
-                   delta.y.ApproxZero() ? SegmentDirection.Horizontal :
-                   delta.x.DifferentSign(delta.y) ? SegmentDirection.NegativeSlope :
+            return delta.X.ApproxZero() ? SegmentDirection.Vertical :
+                   delta.Y.ApproxZero() ? SegmentDirection.Horizontal :
+                   delta.X.DifferentSign(delta.Y) ? SegmentDirection.NegativeSlope :
                                                     SegmentDirection.PositiveSlope;
         }
     }

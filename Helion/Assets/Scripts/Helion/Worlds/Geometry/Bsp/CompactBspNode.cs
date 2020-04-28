@@ -1,6 +1,6 @@
 ﻿using Helion.Util.Extensions;
 using Helion.Util.Geometry.Segments;
-using UnityEngine;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Worlds.Geometry.Bsp
 {
@@ -50,6 +50,6 @@ namespace Helion.Worlds.Geometry.Bsp
         /// </summary>
         /// <param name="point">The point to check.</param>
         /// <returns>True if so, false otherwise.</returns>
-        public bool OnRight(in Vector2 point) => Splitter.OnRight(point);
+        public bool OnRight(in Vec2F point) => Splitter.OnRight(point);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 
 namespace Helion.Util.Geometry
@@ -130,7 +131,7 @@ namespace Helion.Util.Geometry
         /// </param>
         /// <returns>The diamond angle for the vertex. This will be zero if the
         /// start and end vertices are the same.</returns>
-        public static uint ToDiamondAngle(Vector2 start, Vector2 end)
+        public static uint ToDiamondAngle(Vec2F start, Vec2F end)
         {
             // The code below takes some position and finds the vector from the
             // center to the position.
@@ -151,21 +152,21 @@ namespace Helion.Util.Geometry
             // out of the values, because this allows us to see what angles are
             // blocked or not by mapping every position onto a unit circle with
             // 2^32 precision.
-            Vector2 pos = end - start;
-            if (pos == Vector2.zero)
+            Vec2F pos = end - start;
+            if (pos == Vec2F.Zero)
                 return 0;
 
             // TODO: Can we fuse two if statements into one statement somehow?
-            if (pos.y >= 0)
+            if (pos.Y >= 0)
             {
-                if (pos.x >= 0)
-                    return (uint)(DiamondScale * (pos.y / (pos.x + pos.y)));
-                return (uint)(DiamondScale * (1 - (pos.x / (-pos.x + pos.y))));
+                if (pos.X >= 0)
+                    return (uint)(DiamondScale * (pos.Y / (pos.X + pos.Y)));
+                return (uint)(DiamondScale * (1 - (pos.X / (-pos.X + pos.Y))));
             }
 
-            if (pos.x < 0)
-                return (uint)(DiamondScale * (2 - (pos.y / (-pos.x - pos.y))));
-            return (uint)(DiamondScale * (3 + (pos.x / (pos.x - pos.y))));
+            if (pos.X < 0)
+                return (uint)(DiamondScale * (2 - (pos.Y / (-pos.X - pos.Y))));
+            return (uint)(DiamondScale * (3 + (pos.X / (pos.X - pos.Y))));
         }
 
         public static uint CalculateSpriteRotation(uint viewAngle, uint entityAngle)
@@ -188,5 +189,7 @@ namespace Helion.Util.Geometry
         }
 
         public override string ToString() => Degrees.ToString();
+
+        public override int GetHashCode() => Bits.GetHashCode();
     }
 }

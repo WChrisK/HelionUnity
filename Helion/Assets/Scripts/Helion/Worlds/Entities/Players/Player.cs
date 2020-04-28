@@ -6,7 +6,6 @@ using Helion.Util.Extensions;
 using Helion.Util.Geometry;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
-using Helion.Worlds.Geometry;
 using UnityEngine;
 using static Helion.Util.Unity.UnityHelper;
 
@@ -14,6 +13,7 @@ namespace Helion.Worlds.Entities.Players
 {
     public class Player : ITickable, IDisposable
     {
+        public const double MaxMovement = 30.0;
         private const float ForwardMovementSpeed = 1.5625f;
         private const float SideMovementSpeed = 1.25f;
         public static readonly UpperString DefinitionName = "DOOMPLAYER";
@@ -44,13 +44,12 @@ namespace Helion.Worlds.Entities.Players
             float y = mouseReaderFunc("Mouse Y");
 
             yawDegrees += x * Data.Config.Mouse.Yaw * Data.Config.Mouse.Sensitivity;
-            pitchDegrees += y * Data.Config.Mouse.Pitch * Data.Config.Mouse.Sensitivity;
-
             yawDegrees %= 360.0f;
+
+            pitchDegrees += y * Data.Config.Mouse.Pitch * Data.Config.Mouse.Sensitivity;
             pitchDegrees = pitchDegrees.Clamp(-90, 90);
 
             GameObject.transform.rotation = Quaternion.Euler(-pitchDegrees, yawDegrees, 0);
-
             Entity.Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(yawDegrees));
         }
 
@@ -61,19 +60,20 @@ namespace Helion.Worlds.Entities.Players
 
         public void Tick()
         {
-            Vector3 forward = Vec3F.UnitFromDegrees(DoomUnityAngleConverter(yawDegrees));
-            Vector3 side = new Vector3(forward.z, 0, -forward.x);
+            Vec3F forward = Vec3F.CircleUnitDeg(DoomUnityAngleConverter(yawDegrees));
+            Vec3F right = new Vec3F(forward.Z, 0, -forward.X);
 
             // TODO: This is obviously bad if we're not the console player...
-            Vector3 velocity = Vector3.zero;
+            // TODO: Should use the config!
+            Vec3F velocity = Vec3F.Zero;
             if (Input.GetKey(KeyCode.W) || Input.GetMouseButton(1))
                 velocity += forward * ForwardMovementSpeed;
             if (Input.GetKey(KeyCode.A))
-                velocity += side * -SideMovementSpeed;
+                velocity += -right * SideMovementSpeed;
             if (Input.GetKey(KeyCode.S))
-                velocity += forward * -ForwardMovementSpeed;
+                velocity += -forward * ForwardMovementSpeed;
             if (Input.GetKey(KeyCode.D))
-                velocity += side * SideMovementSpeed;
+                velocity += right * SideMovementSpeed;
 
             Entity.Velocity += velocity;
         }

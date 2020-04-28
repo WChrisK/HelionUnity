@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Helion.Resource.Decorate.Definitions;
 using Helion.Resource.Decorate.Definitions.States;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Interpolation;
-using Helion.Util.Unity;
 using Helion.Worlds.Geometry;
 using UnityEngine;
 
@@ -35,7 +35,7 @@ namespace Helion.Worlds.Entities
         /// The bottom center position of the entity. Note that this uses the
         /// Unity coordinate system (so Y is up/down).
         /// </summary>
-        public Vector3Interpolation Position;
+        public Vec3Interpolation Position;
 
         /// <summary>
         /// The angle the entity is facing.
@@ -45,7 +45,7 @@ namespace Helion.Worlds.Entities
         /// <summary>
         /// The velocity of the entity.
         /// </summary>
-        public Vector3 Velocity;
+        public Vec3F Velocity;
 
         /// <summary>
         /// The sector the center of the entity is in.
@@ -60,12 +60,12 @@ namespace Helion.Worlds.Entities
         public World World => entityManager.world;
         public ActorFrame Frame => frameTracker.Frame;
 
-        public Entity(int id, ActorDefinition definition, Vector3 position, BitAngle angle,
+        public Entity(int id, ActorDefinition definition, Vec3F position, BitAngle angle,
             Sector sector, EntityManager manager)
         {
             ID = id;
             Definition = definition;
-            Position = new Vector3Interpolation(position);
+            Position = new Vec3Interpolation(position);
             Angle = angle;
             Sector = sector;
             entityManager = manager;
@@ -88,10 +88,7 @@ namespace Helion.Worlds.Entities
 
             frameTracker.Tick();
 
-            //=================================================================
-            const float Friction = 0.90625f;
-            Velocity *= Friction;
-            Position.Update(Position.Current + Velocity);
+            World.Physics.TryMove(this);
         }
 
         public void Dispose()

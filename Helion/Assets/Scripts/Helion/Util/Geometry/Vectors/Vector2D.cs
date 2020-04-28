@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using UnityEngine;
 
 namespace Helion.Util.Geometry.Vectors
 {
@@ -451,7 +450,7 @@ namespace Helion.Util.Geometry.Vectors
         /// Creates a floating point vector from the double coordinate vector.
         /// </summary>
         /// <returns>A 2D floating point vector.</returns>
-        public Vector2 Float() => new Vector2((float)X, (float)Y);
+        public Vec2F Float() => new Vec2F((float)X, (float)Y);
 
         /// <summary>
         /// Checks if it is equal to another vector. Does an Equals()
@@ -463,8 +462,7 @@ namespace Helion.Util.Geometry.Vectors
 
         public override bool Equals(object obj) => obj is Vector2D other && Equals(other);
 
-        // TODO: This is probably not good.
-        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
+        public override int GetHashCode() => HashCodes.Hash(X.GetHashCode(), Y.GetHashCode());
 
         public override string ToString() => $"{X}, {Y}";
     }

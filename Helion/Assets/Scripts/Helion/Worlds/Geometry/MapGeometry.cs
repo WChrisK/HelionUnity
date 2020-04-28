@@ -4,11 +4,11 @@ using Helion.Bsp;
 using Helion.Bsp.Node;
 using Helion.Resource.Maps;
 using Helion.Resource.Maps.Components;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Logging;
 using Helion.Worlds.Geometry.Bsp;
 using Helion.Worlds.Geometry.Subsectors;
 using Helion.Worlds.Geometry.Walls;
-using UnityEngine;
 
 namespace Helion.Worlds.Geometry
 {
@@ -94,8 +94,8 @@ namespace Helion.Worlds.Geometry
         {
             foreach (MapLinedef linedef in map.Linedefs)
             {
-                Vector2 start = map.Vertices[linedef.StartVertex].Float();
-                Vector2 end = map.Vertices[linedef.EndVertex].Float();
+                Vec2F start = map.Vertices[linedef.StartVertex].Float();
+                Vec2F end = map.Vertices[linedef.EndVertex].Float();
                 Side front = Sides[linedef.FrontSide];
                 Side back = linedef.BackSide != null ? Sides[linedef.BackSide.Value] : null;
 

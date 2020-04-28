@@ -1,11 +1,9 @@
 ﻿using System;
-using Helion.Resource.Maps;
 using Helion.Resource.Maps.Components;
-using Helion.Util;
 using Helion.Util.Bytes;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry;
-using UnityEngine;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Resource.Maps.Readers
 {
@@ -197,7 +195,7 @@ namespace Helion.Resource.Maps.Readers
                 MapThing thing = new MapThing(index);
                 float x = new Fixed(reader.Short(), 0).Float();
                 float y = new Fixed(reader.Short(), 0).Float();
-                thing.Position = new Vector2(x, y);
+                thing.Position = (x, y);
                 thing.AngleDegrees = reader.UShort();
                 thing.EditorID = reader.UShort();
                 SetThingFlags(thing, reader.UShort());

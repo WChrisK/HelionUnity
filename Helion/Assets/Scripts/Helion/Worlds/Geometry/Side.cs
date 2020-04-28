@@ -2,6 +2,7 @@
 using Helion.Resource.Maps.Components;
 using Helion.Util;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Worlds.Geometry.Walls;
 
 namespace Helion.Worlds.Geometry

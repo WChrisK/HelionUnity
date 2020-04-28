@@ -1,8 +1,8 @@
 ﻿using Helion.Resource.Maps.Components;
 using Helion.Util;
 using Helion.Util.Geometry.Segments;
+using Helion.Util.Geometry.Vectors;
 using Helion.Worlds.Geometry.Enums;
-using UnityEngine;
 
 namespace Helion.Worlds.Geometry
 {
@@ -17,12 +17,12 @@ namespace Helion.Worlds.Geometry
         public readonly Seg2F Segment;
         public Unpegged Unpegged;
 
-        public Vector2 Start => Segment.Start;
-        public Vector2 End => Segment.End;
+        public Vec2F Start => Segment.Start;
+        public Vec2F End => Segment.End;
         public bool OneSided => !TwoSided;
         public bool TwoSided => Back.HasValue;
 
-        public Line(int index, MapLinedef linedef, Vector2 start, Vector2 end, Side front,
+        public Line(int index, MapLinedef linedef, Vec2F start, Vec2F end, Side front,
             Side back = null)
         {
             Index = index;

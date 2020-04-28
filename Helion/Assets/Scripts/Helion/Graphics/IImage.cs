@@ -1,5 +1,6 @@
 ﻿using Helion.Resource;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Graphics
 {

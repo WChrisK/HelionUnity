@@ -2,6 +2,7 @@
 using Helion.Resource.Decorate.Definitions.Properties.Enums;
 using Helion.Util;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 using static Helion.Util.OptionalHelper;
 

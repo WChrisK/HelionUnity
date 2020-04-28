@@ -7,11 +7,11 @@ using Helion.Resource.Decorate.Definitions;
 using Helion.Resource.Maps;
 using Helion.Util;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Worlds.Entities.Players;
 using Helion.Worlds.Entities.Spawns;
 using Helion.Worlds.Geometry;
 using MoreLinq;
-using UnityEngine;
 
 namespace Helion.Worlds.Entities
 {
@@ -30,25 +30,25 @@ namespace Helion.Worlds.Entities
             MapToEntityHelper.SpawnEntities(this, map);
         }
 
-        public Entity Spawn(UpperString type, Vector2 position, BitAngle angle = default)
+        public Entity Spawn(UpperString type, Vec2F position, BitAngle angle = default)
         {
             float height = world.Geometry.BspTree.Sector(position).Floor.Height;
-            return Spawn(type, new Vector3(position.x, height, position.y), angle);
+            return Spawn(type, new Vec3F(position.X, height, position.Y), angle);
         }
 
-        public Entity Spawn(int editorID, Vector2 position, BitAngle angle = default)
+        public Entity Spawn(int editorID, Vec2F position, BitAngle angle = default)
         {
             float height = world.Geometry.BspTree.Sector(position).Floor.Height;
-            return Spawn(editorID, new Vector3(position.x, height, position.y), angle);
+            return Spawn(editorID, new Vec3F(position.X, height, position.Y), angle);
         }
 
-        public Entity Spawn(UpperString type, Vector3 position, BitAngle angle = default)
+        public Entity Spawn(UpperString type, Vec3F position, BitAngle angle = default)
         {
             ActorDefinition definition = DecorateManager.Find(type);
             return Spawn(definition, position, angle);
         }
 
-        public Entity Spawn(int editorID, Vector3 position, BitAngle angle = default)
+        public Entity Spawn(int editorID, Vec3F position, BitAngle angle = default)
         {
             ActorDefinition definition = DecorateManager.Find(editorID);
             return Spawn(definition, position, angle);
@@ -95,7 +95,7 @@ namespace Helion.Worlds.Entities
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private Entity Spawn(ActorDefinition definition, Vector3 position, BitAngle angle)
+        private Entity Spawn(ActorDefinition definition, Vec3F position, BitAngle angle)
         {
             Sector sector = world.Geometry.BspTree.Sector(position);
             Entity entity = new Entity(nextEntityID++, definition, position, angle, sector, this);

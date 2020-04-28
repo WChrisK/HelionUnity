@@ -4,6 +4,7 @@ using System.Linq;
 using Helion.Bsp.Geometry;
 using Helion.Bsp.Node;
 using Helion.Util.Geometry.Segments;
+using Helion.Util.Geometry.Vectors;
 using Helion.Worlds.Geometry.Subsectors;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace Helion.Worlds.Geometry.Bsp
         /// </summary>
         /// <param name="point">The world location.</param>
         /// <returns>The sector for the point.</returns>
-        public Sector Sector(in Vector2 point) => Subsector(point).Sector;
+        public Sector Sector(in Vec2F point) => Subsector(point).Sector;
 
         /// <summary>
         /// Finds the sector at the point provided.
@@ -49,14 +50,14 @@ namespace Helion.Worlds.Geometry.Bsp
         /// <param name="point">The world location. This should be in the Unity
         /// coordinate system, so we grab the X/Z position (not the Y).</param>
         /// <returns>The sector for the point.</returns>
-        public Sector Sector(in Vector3 point) => Sector(new Vector2(point.x, point.z));
+        public Sector Sector(in Vec3F point) => Sector(point.XZ);
 
         /// <summary>
         /// Finds the subsector at the point provided.
         /// </summary>
         /// <param name="point">The world location.</param>
         /// <returns>The subsector for the point.</returns>
-        public Subsector Subsector(in Vector2 point)
+        public Subsector Subsector(in Vec2F point)
         {
             CompactBspNode node = root;
 
@@ -91,8 +92,8 @@ namespace Helion.Worlds.Geometry.Bsp
 
         private static Seg2F EdgeToLine(SubsectorEdge edge)
         {
-            Vector2 start = new Vector2((float)edge.Start.X, (float)edge.Start.Y);
-            Vector2 end = new Vector2((float)edge.End.X, (float)edge.End.Y);
+            Vec2F start = ((float)edge.Start.X, (float)edge.Start.Y);
+            Vec2F end = ((float)edge.End.X, (float)edge.End.Y);
             return new Seg2F(start, end);
         }
 

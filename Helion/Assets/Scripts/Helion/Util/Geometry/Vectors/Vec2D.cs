@@ -430,8 +430,7 @@ namespace Helion.Util.Geometry.Vectors
 
         public override bool Equals(object obj) => obj is Vec2D other && Equals(other);
 
-        // TODO: This is probably not good.
-        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
+        public override int GetHashCode() => HashCodes.Hash(X.GetHashCode(), Y.GetHashCode());
 
         public override string ToString() => $"{X}, {Y}";
     }

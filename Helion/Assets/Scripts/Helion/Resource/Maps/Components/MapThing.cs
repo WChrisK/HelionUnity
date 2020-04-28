@@ -1,5 +1,5 @@
 ﻿using Helion.Resource.Decorate.Definitions.Properties.Enums;
-using UnityEngine;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Resource.Maps.Components
 {
@@ -7,7 +7,7 @@ namespace Helion.Resource.Maps.Components
     {
         public readonly int Index;
         public int EditorID;
-        public Vector2 Position;
+        public Vec2F Position;
         public float? AbsoluteHeight; // We added this for Hexen support.
         public float? RelativeHeight;
         public int AngleDegrees; // 0 is East, 90 North, etc.
@@ -74,7 +74,7 @@ namespace Helion.Resource.Maps.Components
         public int Score;
         public int PitchDegrees;
         public int RollDegrees;
-        public Vector2 ScaleXY = Vector2.one;
+        public Vec2F ScaleXY = Vec2F.One;
         public float Scale = 1.0f;
         public int FloatBobPhase;
 

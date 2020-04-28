@@ -4,6 +4,7 @@ using Helion.Util;
 using Helion.Util.Timing;
 using Helion.Util.Unity;
 using Helion.Worlds.Entities;
+using Helion.Worlds.Entities.Physics;
 using Helion.Worlds.Geometry;
 using Helion.Worlds.Info;
 using UnityEditor;
@@ -19,6 +20,7 @@ namespace Helion.Worlds
         public readonly WorldInfo Info;
         public readonly MapGeometry Geometry;
         public readonly EntityManager Entities;
+        public readonly PhysicsSystem Physics;
         public int GameTick { get; private set; }
         private readonly Ticker timer = new Ticker(Constants.TickRateMillis);
         private readonly GameObject gameObject;
@@ -29,6 +31,7 @@ namespace Helion.Worlds
             gameObject = gameObj;
             Geometry = new MapGeometry(map);
             Entities = new EntityManager(this, map);
+            Physics = new PhysicsSystem(this);
 
             timer.Start();
         }

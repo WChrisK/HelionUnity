@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Helion.Util.Geometry.Vectors;
+using UnityEngine;
 
 namespace Helion.Util.Unity
 {
@@ -7,6 +8,13 @@ namespace Helion.Util.Unity
     /// </summary>
     public static class Vector3Extensions
     {
+        /// <summary>
+        /// Converts Unity's vector into our own vector struct.
+        /// </summary>
+        /// <param name="vec">The vector to convert.</param>
+        /// <returns>The converted value.</returns>
+        public static Vec3F AsVec(this Vector3 vec) => new Vec3F(vec.x, vec.y, vec.z);
+
         /// <summary>
         /// Scales the vector to Unity's map unit scaling. This should be
         /// called on any world position vector that is to be placed in a

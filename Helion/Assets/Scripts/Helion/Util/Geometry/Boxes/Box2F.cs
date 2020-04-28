@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry.Segments;
-using Helion.Util.Unity;
+using Helion.Util.Geometry.Vectors;
 using MoreLinq;
 using UnityEngine;
 
@@ -19,69 +19,69 @@ namespace Helion.Util.Geometry.Boxes
         /// The minimum point in the box. This is equal to the bottom left
         /// corner.
         /// </summary>
-        public readonly Vector2 Min;
+        public readonly Vec2F Min;
 
         /// <summary>
         /// The maximum point in the box. This is equal to the top right
         /// corner.
         /// </summary>
-        public readonly Vector2 Max;
+        public readonly Vec2F Max;
 
         /// <summary>
         /// The top left corner of the box.
         /// </summary>
-        public Vector2 TopLeft => new Vector2(Min.x, Max.y);
+        public Vec2F TopLeft => new Vec2F(Min.X, Max.Y);
 
         /// <summary>
         /// The bottom left corner of the box.
         /// </summary>
-        public Vector2 BottomLeft => Min;
+        public Vec2F BottomLeft => Min;
 
         /// <summary>
         /// The bottom right corner of the box.
         /// </summary>
-        public Vector2 BottomRight => new Vector2(Max.x, Min.y);
+        public Vec2F BottomRight => new Vec2F(Max.X, Min.Y);
 
         /// <summary>
         /// The top right corner of the box.
         /// </summary>
-        public Vector2 TopRight => Max;
+        public Vec2F TopRight => Max;
 
         /// <summary>
         /// The top value of the box.
         /// </summary>
-        public float Top => Max.y;
+        public float Top => Max.Y;
 
         /// <summary>
         /// The bottom value of the box.
         /// </summary>
-        public float Bottom => Min.y;
+        public float Bottom => Min.Y;
 
         /// <summary>
         /// The left value of the box.
         /// </summary>
-        public float Left => Min.x;
+        public float Left => Min.X;
 
         /// <summary>
         /// The right value of the box.
         /// </summary>
-        public float Right => Max.x;
+        public float Right => Max.X;
 
         /// <summary>
         /// Calculates the sides of this bounding box.
         /// </summary>
         /// <returns>The sides of the bounding box.</returns>
-        public Vector2 Sides => Max - Min;
+        public Vec2F Sides => Max - Min;
 
         /// <summary>
         /// A property that calculates the width of the box.
         /// </summary>
-        public float Width => Max.x - Min.x;
+        public float Width => Max.X - Min.X;
 
         /// <summary>
         /// A property that calculates the height of the box.
         /// </summary>
-        public float Height => Max.y - Min.y;
+        public float Height => Max.Y - Min.Y;
 
         /// <summary>
         /// Creates a box from a bottom left and top right coordinate.
@@ -95,7 +95,7 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="maxY">The coordinate for the top right Y corner.
         /// </param>
         public Box2F(float minX, float minY, float maxX, float maxY) :
-            this(new Vector2(minX, minY), new Vector2(maxX, maxY))
+            this(new Vec2F(minX, minY), new Vec2F(maxX, maxY))
         {
         }
 
@@ -105,9 +105,9 @@ namespace Helion.Util.Geometry.Boxes
         /// </summary>
         /// <param name="min">The bottom left point.</param>
         /// <param name="max">The top right point.</param>
-        public Box2F(in Vector2 min, in Vector2 max)
+        public Box2F(in Vec2F min, in Vec2F max)
         {
-            Debug.Assert(min.x <= max.x && min.y <= max.y, "Box2F min >= max");
+            Debug.Assert(min.X <= max.X && min.Y <= max.Y, "Box2F min >= max");
 
             Min = min;
             Max = max;
@@ -119,7 +119,7 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="pair">The tuple of start (Item1) and end (Item2)
         /// points.</param>
         /// <returns>A new 2D segment.</returns>
-        public static implicit operator Box2F(ValueTuple<Vector2, Vector2> pair) => new Box2F(pair.Item1, pair.Item2);
+        public static implicit operator Box2F(ValueTuple<Vec2F, Vec2F> pair) => new Box2F(pair.Item1, pair.Item2);
 
         /// <summary>
         /// Creates a bigger box from a series of smaller boxes, returning such
@@ -138,14 +138,14 @@ namespace Helion.Util.Geometry.Boxes
 
             boxes.Skip(1).ForEach(box =>
             {
-                minX = Math.Min(minX, box.Min.x);
-                minY = Math.Min(minY, box.Min.y);
+                minX = Math.Min(minX, box.Min.X);
+                minY = Math.Min(minY, box.Min.Y);
 
-                maxX = Math.Max(maxX, box.Max.x);
-                maxY = Math.Max(maxY, box.Max.y);
+                maxX = Math.Max(maxX, box.Max.X);
+                maxY = Math.Max(maxY, box.Max.Y);
             });
 
-            return new Box2F(new Vector2(minX, minY), new Vector2(maxX, maxY));
+            return new Box2F(new Vec2F(minX, minY), new Vec2F(maxX, maxY));
         }
 
         /// <summary>
@@ -168,9 +168,9 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="newCenter">The new center of the box.</param>
         /// <returns>The box at the position.</returns>
         [Pure]
-        public Box2F CopyTo(in Vector2 newCenter)
+        public Box2F CopyTo(in Vec2F newCenter)
         {
-            Vector2 delta = Sides * 0.5f;
+            Vec2F delta = Sides * 0.5f;
             return new Box2F(newCenter - delta, newCenter + delta);
         }
 
@@ -180,7 +180,7 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="offset">The offset to copy.</param>
         /// <returns>The new box.</returns>
         [Pure]
-        public Box2F CopyOffset(in Vector2 offset) => new Box2F(Min + offset, Max + offset);
+        public Box2F CopyOffset(in Vec2F offset) => new Box2F(Min + offset, Max + offset);
 
         /// <summary>
         /// Checks if the box contains the point. Being on the edge is not
@@ -189,9 +189,9 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="point">The point to check.</param>
         /// <returns>True if it is inside, false if not.</returns>
         [Pure]
-        public bool Contains(in Vector2 point)
+        public bool Contains(in Vec2F point)
         {
-            return point.x > Min.x && point.x < Max.x && point.y > Min.y && point.y < Max.y;
+            return point.X > Min.X && point.X < Max.X && point.Y > Min.Y && point.Y < Max.Y;
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Helion.Util.Geometry.Boxes
         [Pure]
         public bool Contains(in Vector3 point)
         {
-            return point.x > Min.x && point.x < Max.x && point.y > Min.y && point.y < Max.y;
+            return point.x > Min.X && point.x < Max.X && point.y > Min.Y && point.y < Max.Y;
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Helion.Util.Geometry.Boxes
         [Pure]
         public bool Overlaps(in Box2F box)
         {
-            return !(Min.x >= box.Max.x || Max.x <= box.Min.x || Min.y >= box.Max.y || Max.y <= box.Min.y);
+            return !(Min.X >= box.Max.X || Max.X <= box.Min.X || Min.Y >= box.Max.Y || Max.Y <= box.Min.Y);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="position">The position to look from.</param>
         /// <returns>The start and end points along the bounding box.</returns>
         [Pure]
-        public Seg2F GetSpanningEdge(in Vector2 position)
+        public Seg2F GetSpanningEdge(in Vec2F position)
         {
             // This is best understood by asking ourselves how we'd classify
             // where we are along a 1D line. Suppose we want to find out which
@@ -266,8 +266,8 @@ namespace Helion.Util.Geometry.Boxes
             //
             // Note this is my optimization to the Cohen-Sutherland algorithm
             // bitcode detector.
-            uint horizontalBits = Convert.ToUInt32(position.x > Left) + Convert.ToUInt32(position.x > Right);
-            uint verticalBits = Convert.ToUInt32(position.y > Bottom) + Convert.ToUInt32(position.y > Top);
+            uint horizontalBits = Convert.ToUInt32(position.X > Left) + Convert.ToUInt32(position.X > Right);
+            uint verticalBits = Convert.ToUInt32(position.Y > Bottom) + Convert.ToUInt32(position.Y > Top);
 
             switch (horizontalBits | (verticalBits << 2))
             {

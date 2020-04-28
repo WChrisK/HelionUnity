@@ -11,16 +11,11 @@ namespace Helion.Util.Unity
     public static class Vector2Extensions
     {
         /// <summary>
-        /// Deconstructs a vector to a tuple.
+        /// Converts Unity's vector into our own vector struct.
         /// </summary>
-        /// <param name="vec">The vector to operate on.</param>
-        /// <param name="x">The X coordinate.</param>
-        /// <param name="y">The Y coordinate.</param>
-        public static void Deconstruct(this Vector2 vec, out float x, out float y)
-        {
-            x = vec.x;
-            y = vec.y;
-        }
+        /// <param name="vec">The vector to convert.</param>
+        /// <returns>The converted value.</returns>
+        public static Vec2F AsVec(this Vector2 vec) => new Vec2F(vec.x, vec.y);
 
         /// <summary>
         /// Creates a new vector but with a new X component.

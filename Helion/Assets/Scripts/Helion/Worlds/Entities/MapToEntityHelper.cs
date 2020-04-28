@@ -3,7 +3,6 @@ using Helion.Resource.Maps;
 using Helion.Resource.Maps.Components;
 using Helion.Util.Geometry;
 using Helion.Worlds.Info;
-using UnityEngine;
 
 namespace Helion.Worlds.Entities
 {

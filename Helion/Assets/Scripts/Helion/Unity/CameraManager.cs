@@ -1,5 +1,6 @@
 ﻿using Helion.Util;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
 using Helion.Worlds.Entities;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Helion.Unity
         /// </summary>
         public static Camera Camera { get; private set; }
         public static BitAngle Angle { get; private set; }
-        public static Vector3 Position { get; private set; }
+        public static Vec3F Position { get; private set; }
         internal static EntryPoint entryPoint;
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Helion.Unity
             Camera camera = FindCamera();
             UpdateToNewCameraIfNeeded(camera);
 
-            Position = Camera.transform.position / Constants.MapUnit;
+            Position = Camera.transform.position.AsVec() / Constants.MapUnit;
             Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(Camera.transform.eulerAngles.y));
         }
 
@@ -61,8 +62,8 @@ namespace Helion.Unity
         {
             // TODO: We keep doing pointless XYZ -> XZ conversions when we don't need to.
             // TODO: Does not take interpolation of the camera position into account!
-            Vector2 eye = Position.XZ();
-            Vector2 other = entity.Position.Value(tickFraction).XZ();
+            Vec2F eye = Position.XZ;
+            Vec2F other = entity.Position.Value(tickFraction).XZ;
             uint bits = BitAngle.ToDiamondAngle(eye, other);
             return (int)BitAngle.CalculateSpriteRotation(bits, entity.Angle.Bits);
         }

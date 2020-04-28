@@ -1,5 +1,6 @@
 ﻿using System;
 using Helion.Util;
+using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
 using Helion.Worlds.Geometry.Enums;
 using UnityEngine;
@@ -169,8 +170,8 @@ namespace Helion.Worlds.Geometry.Walls
         {
             float top = ceiling.Height;
             float bottom = floor.Height;
-            Vector2 start = wall.Line.Segment.Start;
-            Vector2 end = wall.Line.Segment.End;
+            Vec2F start = wall.Line.Segment.Start;
+            Vec2F end = wall.Line.Segment.End;
 
             if (wall.OnBackSide)
                 (start, end) = (end, start);
@@ -197,10 +198,10 @@ namespace Helion.Worlds.Geometry.Walls
 
             return new[]
             {
-                new Vector3(start.x, bottom, start.y).MapUnit(),
-                new Vector3(end.x, bottom, end.y).MapUnit(),
-                new Vector3(start.x, top, start.y).MapUnit(),
-                new Vector3(end.x, top, end.y).MapUnit(),
+                new Vector3(start.X, bottom, start.Y).MapUnit(),
+                new Vector3(end.X, bottom, end.Y).MapUnit(),
+                new Vector3(start.X, top, start.Y).MapUnit(),
+                new Vector3(end.X, top, end.Y).MapUnit(),
             };
         }
 

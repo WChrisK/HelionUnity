@@ -6,6 +6,7 @@ using Helion.Resource.Maps.Actions;
 using Helion.Util;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Vectors;
 using static Helion.Util.OptionalHelper;
 
 namespace Helion.Resource.Decorate.Parser
