@@ -1,7 +1,7 @@
 ﻿using System;
-using Helion.Util;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
+using Helion.Worlds.Entities.Physics;
 using Helion.Worlds.Geometry.Enums;
 using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
@@ -51,29 +51,6 @@ namespace Helion.Worlds.Geometry.Walls
             Update();
         }
 
-        private MeshFilter CreateFilter()
-        {
-            MeshFilter filter = gameObject.AddComponent<MeshFilter>();
-            filter.sharedMesh = Mesh;
-            return filter;
-        }
-
-        private MeshRenderer CreateRenderer()
-        {
-            MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = texture.Material;
-            return renderer;
-        }
-
-        private BoxCollider CreateBoxCollider()
-        {
-            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
-            collider.center = Vector3.zero;
-            collider.size = new Vector3(0.5f, 0.5f, 0.01f);
-
-            return collider;
-        }
-
         public void Update()
         {
             (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
@@ -97,6 +74,57 @@ namespace Helion.Worlds.Geometry.Walls
             GameObjectHelper.Destroy(Renderer);
             GameObjectHelper.Destroy(Collider);
             GameObjectHelper.Destroy(gameObject);
+        }
+
+        private Mesh CreateMesh()
+        {
+            (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
+
+            Vector3[] vertices = CalculateVertices(floor, ceiling);
+            Vector3[] normals = CalculateNormals(vertices[0], vertices[1]);
+            Vector2[] uvCoords = CalculateUVCoordinates(floor, ceiling, vertices);
+            Color[] colors = CalculateColors();
+            SetTranslationScaleRotation(vertices);
+
+            return new Mesh
+            {
+                vertices = new[]
+                {
+                    new Vector3(-0.5f, -0.5f, 0),
+                    new Vector3(0.5f, -0.5f, 0),
+                    new Vector3(-0.5f, 0.5f, 0),
+                    new Vector3(0.5f, 0.5f, 0)
+                },
+                triangles = new[] { 0, 2, 1, 1, 2, 3 },
+                normals = normals,
+                uv = uvCoords,
+                colors = colors
+            };
+        }
+
+        private MeshFilter CreateFilter()
+        {
+            MeshFilter filter = gameObject.AddComponent<MeshFilter>();
+            filter.sharedMesh = Mesh;
+
+            return filter;
+        }
+
+        private MeshRenderer CreateRenderer()
+        {
+            MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = texture.Material;
+
+            return renderer;
+        }
+
+        private BoxCollider CreateBoxCollider()
+        {
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+            collider.center = Vector3.zero;
+            collider.size = new Vector3(1, 1, PhysicsSystem.ColliderThickness);
+
+            return collider;
         }
 
         private void UpdateEnabledStatus(SectorPlane floor, SectorPlane ceiling)
@@ -170,25 +198,6 @@ namespace Helion.Worlds.Geometry.Walls
             default:
                 throw new Exception($"Unexpected section type for wall attachment: {wall.Section}");
             }
-        }
-
-        private Mesh CreateMesh()
-        {
-            (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
-
-            Vector3[] vertices = CalculateVertices(floor, ceiling);
-            Vector3[] normals = CalculateNormals(vertices[0], vertices[1]);
-            Vector2[] uvCoords = CalculateUVCoordinates(floor, ceiling, vertices);
-            Color[] colors = CalculateColors();
-
-            return new Mesh
-            {
-                vertices = vertices,
-                triangles = new[] { 0, 2, 1, 1, 2, 3 },
-                normals = normals,
-                uv = uvCoords,
-                colors = colors
-            };
         }
 
         private Vector3[] CalculateVertices(SectorPlane floor, SectorPlane ceiling)
@@ -390,6 +399,40 @@ namespace Helion.Worlds.Geometry.Walls
             float lightLevel = wall.Side.Sector.LightLevelNormalized;
             Color color = new Color(lightLevel, lightLevel, lightLevel, 1.0f);
             return new[] { color, color, color, color };
+        }
+
+        private void SetTranslationScaleRotation(Vector3[] vertices)
+        {
+            SetScale(vertices);
+            SetTranslation(vertices);
+            SetRotation(vertices);
+        }
+
+        private void SetScale(Vector3[] vertices)
+        {
+            // TODO: This will not play nicely with slopes...
+            float y = (vertices[2] - vertices[0]).magnitude;
+            float x = (vertices[1] - vertices[0]).magnitude;
+            gameObject.transform.localScale = new Vector3(x, y, 1);
+        }
+
+        private void SetTranslation(Vector3[] vertices)
+        {
+            // The center of the wall is the center of the quad.
+            Vector3 average = Vector3.zero;
+            foreach (Vector3 vertex in vertices)
+                average += vertex;
+            average /= vertices.Length;
+
+            gameObject.transform.Translate(average);
+        }
+
+        private void SetRotation(Vector3[] vertices)
+        {
+            Vector3 direction = vertices[1] - vertices[0];
+            Vector3 angle = Quaternion.LookRotation(direction).eulerAngles;
+            angle.y -= 90;
+            gameObject.transform.localEulerAngles = angle;
         }
     }
 }

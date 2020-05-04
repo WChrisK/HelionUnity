@@ -84,6 +84,11 @@ namespace Helion.Util.Geometry.Boxes
         public float Height => Max.Y - Min.Y;
 
         /// <summary>
+        /// Gets the center point in the box.
+        /// </summary>
+        public Vec2F Center => BottomLeft + (Sides * 0.5f);
+
+        /// <summary>
         /// Creates a box from a bottom left and top right coordinate.
         /// </summary>
         /// <param name="minX">The coordinate for the bottom left X corner.
@@ -128,13 +133,22 @@ namespace Helion.Util.Geometry.Boxes
         /// <param name="boxes">The boxes.</param>
         /// <returns>A box that encases all of the args tightly. If the list is
         /// empty, the result returned is the default generated box.</returns>
-        public static Box2F Combine(params Box2F[] boxes)
+        public static Box2F Combine(params Box2F[] boxes) => Combine(boxes);
+
+        /// <summary>
+        /// Creates a bigger box from a series of smaller boxes, returning such
+        /// a box that encapsulates minimally all the provided arguments.
+        /// </summary>
+        /// <param name="boxes">The boxes.</param>
+        /// <returns>A box that encases all of the args tightly. If the list is
+        /// empty, the result returned is the default generated box.</returns>
+        public static Box2F Combine(IEnumerable<Box2F> boxes)
         {
             if (boxes.Empty())
                 return default;
 
-            (float minX, float minY) = boxes[0].Min;
-            (float maxX, float maxY) = boxes[0].Max;
+            (float minX, float minY) = boxes.ElementAt(0).Min;
+            (float maxX, float maxY) = boxes.ElementAt(0).Max;
 
             boxes.Skip(1).ForEach(box =>
             {

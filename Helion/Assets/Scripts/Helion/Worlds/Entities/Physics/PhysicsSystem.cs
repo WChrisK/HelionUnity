@@ -7,8 +7,9 @@ namespace Helion.Worlds.Entities.Physics
     /// </summary>
     public class PhysicsSystem
     {
+        public const float ColliderThickness = 0.02f;
         private const float Friction = 0.90625f;
-        private static readonly Vec3F FrictionScale = (Friction, 1, Friction);
+        private static readonly Vec3F FrictionXZScale = (Friction, 1, Friction);
 
         private World world;
 
@@ -26,7 +27,7 @@ namespace Helion.Worlds.Entities.Physics
 
         private void ApplyFriction(Entity entity)
         {
-            entity.Velocity *= FrictionScale;
+            entity.Velocity *= FrictionXZScale;
         }
     }
 }

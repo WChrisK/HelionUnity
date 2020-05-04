@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helion.Resource;
 using Helion.Resource.Textures;
 using Helion.Util.Extensions;
+using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Segments;
 using Helion.Util.Unity;
+using Helion.Worlds.Entities.Physics;
 using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
 
@@ -15,6 +18,7 @@ namespace Helion.Worlds.Geometry.Subsectors
         public readonly Mesh Mesh;
         public readonly MeshFilter Filter;
         public readonly MeshRenderer Renderer;
+        public readonly BoxCollider Collider;
         private readonly SubsectorPlane subsectorPlane;
         private Texture texture;
 
@@ -23,12 +27,10 @@ namespace Helion.Worlds.Geometry.Subsectors
         {
             subsectorPlane = plane;
             texture = TextureManager.Texture(plane.SectorPlane.TextureName, ResourceNamespace.Flats);
-            Renderer = gameObject.AddComponent<MeshRenderer>();
-            Filter = gameObject.AddComponent<MeshFilter>();
             Mesh = CreateMesh(sectorPlane, edges, texture);
-
-            Renderer.sharedMaterial = texture.Material;
-            Filter.sharedMesh = Mesh;
+            Filter = CreateFilter(gameObject);
+            Renderer = CreateRenderer(gameObject);
+            Collider = CreateCollider(gameObject, edges);
         }
 
         public void Dispose()
@@ -36,12 +38,6 @@ namespace Helion.Worlds.Geometry.Subsectors
             GameObjectHelper.Destroy(Mesh);
             GameObjectHelper.Destroy(Filter);
             GameObjectHelper.Destroy(Renderer);
-        }
-
-        internal void SetTexture(Texture newTexture)
-        {
-            texture = newTexture;
-            Renderer.sharedMaterial = newTexture.Material;
         }
 
         private static Mesh CreateMesh(SectorPlane sectorPlane, List<Seg2F> edges, Texture texture)
@@ -116,6 +112,36 @@ namespace Helion.Worlds.Geometry.Subsectors
             Color color = new Color(lightLevel, lightLevel, lightLevel, 1.0f);
 
             return Arrays.Create(vertexCount, color);
+        }
+
+
+        private MeshFilter CreateFilter(GameObject gameObject)
+        {
+            MeshFilter filter = gameObject.AddComponent<MeshFilter>();
+            filter.sharedMesh = Mesh;
+
+            return filter;
+        }
+
+        private MeshRenderer CreateRenderer(GameObject gameObject)
+        {
+            MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = texture.Material;
+
+            return renderer;
+        }
+
+        private BoxCollider CreateCollider(GameObject gameObject, List<Seg2F> edges)
+        {
+            Box2F box = Box2F.Combine(edges.Select(edge => edge.Box));
+            (float x, float z) = box.Center;
+            float y = subsectorPlane.SectorPlane.Height;
+
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+            collider.center = new Vector3(x, y, z).MapUnit();
+            collider.size = new Vector3(box.Width, PhysicsSystem.ColliderThickness, box.Height).MapUnit();
+
+            return collider;
         }
     }
 }
