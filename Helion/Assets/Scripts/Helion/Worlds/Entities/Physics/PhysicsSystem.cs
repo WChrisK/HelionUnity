@@ -1,4 +1,5 @@
-﻿using Helion.Util.Geometry.Vectors;
+﻿using Helion.Util;
+using Helion.Util.Geometry.Vectors;
 
 namespace Helion.Worlds.Entities.Physics
 {

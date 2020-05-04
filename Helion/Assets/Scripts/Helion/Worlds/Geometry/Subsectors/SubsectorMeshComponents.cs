@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Helion.Resource;
 using Helion.Resource.Textures;
+using Helion.Util;
 using Helion.Util.Extensions;
 using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Segments;
@@ -137,9 +138,14 @@ namespace Helion.Worlds.Geometry.Subsectors
             (float x, float z) = box.Center;
             float y = subsectorPlane.SectorPlane.Height;
 
+            // Because we don't want some thin value being made even thinner,
+            // we scale it up by the map unit size. This way we don't risk any
+            // objects passing through it.
+            float colliderThickness = PhysicsSystem.ColliderThickness / Constants.MapUnit;
+
             BoxCollider collider = gameObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(x, y, z).MapUnit();
-            collider.size = new Vector3(box.Width, PhysicsSystem.ColliderThickness, box.Height).MapUnit();
+            collider.size = new Vector3(box.Width, colliderThickness, box.Height).MapUnit();
 
             return collider;
         }
