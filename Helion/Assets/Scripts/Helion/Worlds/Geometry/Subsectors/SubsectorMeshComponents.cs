@@ -141,7 +141,7 @@ namespace Helion.Worlds.Geometry.Subsectors
             // Because we don't want some thin value being made even thinner,
             // we scale it up by the map unit size. This way we don't risk any
             // objects passing through it.
-            float colliderThickness = PhysicsSystem.ColliderThickness / Constants.MapUnit;
+            float colliderThickness = PhysicsSystem.ColliderThickness * Constants.MapUnitInverse;
 
             BoxCollider collider = gameObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(x, y, z).MapUnit();

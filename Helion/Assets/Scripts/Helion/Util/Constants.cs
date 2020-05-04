@@ -16,6 +16,11 @@
         public const float MapUnit = 1.0f / MeterToMapUnits;
 
         /// <summary>
+        /// The inverse of the map unit.
+        /// </summary>
+        public const float MapUnitInverse = 1.0f / MapUnit;
+
+        /// <summary>
         /// How many milliseconds each tick takes.
         /// </summary>
         public const float TickRateMillis = 28;
