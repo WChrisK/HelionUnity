@@ -11,6 +11,7 @@ namespace Helion.Worlds.Entities
 {
     public class EntityMeshComponents : IDisposable
     {
+        // TODO: Should we make this non static? If someone edits these accidentlaly, we're screwed.
         private static readonly Vector2[] nonFlippedUV =
         {
             new Vector2(0, 1),
@@ -18,7 +19,6 @@ namespace Helion.Worlds.Entities
             new Vector2(0, 0),
             new Vector2(1, 0)
         };
-
         private static readonly Vector2[] flippedUV =
         {
             new Vector2(1, 1),
