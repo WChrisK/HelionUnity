@@ -39,7 +39,7 @@ namespace Helion.Worlds.Geometry
             {
                 height = value;
                 SubsectorPlanes.ForEach(subsectorPlane => subsectorPlane.UpdateMeshes());
-                WallListeners.ForEach(wall => wall.UpdateWallMesh());
+                WallListeners.ForEach(wall => wall.Update());
             }
         }
 

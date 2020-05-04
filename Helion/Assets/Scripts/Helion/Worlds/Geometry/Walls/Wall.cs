@@ -1,8 +1,6 @@
 ﻿using System;
 using Helion.Resource.Textures;
 using Helion.Util;
-using Helion.Util.Unity;
-using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
 
 namespace Helion.Worlds.Geometry.Walls
@@ -12,48 +10,38 @@ namespace Helion.Worlds.Geometry.Walls
         public readonly int Index;
         public readonly Side Side;
         public readonly WallSection Section;
-        public Texture Texture { get; private set; }
-        private readonly GameObject gameObject;
-        private readonly WallMeshComponents meshComponents;
-        private UpperString textureName;
+        public UpperString TextureName { get; }
+        public Texture Texture { get; }
 
-        public UpperString TextureName => textureName;
+        private readonly WallMeshComponents meshComponents;
+
         public bool OnFrontSide => ReferenceEquals(Side.Line.Front, Side);
         public bool OnBackSide => !OnFrontSide;
         public Line Line => Side.Line;
+
+        public bool IsTwoSidedNoMiddle => Section == WallSection.Middle && Line.TwoSided && TextureName == Constants.NoTexture;
 
         public Wall(int index, Side side, WallSection section)
         {
             Index = index;
             Side = side;
             Section = section;
-            textureName = GetTextureNameFrom(side, section);
-            Texture = TextureManager.Texture(textureName);
-            gameObject = new GameObject($"Wall {index} ({section}) [Line {side.Line.Index}, Side {side.Index}]");
-            meshComponents = new WallMeshComponents(this, gameObject, Texture);
+            TextureName = GetTextureNameFrom(side, section);
+            Texture = TextureManager.Texture(TextureName);
+            meshComponents = new WallMeshComponents(this, Texture);
 
             AttachToSectorPlanes();
             side.Walls.Add(this);
-
-            UpdateWallMesh();
         }
 
-        public void UpdateWallMesh()
+        public void Update()
         {
             meshComponents.Update();
-        }
-
-        public void SetTexture(UpperString newTextureName)
-        {
-            textureName = newTextureName;
-            Texture = TextureManager.Texture(newTextureName);
-            meshComponents.SetTexture(Texture);
         }
 
         public void Dispose()
         {
             meshComponents.Dispose();
-            GameObjectHelper.Destroy(gameObject);
         }
 
         private static UpperString GetTextureNameFrom(Side side, WallSection section)

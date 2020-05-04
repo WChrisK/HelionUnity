@@ -21,28 +21,57 @@ namespace Helion.Worlds.Geometry.Walls
     /// </code>
     /// Then we reference them clockwise since apparently Unity has CW as the
     /// default instead of CCW.
+    /// Finally, the vertices are placed at +/-0.5 so that the center of the
+    /// wall is at the origin and follows along the X/Y plane (Z depth = 0).
+    /// This way when we apply scaling and rotations, the box collider will
+    /// go along with it and rotate appropriately. This is to get around the
+    /// mesh collider which does not work for planes.
     /// </remarks>
     public class WallMeshComponents : IDisposable
     {
         public readonly Mesh Mesh;
         public readonly MeshFilter Filter;
         public readonly MeshRenderer Renderer;
+        public readonly BoxCollider Collider;
+        private readonly GameObject gameObject;
         private readonly Wall wall;
-        private readonly float lineLength;
         private Texture texture;
         private bool isDisabled;
 
-        public WallMeshComponents(Wall wall, GameObject gameObject, Texture texture)
+        public WallMeshComponents(Wall wall, Texture texture)
         {
             this.wall = wall;
             this.texture = texture;
-            this.lineLength = wall.Line.Segment.Length();
-            this.Renderer = gameObject.AddComponent<MeshRenderer>();
-            this.Filter = gameObject.AddComponent<MeshFilter>();
+            this.gameObject = new GameObject($"Wall {wall.Index} ({wall.Section}: Line {wall.Side.Line.Index}, Side {wall.Side.Index})");
             this.Mesh = CreateMesh();
+            this.Filter = CreateFilter();
+            this.Renderer = CreateRenderer();
+            this.Collider = CreateBoxCollider();
 
-            Renderer.sharedMaterial = texture.Material;
-            Filter.sharedMesh = Mesh;
+            Update();
+        }
+
+        private MeshFilter CreateFilter()
+        {
+            MeshFilter filter = gameObject.AddComponent<MeshFilter>();
+            filter.sharedMesh = Mesh;
+            return filter;
+        }
+
+        private MeshRenderer CreateRenderer()
+        {
+            MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = texture.Material;
+            return renderer;
+        }
+
+        private BoxCollider CreateBoxCollider()
+        {
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+            collider.center = Vector3.zero;
+            collider.size = new Vector3(0.5f, 0.5f, 0.01f);
+
+            return collider;
         }
 
         public void Update()
@@ -66,19 +95,13 @@ namespace Helion.Worlds.Geometry.Walls
             GameObjectHelper.Destroy(Mesh);
             GameObjectHelper.Destroy(Filter);
             GameObjectHelper.Destroy(Renderer);
-        }
-
-        internal void SetTexture(Texture newTexture)
-        {
-            texture = newTexture;
-            Renderer.sharedMaterial = newTexture.Material;
+            GameObjectHelper.Destroy(Collider);
+            GameObjectHelper.Destroy(gameObject);
         }
 
         private void UpdateEnabledStatus(SectorPlane floor, SectorPlane ceiling)
         {
-            if (wall.Section == WallSection.Middle &&
-                wall.Line.TwoSided &&
-                wall.TextureName == Constants.NoTexture)
+            if (wall.IsTwoSidedNoMiddle)
             {
                 Disable();
                 isDisabled = true;
@@ -87,7 +110,7 @@ namespace Helion.Worlds.Geometry.Walls
 
             // We do it this way just in case enabling/disabling ends up being
             // a non-cheap operation.
-            if (floor.Height < ceiling.Height)
+            if (floor.Height <= ceiling.Height)
             {
                 if (isDisabled)
                 {
@@ -107,14 +130,16 @@ namespace Helion.Worlds.Geometry.Walls
 
         private void Enable()
         {
-            // TODO: `Collider.enabled = true;` if it has one
+            Collider.enabled = true;
             Renderer.enabled = true;
+            isDisabled = false;
         }
 
         private void Disable()
         {
-            // TODO: `Collider.enabled = false;` if it has one
+            Collider.enabled = false;
             Renderer.enabled = false;
+            isDisabled = true;
         }
 
         private (SectorPlane floor, SectorPlane ceiling) FindBoundingPlane()
@@ -264,6 +289,7 @@ namespace Helion.Worlds.Geometry.Walls
         private void CalculateTwoSidedLowerUV(SectorPlane floor, SectorPlane ceiling,
             ref Vector2 start, ref Vector2 end)
         {
+            float lineLength = wall.Line.Segment.Length();
             int height = ceiling.Height - floor.Height;
             Vector2 invDimension = texture.InverseDimension;
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
@@ -295,6 +321,7 @@ namespace Helion.Worlds.Geometry.Walls
         private void CalculateOneSidedMiddleUV(SectorPlane floor, SectorPlane ceiling,
             ref Vector2 start, ref Vector2 end)
         {
+            float lineLength = wall.Line.Segment.Length();
             int height = ceiling.Height - floor.Height;
             Vector2 invDimension = texture.InverseDimension;
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
@@ -318,6 +345,7 @@ namespace Helion.Worlds.Geometry.Walls
         {
             // TODO: Should probably turn this into a data structure to avoid these cryptic references.
             float height = vertices[2].y - vertices[0].y;
+            float lineLength = wall.Line.Segment.Length();
 
             Vector2 invDimension = texture.InverseDimension;
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
@@ -331,6 +359,7 @@ namespace Helion.Worlds.Geometry.Walls
         private void CalculateTwoSidedUpperUV(SectorPlane floor, SectorPlane ceiling,
             ref Vector2 start, ref Vector2 end)
         {
+            float lineLength = wall.Line.Segment.Length();
             int height = ceiling.Height - floor.Height;
             Vector2 invDimension = texture.InverseDimension;
             Vector2 spanUV = new Vector2(lineLength, height) * invDimension;
