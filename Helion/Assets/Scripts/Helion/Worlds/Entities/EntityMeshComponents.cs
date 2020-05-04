@@ -11,6 +11,22 @@ namespace Helion.Worlds.Entities
 {
     public class EntityMeshComponents : IDisposable
     {
+        private static readonly Vector2[] nonFlippedUV =
+        {
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+            new Vector2(0, 0),
+            new Vector2(1, 0)
+        };
+
+        private static readonly Vector2[] flippedUV =
+        {
+            new Vector2(1, 1),
+            new Vector2(0, 1),
+            new Vector2(1, 0),
+            new Vector2(0, 0)
+        };
+
         public readonly Mesh Mesh;
         public readonly MeshFilter Filter;
         public readonly MeshRenderer Renderer;
@@ -44,10 +60,16 @@ namespace Helion.Worlds.Entities
 
             EnsureEnabled();
 
-            // TODO: Need to flip UV coordinates on the mesh or something if mirrored.
+            // TODO: If the index or the texture does not change, exit early.
+
             int index = CameraManager.CalculateRotationIndex(entity, tickFraction);
             Texture texture = entity.Frame.SpriteRotations[index];
             Renderer.sharedMaterial = texture.Material;
+
+            // Since the 0-7 range has us looking for 5, 6, or 7, we can check
+            // anything >= 5 to see if we should be mirroring.
+            bool shouldFlip = rotations.Mirrored && index >= 5;
+            Mesh.uv = shouldFlip ? flippedUV : nonFlippedUV;
 
             float y = texture.Height.MapUnit() / 2;
             gameObject.transform.localPosition = new Vector3(0, y, 0);
@@ -83,7 +105,7 @@ namespace Helion.Worlds.Entities
                 new Vector3(-radius, radius, 0),
                 new Vector3(radius, radius, 0)
             };
-            Vector2[] uvCoords = { new Vector2(0, 1), Vector2.one, Vector2.zero, new Vector2(1, 0) };
+            Vector2[] uvCoords = nonFlippedUV;
             Vector3[] normals = { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
             Color[] colors = { color, color, color, color };
 
