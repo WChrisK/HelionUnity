@@ -6,12 +6,14 @@ using Helion.Util.Extensions;
 using Helion.Util.Unity;
 using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Helion.Worlds.Entities
 {
     public class EntityMeshComponents : IDisposable
     {
-        // TODO: Should we make this non static? If someone edits these accidentlaly, we're screwed.
+        // TODO: Should we make this non static? If someone edits these accidentally, we're screwed.
         private static readonly Vector2[] nonFlippedUV =
         {
             new Vector2(0, 1),
@@ -41,11 +43,9 @@ namespace Helion.Worlds.Entities
             gameObject = new GameObject("Sprite mesh");
             entityGameObject.SetChild(gameObject, false);
 
-            Renderer = gameObject.AddComponent<MeshRenderer>();
-            Filter = gameObject.AddComponent<MeshFilter>();
             Mesh = CreateMesh();
-
-            Filter.sharedMesh = Mesh;
+            Filter = CreateFilter();
+            Renderer = gameObject.AddComponent<MeshRenderer>();
         }
 
         public void Update(float tickFraction)
@@ -117,6 +117,14 @@ namespace Helion.Worlds.Entities
                 uv = uvCoords,
                 colors = colors
             };
+        }
+
+        private MeshFilter CreateFilter()
+        {
+            MeshFilter filter = gameObject.AddComponent<MeshFilter>();
+            filter.sharedMesh = Mesh;
+
+            return filter;
         }
 
         private void EnsureEnabled()

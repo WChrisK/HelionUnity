@@ -5,6 +5,7 @@ using Helion.Resource.Decorate.Definitions.States;
 using Helion.Util.Geometry;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Interpolation;
+using Helion.Util.Unity;
 using Helion.Worlds.Geometry;
 using UnityEngine;
 
@@ -56,6 +57,7 @@ namespace Helion.Worlds.Entities
         private readonly EntityManager entityManager;
         private readonly FrameTracker frameTracker;
         private readonly EntityMeshComponents meshComponents;
+        private readonly BoxCollider collider;
 
         public World World => entityManager.world;
         public ActorFrame Frame => frameTracker.Frame;
@@ -72,6 +74,7 @@ namespace Helion.Worlds.Entities
             frameTracker = new FrameTracker(this);
             GameObject = CreateGameObject();
             meshComponents = new EntityMeshComponents(this, GameObject);
+            collider = CreateCollider();
         }
 
         public void Update(float tickFraction)
@@ -95,6 +98,8 @@ namespace Helion.Worlds.Entities
         {
             meshComponents.Dispose();
             entityManager.Entities.Remove(node);
+            GameObjectHelper.Destroy(collider);
+            GameObjectHelper.Destroy(GameObject);
         }
 
         private GameObject CreateGameObject()
@@ -102,6 +107,19 @@ namespace Helion.Worlds.Entities
             GameObject gameObj = new GameObject($"Entity {Definition.Name} ({ID})");
             gameObj.transform.position = Position.Current.MapUnit();
             return gameObj;
+        }
+
+        private BoxCollider CreateCollider()
+        {
+            float radius = Definition.Properties.Radius;
+            float diameter = radius * 2;
+            float height = Definition.Properties.Height;
+
+            BoxCollider boxCollider = GameObject.AddComponent<BoxCollider>();
+            boxCollider.center = new Vector3(0, height / 2, 0).MapUnit();
+            boxCollider.size = new Vector3(diameter, height, diameter).MapUnit();
+
+            return boxCollider;
         }
     }
 }
