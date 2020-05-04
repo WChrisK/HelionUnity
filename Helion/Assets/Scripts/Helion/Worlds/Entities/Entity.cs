@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Helion.Resource.Decorate.Definitions;
 using Helion.Resource.Decorate.Definitions.States;
+using Helion.Unity;
 using Helion.Util.Geometry;
 using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Vectors;
@@ -64,6 +65,7 @@ namespace Helion.Worlds.Entities
         private readonly FrameTracker frameTracker;
         private readonly EntityMeshComponents meshComponents;
         private readonly BoxCollider collider;
+        private readonly CollisionInfo collisionInfo;
 
         public World World => entityManager.world;
         public ActorFrame Frame => frameTracker.Frame;
@@ -82,6 +84,7 @@ namespace Helion.Worlds.Entities
             GameObject = CreateGameObject();
             meshComponents = new EntityMeshComponents(this, GameObject);
             collider = CreateCollider();
+            collisionInfo = CollisionInfo.CreateOn(GameObject, this);
         }
 
         public void Update(float tickFraction)
@@ -105,6 +108,7 @@ namespace Helion.Worlds.Entities
         {
             meshComponents.Dispose();
             entityManager.Entities.Remove(node);
+            GameObjectHelper.Destroy(collisionInfo);
             GameObjectHelper.Destroy(collider);
             GameObjectHelper.Destroy(GameObject);
         }

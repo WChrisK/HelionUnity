@@ -1,4 +1,5 @@
 ﻿using System;
+using Helion.Unity;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
 using Helion.Worlds.Entities.Physics;
@@ -35,6 +36,7 @@ namespace Helion.Worlds.Geometry.Walls
         public readonly BoxCollider Collider;
         private readonly GameObject gameObject;
         private readonly Wall wall;
+        private readonly CollisionInfo collisionInfo;
         private Texture texture;
         private bool isDisabled;
 
@@ -47,6 +49,7 @@ namespace Helion.Worlds.Geometry.Walls
             this.Filter = CreateFilter();
             this.Renderer = CreateRenderer();
             this.Collider = CreateBoxCollider();
+            this.collisionInfo = CollisionInfo.CreateOn(gameObject, wall);
 
             Update();
         }
@@ -73,6 +76,7 @@ namespace Helion.Worlds.Geometry.Walls
             GameObjectHelper.Destroy(Filter);
             GameObjectHelper.Destroy(Renderer);
             GameObjectHelper.Destroy(Collider);
+            GameObjectHelper.Destroy(collisionInfo);
             GameObjectHelper.Destroy(gameObject);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Helion.Unity;
 using Helion.Util.Geometry.Segments;
 using Helion.Util.Unity;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace Helion.Worlds.Geometry.Subsectors
         public readonly SubsectorMeshComponents MeshComponents;
         public Subsector Subsector { get; internal set; }
         private readonly GameObject gameObject;
+        private readonly CollisionInfo collisionInfo;
 
         public SubsectorPlane(int index, SectorPlane sectorPlane, List<Seg2F> edges)
         {
@@ -25,6 +27,7 @@ namespace Helion.Worlds.Geometry.Subsectors
             Edges = edges.ToList();
             gameObject = new GameObject($"Subsector {index} (Sector {sectorPlane.Sector.Index} Plane {sectorPlane.Index} {facingText})");
             MeshComponents = new SubsectorMeshComponents(this, sectorPlane, edges, gameObject);
+            collisionInfo = CollisionInfo.CreateOn(gameObject, this);
 
             sectorPlane.SubsectorPlanes.Add(this);
         }
@@ -37,6 +40,7 @@ namespace Helion.Worlds.Geometry.Subsectors
         public void Dispose()
         {
             MeshComponents.Dispose();
+            GameObjectHelper.Destroy(collisionInfo);
             GameObjectHelper.Destroy(gameObject);
         }
     }
