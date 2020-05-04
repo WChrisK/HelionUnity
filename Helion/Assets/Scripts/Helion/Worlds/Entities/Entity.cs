@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Helion.Resource.Decorate.Definitions;
 using Helion.Resource.Decorate.Definitions.States;
 using Helion.Util.Geometry;
+using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Interpolation;
 using Helion.Util.Unity;
@@ -49,6 +50,11 @@ namespace Helion.Worlds.Entities
         public Vec3F Velocity;
 
         /// <summary>
+        /// The bounding box around the entity from a birds eye view.
+        /// </summary>
+        public Box2F Box;
+
+        /// <summary>
         /// The sector the center of the entity is in.
         /// </summary>
         public Sector Sector { get; internal set; }
@@ -69,6 +75,7 @@ namespace Helion.Worlds.Entities
             Definition = definition;
             Position = new Vec3Interpolation(position);
             Angle = angle;
+            Box = CreateBox();
             Sector = sector;
             entityManager = manager;
             frameTracker = new FrameTracker(this);
@@ -100,6 +107,15 @@ namespace Helion.Worlds.Entities
             entityManager.Entities.Remove(node);
             GameObjectHelper.Destroy(collider);
             GameObjectHelper.Destroy(GameObject);
+        }
+
+        private Box2F CreateBox()
+        {
+            float radius = Definition.Properties.Radius;
+            Vec2F radiusVector = new Vec2F(radius, radius);
+            Vec2F center = Position.Current.To2D();
+
+            return new Box2F(center - radiusVector, center + radiusVector);
         }
 
         private GameObject CreateGameObject()
