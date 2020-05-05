@@ -38,7 +38,7 @@ namespace Helion.Worlds.Entities
         /// The bottom center position of the entity. Note that this uses the
         /// Unity coordinate system (so Y is up/down).
         /// </summary>
-        public Vec3Interpolation Position;
+        public Vec3Interpolation Position { get; private set; }
 
         /// <summary>
         /// The angle the entity is facing.
@@ -51,9 +51,10 @@ namespace Helion.Worlds.Entities
         public Vec3F Velocity;
 
         /// <summary>
-        /// The bounding box around the entity from a birds eye view.
+        /// The bounding box around the entity from a birds eye view. This box
+        /// will only be at the current position, there is no interpolation.
         /// </summary>
-        public Box2F Box;
+        public Box2F Box { get; private set; }
 
         /// <summary>
         /// The sector the center of the entity is in.
@@ -77,7 +78,7 @@ namespace Helion.Worlds.Entities
             Definition = definition;
             Position = new Vec3Interpolation(position);
             Angle = angle;
-            Box = CreateBox();
+            Box = CreateBoxAt(position.XZ);
             Sector = sector;
             entityManager = manager;
             frameTracker = new FrameTracker(this);
@@ -94,9 +95,23 @@ namespace Helion.Worlds.Entities
             meshComponents.Update(tickFraction);
         }
 
+        /// <summary>
+        /// Sets the world position. This should be the world unit position
+        /// (not the scaled map unit position).
+        /// </summary>
+        /// <param name="position">The world position.</param>
+        public void SetPosition(Vec3F position)
+        {
+            Position = Position.At(position);
+            Box = CreateBoxAt(position.XZ);
+            GameObject.transform.position = position.MapUnit();
+
+            Sector = World.Geometry.BspTree.Sector(position);
+        }
+
         public void Tick()
         {
-            Position.Tick();
+            Position = Position.Tick();
             Sector = World.Geometry.BspTree.Sector(Position.Current);
 
             frameTracker.Tick();
@@ -113,12 +128,10 @@ namespace Helion.Worlds.Entities
             GameObjectHelper.Destroy(GameObject);
         }
 
-        private Box2F CreateBox()
+        private Box2F CreateBoxAt(in Vec2F center)
         {
             float radius = Definition.Properties.Radius;
             Vec2F radiusVector = new Vec2F(radius, radius);
-            Vec2F center = Position.Current.To2D();
-
             return new Box2F(center - radiusVector, center + radiusVector);
         }
 

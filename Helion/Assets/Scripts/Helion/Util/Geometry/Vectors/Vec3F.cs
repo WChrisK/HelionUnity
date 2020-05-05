@@ -233,13 +233,6 @@ namespace Helion.Util.Geometry.Vectors
         public Vector3D ToClass() => new Vector3D(X, Y, Z);
 
         /// <summary>
-        /// Converts to a 2D vector by dropping the Z component.
-        /// </summary>
-        /// <returns>The 2D vector without the Z component.</returns>
-        [Pure]
-        public Vec2F To2D() => new Vec2F(X, Y);
-
-        /// <summary>
         /// Creates a new vector but with a new X component.
         /// </summary>
         /// <param name="x">The new X component.</param>

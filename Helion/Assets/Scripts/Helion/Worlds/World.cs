@@ -4,7 +4,7 @@ using Helion.Util;
 using Helion.Util.Timing;
 using Helion.Util.Unity;
 using Helion.Worlds.Entities;
-using Helion.Worlds.Entities.Physics;
+using Helion.Worlds.Entities.Movement;
 using Helion.Worlds.Geometry;
 using Helion.Worlds.Info;
 using UnityEditor;

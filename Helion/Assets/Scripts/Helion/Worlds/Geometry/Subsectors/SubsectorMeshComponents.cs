@@ -8,7 +8,7 @@ using Helion.Util.Extensions;
 using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Segments;
 using Helion.Util.Unity;
-using Helion.Worlds.Entities.Physics;
+using Helion.Worlds.Entities.Movement;
 using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
 

@@ -2,7 +2,7 @@
 using Helion.Unity;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
-using Helion.Worlds.Entities.Physics;
+using Helion.Worlds.Entities.Movement;
 using Helion.Worlds.Geometry.Enums;
 using UnityEngine;
 using Texture = Helion.Resource.Textures.Texture;
