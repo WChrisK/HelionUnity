@@ -40,6 +40,14 @@ namespace Helion.Worlds.Geometry.Subsectors
             // TODO
         }
 
+        /// <summary>
+        /// To be called to check if a box intersects this subsector plane.
+        /// This is usually the bounding box of an entity being moved to some
+        /// position.
+        /// </summary>
+        /// <param name="box">The box to check.</param>
+        /// <returns>True if it's intersected by the box (meaning the subsector
+        /// plane slices through it at some point), false otherwise.</returns>
         public bool IntersectedBy(in Box3F box)
         {
             Box2F box2D = box.XZ;
