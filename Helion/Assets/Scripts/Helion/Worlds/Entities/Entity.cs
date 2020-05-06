@@ -56,7 +56,7 @@ namespace Helion.Worlds.Entities
         /// The bounding box around the entity from a birds eye view. This box
         /// will only be at the current position, there is no interpolation.
         /// </summary>
-        public Box2F Box { get; private set; }
+        public Box3F Box { get; private set; }
 
         /// <summary>
         /// The sector the center of the entity is in.
@@ -85,7 +85,7 @@ namespace Helion.Worlds.Entities
             Definition = definition;
             Position = new Vec3Interpolation(position);
             Angle = angle;
-            Box = CreateBoxAt(position.XZ);
+            Box = CreateBoxAt(position);
             Sector = sector;
             entityManager = manager;
             frameTracker = new FrameTracker(this);
@@ -110,7 +110,7 @@ namespace Helion.Worlds.Entities
         public void SetPosition(Vec3F position)
         {
             Position = Position.At(position);
-            Box = CreateBoxAt(position.XZ);
+            Box = CreateBoxAt(position);
             GameObject.transform.position = position.MapUnit();
 
             Sector = World.Geometry.BspTree.Sector(position);
@@ -147,11 +147,12 @@ namespace Helion.Worlds.Entities
             GameObjectHelper.Destroy(GameObject);
         }
 
-        private Box2F CreateBoxAt(in Vec2F center)
+        private Box3F CreateBoxAt(in Vec3F center)
         {
             float radius = Radius;
-            Vec2F radiusVector = new Vec2F(radius, radius);
-            return new Box2F(center - radiusVector, center + radiusVector);
+            Vec3F radiusVector = new Vec3F(radius, 0, radius);
+            Vec3F radiusHeightVector = radiusVector.WithY(Height);
+            return new Box3F(center - radiusVector, center + radiusHeightVector);
         }
 
         private GameObject CreateGameObject()

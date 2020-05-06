@@ -74,6 +74,30 @@ namespace Helion.Util.Geometry.Boxes
         }
 
         /// <summary>
+        /// Adds a vector to the box to move it by that amount.
+        /// </summary>
+        /// <param name="box">The box to move.</param>
+        /// <param name="delta">The amount to move it by.</param>
+        /// <returns>A new box that has its coordinates adding the delta value
+        /// provided.</returns>
+        public static Box3F operator +(in Box3F box, in Vec3F delta)
+        {
+            return new Box3F(box.Min + delta, box.Max + delta);
+        }
+
+        /// <summary>
+        /// Subtracts a vector to the box to move it by that amount.
+        /// </summary>
+        /// <param name="box">The box to move.</param>
+        /// <param name="delta">The amount to move it by.</param>
+        /// <returns>A new box that has its coordinates subtracting the delta
+        /// value provided.</returns>
+        public static Box3F operator -(in Box3F box, in Vec3F delta)
+        {
+            return new Box3F(box.Min - delta, box.Max - delta);
+        }
+
+        /// <summary>
         /// Creates a bigger box from a series of smaller boxes, returning such
         /// a box that encapsulates minimally all the provided arguments.
         /// </summary>

@@ -56,7 +56,7 @@ namespace Helion.Worlds.Geometry.Walls
 
         public void Update()
         {
-            (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
+            (SectorPlane floor, SectorPlane ceiling) = wall.FindBoundingPlane();
 
             UpdateEnabledStatus(floor, ceiling);
 
@@ -82,7 +82,7 @@ namespace Helion.Worlds.Geometry.Walls
 
         private Mesh CreateMesh()
         {
-            (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
+            (SectorPlane floor, SectorPlane ceiling) = wall.FindBoundingPlane();
 
             Vector3[] vertices = CalculateVertices(floor, ceiling);
             Vector3[] normals = CalculateNormals(vertices[0], vertices[1]);
@@ -172,36 +172,6 @@ namespace Helion.Worlds.Geometry.Walls
             Collider.enabled = false;
             Renderer.enabled = false;
             isDisabled = true;
-        }
-
-        private (SectorPlane floor, SectorPlane ceiling) FindBoundingPlane()
-        {
-            Line line = wall.Line;
-            Sector facingSector = wall.Side.Sector;
-            if (line.OneSided)
-                return (facingSector.Floor, facingSector.Ceiling);
-
-            Sector partnerSector = wall.Side.PartnerSide.Value.Sector;
-            if (wall.OnBackSide)
-                (facingSector, partnerSector) = (partnerSector, facingSector);
-
-            SectorPlane facingFloor = facingSector.Floor;
-            SectorPlane facingCeiling = facingSector.Ceiling;
-            SectorPlane partnerFloor = partnerSector.Floor;
-            SectorPlane partnerCeiling = partnerSector.Ceiling;
-
-            switch (wall.Section)
-            {
-            case WallSection.Lower:
-                return (facingFloor, partnerFloor);
-            case WallSection.Middle:
-                return (facingFloor.Height >= partnerFloor.Height ? facingFloor : partnerFloor,
-                        facingCeiling.Height <= partnerCeiling.Height ? facingCeiling : partnerCeiling);
-            case WallSection.Upper:
-                return (partnerCeiling, facingCeiling);
-            default:
-                throw new Exception($"Unexpected section type for wall attachment: {wall.Section}");
-            }
         }
 
         private Vector3[] CalculateVertices(SectorPlane floor, SectorPlane ceiling)

@@ -1,4 +1,5 @@
 ﻿using System;
+using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Vectors;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace Helion.Worlds.Entities.Movement
             int slidesLeft = MaxSlides;
             Vec3F position = entity.Position.Current;
             Vec3F velocityXZ = entity.Velocity.WithY(0);
+            Box3F box = entity.Box;
 
             // We advance in small steps that are smaller than the radius of
             // the actor so we don't skip over any lines or things due to fast
@@ -43,17 +45,19 @@ namespace Helion.Worlds.Entities.Movement
                     break;
 
                 Vec3F nextPosition = position + stepDelta;
-                CollisionData collisions = FindCollisions(entity, nextPosition);
+                Box3F nextBox = box + stepDelta;
+                CollisionData collisions = FindCollisions(entity, nextPosition, nextBox);
 
                 if (collisions.HasNone)
                 {
                     position = nextPosition;
+                    box = nextBox;
                     continue;
                 }
 
                 if (slidesLeft > 0 && entity.Flags.Slides)
                 {
-                    HandleSlideXZ(entity, ref position, ref stepDelta, ref movesLeft);
+                    HandleSlideXZ(entity, ref position, ref box, ref stepDelta, ref movesLeft);
                     slidesLeft--;
                     continue;
                 }
@@ -77,7 +81,8 @@ namespace Helion.Worlds.Entities.Movement
             return (int)(biggerAxis / moveDistance) + 1;
         }
 
-        private void HandleSlideXZ(Entity entity, ref Vec3F position, ref Vec3F stepDelta, ref int movesLeft)
+        private void HandleSlideXZ(Entity entity, ref Vec3F position, ref Box3F box,
+            ref Vec3F stepDelta, ref int movesLeft)
         {
             // TODO
         }

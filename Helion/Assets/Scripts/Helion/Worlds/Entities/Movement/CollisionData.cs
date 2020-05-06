@@ -1,5 +1,6 @@
 ﻿using System;
 using Helion.Unity;
+using Helion.Util.Geometry.Boxes;
 using Helion.Worlds.Geometry.Subsectors;
 using Helion.Worlds.Geometry.Walls;
 using UnityEngine;
@@ -33,7 +34,7 @@ namespace Helion.Worlds.Entities.Movement
             NonBlockingEntities = new Entity[MaxColliders];
         }
 
-        public CollisionData(Collider[] allColliders, Entity entity)
+        public CollisionData(Collider[] allColliders, Entity entity, in Box3F box)
         {
             colliders = allColliders;
             collisionCount = allColliders.Length;
@@ -46,16 +47,29 @@ namespace Helion.Worlds.Entities.Movement
             BlockingEntities = new Entity[collisionCount];
             NonBlockingEntities = new Entity[collisionCount];
 
-            PartitionCollisions(entity);
+            PartitionCollisions(entity, box);
         }
 
-        public void Populate(Vector3 center, Vector3 halfExtents, Entity entity)
+        /// <summary>
+        /// Uses a static allocator to find collisions. The center point and
+        /// the box should overlap if they were in the same coordinate space
+        /// (as center/halfExtents are in Unity map units, and the box is in
+        /// world units).
+        /// </summary>
+        /// <param name="center">The center point in Unity map units.</param>
+        /// <param name="halfExtents">The box extends in Unity map units.
+        /// </param>
+        /// <param name="entity">The entity that is to collide with things.
+        /// </param>
+        /// <param name="box">The bounding box at the position to check.
+        /// </param>
+        public void Populate(Vector3 center, Vector3 halfExtents, Entity entity, in Box3F box)
         {
             collisionCount = Physics.OverlapBoxNonAlloc(center, halfExtents, colliders);
-            PartitionCollisions(entity);
+            PartitionCollisions(entity, box);
         }
 
-        private void PartitionCollisions(Entity entity)
+        private void PartitionCollisions(Entity entity, in Box3F box)
         {
             WallCount = 0;
             PlaneCount = 0;
@@ -79,14 +93,13 @@ namespace Helion.Worlds.Entities.Movement
                     break;
 
                 case CollisionInfoType.SubsectorPlane:
-                    // TODO: Perform more accurate check now.
-                    Planes[PlaneCount++] = collisionInfo.SubsectorPlane;
+                    if (collisionInfo.SubsectorPlane.IntersectedBy(box))
+                        Planes[PlaneCount++] = collisionInfo.SubsectorPlane;
                     break;
 
                 case CollisionInfoType.Wall:
-                    // TODO: Check that we actually cross the line.
-                    // TODO: Check that we aren't touching (PhysX considers touching a collision).
-                    Walls[WallCount++] = collisionInfo.Wall;
+                    if (collisionInfo.Wall.IntersectedBy(box))
+                        Walls[WallCount++] = collisionInfo.Wall;
                     break;
 
                 default:

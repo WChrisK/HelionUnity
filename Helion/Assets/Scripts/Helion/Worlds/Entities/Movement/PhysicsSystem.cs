@@ -1,4 +1,5 @@
 ﻿using Helion.Util.Extensions;
+using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Unity;
 using UnityEngine;
@@ -52,17 +53,25 @@ namespace Helion.Worlds.Entities.Movement
             entity.Velocity = new Vec3F(x, y, z);
         }
 
-        private CollisionData FindCollisions(Entity entity, in Vec3F position)
+        /// <summary>
+        /// Finds all the collisions for some entity at a position/box.
+        /// </summary>
+        /// <param name="entity">The entity that is to collide with things.
+        /// </param>
+        /// <param name="position">The center point, which should also be the
+        /// bottom center of the box (at the feet).</param>
+        /// <param name="box">The bounding box at the position to check.
+        /// </param>
+        /// <returns>The things collided with. This should never be mutated.
+        /// </returns>
+        private CollisionData FindCollisions(Entity entity, in Vec3F position, in Box3F box)
         {
             float radius = entity.Radius;
             float halfHeight = entity.HalfHeight;
             Vector3 center = new Vec3F(position.X, position.Y + halfHeight, position.Z).MapUnit();
             Vector3 halfExtents = new Vector3(radius, halfHeight, radius).MapUnit();
 
-            Vector3 min = center - halfExtents;
-            Vector3 max = center + halfExtents;
-            Debug.Log($"[{world.GameTick}] Checking {min.x} {min.y} {min.z} -> {max.x} {max.y} {max.z}");
-            collisionData.Populate(center, halfExtents, entity);
+            collisionData.Populate(center, halfExtents, entity, box);
 
             // If we didn't run up to the end of the array, then we can exit
             // early without having to do more checks.
@@ -73,7 +82,7 @@ namespace Helion.Worlds.Entities.Movement
             // allocation hit and figure out all of the collisions. This should
             // be very rare so it is okay if it adds a bit of GC pressure.
             Collider[] allColliders = Physics.OverlapBox(center, halfExtents);
-            return new CollisionData(allColliders, entity);
+            return new CollisionData(allColliders, entity, box);
         }
     }
 }

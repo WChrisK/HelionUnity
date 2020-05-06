@@ -118,5 +118,7 @@ namespace Helion.Worlds.Geometry
             TextureName = texture;
             Texture = TextureManager.Texture(texture);
         }
+
+        // TODO: On height change, notify walls!
     }
 }

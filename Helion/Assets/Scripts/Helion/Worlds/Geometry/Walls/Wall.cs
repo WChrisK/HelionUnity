@@ -1,6 +1,7 @@
 ﻿using System;
 using Helion.Resource.Textures;
 using Helion.Util;
+using Helion.Util.Geometry.Boxes;
 using Texture = Helion.Resource.Textures.Texture;
 
 namespace Helion.Worlds.Geometry.Walls
@@ -12,6 +13,8 @@ namespace Helion.Worlds.Geometry.Walls
         public readonly WallSection Section;
         public UpperString TextureName { get; }
         public Texture Texture { get; }
+        public float FloorHeight;
+        public float CeilingHeight;
 
         private readonly WallMeshComponents meshComponents;
 
@@ -30,8 +33,27 @@ namespace Helion.Worlds.Geometry.Walls
             Texture = TextureManager.Texture(TextureName);
             meshComponents = new WallMeshComponents(this, Texture);
 
+            (SectorPlane floor, SectorPlane ceiling) = FindBoundingPlane();
+            FloorHeight = floor.Height;
+            CeilingHeight = ceiling.Height;
+
             AttachToSectorPlanes();
             side.Walls.Add(this);
+        }
+
+        /// <summary>
+        /// Checks if a box intersects this wall. Intersection is considered to
+        /// be fully crossing, not just touching (for compatibility reasons).
+        /// </summary>
+        /// <param name="box">The box to check.</param>
+        /// <returns>True if the box intersects the wall, false if not.
+        /// </returns>
+        public bool IntersectedBy(in Box3F box)
+        {
+            if (!Line.Segment.Intersects(box.XZ))
+                return false;
+
+            return !(box.Max.Y <= FloorHeight || box.Min.Y >= CeilingHeight);
         }
 
         public void Update()
@@ -42,6 +64,35 @@ namespace Helion.Worlds.Geometry.Walls
         public void Dispose()
         {
             meshComponents.Dispose();
+        }
+
+        internal (SectorPlane floor, SectorPlane ceiling) FindBoundingPlane()
+        {
+            Sector facingSector = Side.Sector;
+            if (Line.OneSided)
+                return (facingSector.Floor, facingSector.Ceiling);
+
+            Sector partnerSector = Side.PartnerSide.Value.Sector;
+            if (OnBackSide)
+                (facingSector, partnerSector) = (partnerSector, facingSector);
+
+            SectorPlane facingFloor = facingSector.Floor;
+            SectorPlane facingCeiling = facingSector.Ceiling;
+            SectorPlane partnerFloor = partnerSector.Floor;
+            SectorPlane partnerCeiling = partnerSector.Ceiling;
+
+            switch (Section)
+            {
+            case WallSection.Lower:
+                return (facingFloor, partnerFloor);
+            case WallSection.Middle:
+                return (facingFloor.Height >= partnerFloor.Height ? facingFloor : partnerFloor,
+                    facingCeiling.Height <= partnerCeiling.Height ? facingCeiling : partnerCeiling);
+            case WallSection.Upper:
+                return (partnerCeiling, facingCeiling);
+            default:
+                throw new Exception($"Unexpected section type for wall attachment: {Section}");
+            }
         }
 
         private static UpperString GetTextureNameFrom(Side side, WallSection section)
