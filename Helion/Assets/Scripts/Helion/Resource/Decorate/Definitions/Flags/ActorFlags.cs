@@ -311,6 +311,9 @@ namespace Helion.Resource.Decorate.Definitions.Flags
         public bool WindThrust => bits[(int)ActorFlagType.WindThrust];
         public bool ZdoomTrans => bits[(int)ActorFlagType.ZdoomTrans];
 
+        // The following are for readability and renaming badly named flags.
+        public bool Slides => SlidesOnWalls;
+
         /// <summary>
         /// Creates an empty flags object where no flags are set.
         /// </summary>

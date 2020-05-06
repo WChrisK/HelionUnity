@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Helion.Resource.Decorate.Definitions;
+using Helion.Resource.Decorate.Definitions.Flags;
+using Helion.Resource.Decorate.Definitions.Properties;
 using Helion.Resource.Decorate.Definitions.States;
 using Helion.Unity;
 using Helion.Util.Geometry;
@@ -70,6 +72,11 @@ namespace Helion.Worlds.Entities
 
         public World World => entityManager.world;
         public ActorFrame Frame => frameTracker.Frame;
+        public ActorFlags Flags => Definition.Flags;
+        public ActorProperties Properties => Definition.Properties;
+        public float Radius => Definition.Properties.Radius;
+        public float Height => Definition.Properties.Height;
+        public float HalfHeight => Height * 0.5f;
 
         public Entity(int id, ActorDefinition definition, Vec3F position, BitAngle angle,
             Sector sector, EntityManager manager)
@@ -109,6 +116,18 @@ namespace Helion.Worlds.Entities
             Sector = World.Geometry.BspTree.Sector(position);
         }
 
+        /// <summary>
+        /// Checks if the provided entity blocks this one. This is primarily
+        /// intended to see if a collision between entities should be blocking
+        /// or if the mover can walk into it (and possibly even pick it up).
+        /// </summary>
+        /// <param name="other">The other entity to check against.</param>
+        /// <returns>True if the other blocks it, false if not.</returns>
+        public bool IsBlockedBy(Entity other)
+        {
+            return other.Flags.Solid;
+        }
+
         public void Tick()
         {
             Position = Position.Tick();
@@ -130,7 +149,7 @@ namespace Helion.Worlds.Entities
 
         private Box2F CreateBoxAt(in Vec2F center)
         {
-            float radius = Definition.Properties.Radius;
+            float radius = Radius;
             Vec2F radiusVector = new Vec2F(radius, radius);
             return new Box2F(center - radiusVector, center + radiusVector);
         }
@@ -144,13 +163,11 @@ namespace Helion.Worlds.Entities
 
         private BoxCollider CreateCollider()
         {
-            float radius = Definition.Properties.Radius;
-            float diameter = radius * 2;
-            float height = Definition.Properties.Height;
+            float diameter = Radius * 2;
 
             BoxCollider boxCollider = GameObject.AddComponent<BoxCollider>();
-            boxCollider.center = new Vector3(0, height / 2, 0).MapUnit();
-            boxCollider.size = new Vector3(diameter, height, diameter).MapUnit();
+            boxCollider.center = new Vector3(0, Height / 2, 0).MapUnit();
+            boxCollider.size = new Vector3(diameter, Height, diameter).MapUnit();
 
             return boxCollider;
         }
