@@ -75,7 +75,7 @@ namespace Helion.Worlds.Entities
             float y = texture.Height.MapUnit() / 2;
             gameObject.transform.localPosition = new Vector3(0, y, 0);
             gameObject.transform.localScale = new Vector3(texture.Width, texture.Height, 1);
-            gameObject.transform.localEulerAngles = CameraManager.CalculateSpriteEulerAngles(entity, tickFraction);
+            gameObject.transform.localEulerAngles = CameraManager.SpriteEulerAngles;
 
             // TODO: Only do this if the brightness level changes.
             float lightLevel = entity.Sector.LightLevelNormalized;

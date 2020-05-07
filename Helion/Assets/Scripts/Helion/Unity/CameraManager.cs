@@ -18,8 +18,24 @@ namespace Helion.Unity
         /// The current camera we are looking through.
         /// </summary>
         public static Camera Camera { get; private set; }
+
+        /// <summary>
+        /// The bit angle the camera is facing.
+        /// </summary>
         public static BitAngle Angle { get; private set; }
+
+        /// <summary>
+        /// The position of the camera.
+        /// </summary>
         public static Vec3F Position { get; private set; }
+
+        /// <summary>
+        /// The euler angle value that can be used with the transform of an
+        /// entity mesh so that it is properly facing us in a billboarded
+        /// way.
+        /// </summary>
+        public static Vector3 SpriteEulerAngles { get; private set; }
+
         internal static EntryPoint entryPoint;
 
         /// <summary>
@@ -49,24 +65,7 @@ namespace Helion.Unity
 
             Position = Camera.transform.position.AsVec() / Constants.MapUnit;
             Angle = BitAngle.FromDegrees(DoomUnityAngleConverter(Camera.transform.eulerAngles.y));
-        }
-
-        /// <summary>
-        /// Calculates the rotation (euler angles) we should apply to a mesh so
-        /// that it always faces the camera.
-        /// </summary>
-        /// <param name="entity">The entity being rendered by the camera.</param>
-        /// <param name="tickFraction">The fraction for interpolation.</param>
-        /// <returns>The euler angles that can be assigned for the proper
-        /// rotation.</returns>
-        public static Vector3 CalculateSpriteEulerAngles(Entity entity, float tickFraction)
-        {
-            Vec3F delta = entity.Position.Value(tickFraction) - Position;
-            Quaternion rotation = Quaternion.LookRotation(delta);
-            Vector3 eulerAngles = rotation.eulerAngles;
-            // eulerAngles.y -= 90;
-
-            return eulerAngles;
+            SpriteEulerAngles = Quaternion.AngleAxis(Camera.transform.eulerAngles.y, Vector3.up).eulerAngles;
         }
 
         /// <summary>
