@@ -76,10 +76,17 @@ namespace Helion.Worlds.Entities
 
         public void Tick()
         {
-            // We want to
             players.Values.ForEach(player => player.Tick());
 
-            Entities.ForEach(entity => entity.Tick());
+            // Because we can run over items and pick them up (remove them from
+            // the world) we cannot use the normal iteration methods or we will
+            // cause exceptions due to mutating (removal) while iterating.
+            LinkedListNode<Entity> node = Entities.First;
+            while (node != null)
+            {
+                node.Value.Tick();
+                node = node.Next;
+            }
         }
 
         public void Dispose()
