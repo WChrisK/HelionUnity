@@ -52,6 +52,24 @@ namespace Helion.Unity
         }
 
         /// <summary>
+        /// Calculates the rotation (euler angles) we should apply to a mesh so
+        /// that it always faces the camera.
+        /// </summary>
+        /// <param name="entity">The entity being rendered by the camera.</param>
+        /// <param name="tickFraction">The fraction for interpolation.</param>
+        /// <returns>The euler angles that can be assigned for the proper
+        /// rotation.</returns>
+        public static Vector3 CalculateSpriteEulerAngles(Entity entity, float tickFraction)
+        {
+            Vec3F delta = entity.Position.Value(tickFraction) - Position;
+            Quaternion rotation = Quaternion.LookRotation(delta);
+            Vector3 eulerAngles = rotation.eulerAngles;
+            // eulerAngles.y -= 90;
+
+            return eulerAngles;
+        }
+
+        /// <summary>
         /// Gets the rotational index between 0 - 7 for which sprite rotation
         /// to use.
         /// </summary>
@@ -61,8 +79,6 @@ namespace Helion.Unity
         /// </returns>
         public static int CalculateRotationIndex(Entity entity, float tickFraction)
         {
-            // TODO: We keep doing pointless XYZ -> XZ conversions when we don't need to.
-            // TODO: Does not take interpolation of the camera position into account!
             Vec2F eye = Position.XZ;
             Vec2F other = entity.Position.Value(tickFraction).XZ;
             uint bits = BitAngle.ToDiamondAngle(eye, other);

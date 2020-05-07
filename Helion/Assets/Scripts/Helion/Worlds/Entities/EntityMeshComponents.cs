@@ -75,12 +75,13 @@ namespace Helion.Worlds.Entities
             float y = texture.Height.MapUnit() / 2;
             gameObject.transform.localPosition = new Vector3(0, y, 0);
             gameObject.transform.localScale = new Vector3(texture.Width, texture.Height, 1);
+            gameObject.transform.localEulerAngles = CameraManager.CalculateSpriteEulerAngles(entity, tickFraction);
 
             // TODO: Only do this if the brightness level changes.
             float lightLevel = entity.Sector.LightLevelNormalized;
             Color color = new Color(lightLevel, lightLevel, lightLevel, 1.0f);
             Color[] colors = meshDataManager.ColorBufferSwap(color);
-            Mesh.SetColors(colors);
+            Mesh.colors = colors;
         }
 
         public void Dispose()

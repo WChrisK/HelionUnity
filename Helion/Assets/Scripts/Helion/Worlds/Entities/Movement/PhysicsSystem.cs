@@ -40,9 +40,7 @@ namespace Helion.Worlds.Entities.Movement
 
         private void ClampVelocity(Entity entity)
         {
-            // TODO: This does not create an intermediate object on the heap, right?
             (float x, float y, float z) = entity.Velocity;
-
             if (x.ApproxZero(MinMovementThreshold))
                 x = 0;
             if (y.ApproxZero(MinMovementThreshold))
