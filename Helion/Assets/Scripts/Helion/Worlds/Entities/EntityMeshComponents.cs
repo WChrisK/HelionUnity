@@ -11,6 +11,11 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace Helion.Worlds.Entities
 {
+    /// <summary>
+    /// A collection of mesh components used for rendering an entity with. This
+    /// only contains elements for rendering, it does not contain anything like
+    /// the box collider.
+    /// </summary>
     public class EntityMeshComponents : IRenderable, IDisposable
     {
         // TODO: Should we make this non static? If someone edits these accidentally, we're screwed.
@@ -127,6 +132,8 @@ namespace Helion.Worlds.Entities
             };
 
             // We're going to be changing components on this potentially a lot.
+            // Especially since most frames are not the same size and/or we
+            // have to deal with changing the UV for mirrors.
             mesh.MarkDynamic();
 
             return mesh;
