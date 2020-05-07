@@ -84,5 +84,55 @@ namespace Helion.Worlds.Entities.Movement
             Collider[] allColliders = Physics.OverlapBox(center, halfExtents);
             return new CollisionData(allColliders, entity, box);
         }
+
+        /// <summary>
+        /// Checks if we can move to the position at 'next position'. Populates
+        /// a reference with collision data, which should not be mutated.
+        /// </summary>
+        /// <param name="entity">The entity that is trying to move.</param>
+        /// <param name="nextPosition">The center bottom of where we want to
+        /// move to.</param>
+        /// <param name="nextBox">The collision box for the entity. This should
+        /// also have its bottom center at the exact same point as the next
+        /// position vector.</param>
+        /// <param name="collisions">The output with the found collisions.
+        /// </param>
+        /// <returns>True if we can move to the spot without any collisions,
+        /// false if there was one or more blockers.</returns>
+        private bool CanMoveTo(Entity entity, in Vec3F nextPosition, in Box3F nextBox, out CollisionData collisions)
+        {
+            collisions = FindCollisions(entity, nextPosition, nextBox);
+            return collisions.HasNone;
+        }
+
+        /// <summary>
+        /// Performs the actual move to the position provided. This will update
+        /// the entity and do any item pickups.
+        /// </summary>
+        /// <param name="entity">The entity to move to the position.</param>
+        /// <param name="position">The bottom center position to move the
+        /// entity to.</param>
+        /// <param name="collisions">The collision info from the call to
+        /// <see cref="CanMoveTo"/>.</param>
+        private void MoveTo(Entity entity, in Vec3F position, CollisionData collisions)
+        {
+            entity.SetPosition(position);
+
+            if (entity.Flags.Pickup)
+                PerformItemPickups(entity, collisions);
+        }
+
+        private void PerformItemPickups(Entity entity, CollisionData collisions)
+        {
+            for (int i = 0; i < collisions.NonBlockingEntityCount; i++)
+            {
+                Entity nonBlockingEntity = collisions.NonBlockingEntities[i];
+                if (nonBlockingEntity.Definition.ActorType.Inventory)
+                {
+                    // TODO: Add it to the inventory.
+                    nonBlockingEntity.Dispose();
+                }
+            }
+        }
     }
 }

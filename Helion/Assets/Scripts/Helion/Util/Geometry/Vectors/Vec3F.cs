@@ -257,6 +257,15 @@ namespace Helion.Util.Geometry.Vectors
         public Vec3F WithZ(float z) => new Vec3F(X, Y, z);
 
         /// <summary>
+        /// Returns a vector with its X set to the incoming X, and Z set to the
+        /// incoming Y.
+        /// </summary>
+        /// <param name="vec">The X/Y values to map onto X/Z.</param>
+        /// <returns>A new vector with the X/Z values set, and the Y value is
+        /// unchanged.</returns>
+        public Vec3F WithXZ(in Vec2F vec) => new Vec3F(vec.X, Y, vec.Y);
+
+        /// <summary>
         /// Floors the components and returns the result.
         /// </summary>
         /// <returns>A floored vector.</returns>
