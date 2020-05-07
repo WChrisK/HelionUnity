@@ -260,9 +260,21 @@ namespace Helion.Util.Geometry.Vectors
         /// Returns a vector with its X set to the incoming X, and Z set to the
         /// incoming Y.
         /// </summary>
+        /// <param name="x">The new X value.</param>
+        /// <param name="z">The new X value.</param>
+        /// <returns>A new vector with the X/Z values set, and the Y value is
+        /// unchanged.</returns>
+        [Pure]
+        public Vec3F WithXZ(float x, float z) => new Vec3F(x, Y, z);
+
+        /// <summary>
+        /// Returns a vector with its X set to the incoming X, and Z set to the
+        /// incoming Y.
+        /// </summary>
         /// <param name="vec">The X/Y values to map onto X/Z.</param>
         /// <returns>A new vector with the X/Z values set, and the Y value is
         /// unchanged.</returns>
+        [Pure]
         public Vec3F WithXZ(in Vec2F vec) => new Vec3F(vec.X, Y, vec.Y);
 
         /// <summary>

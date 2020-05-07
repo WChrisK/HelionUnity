@@ -231,14 +231,15 @@ namespace Helion.Util.Geometry.Segments
 
         /// <summary>
         /// Calculates the perpendicular dot product. This also may be known as
-        /// the wedge product.
+        /// the wedge product. Note: This assumes a birds eye XZ view of the
+        /// point.
         /// </summary>
         /// <param name="point">The point to test against.</param>
         /// <returns>The perpendicular dot product.</returns>
         [Pure]
         public float PerpDot(in Vec3F point)
         {
-            return (Delta.X * (point.Y - Start.Y)) - (Delta.Y * (point.X - Start.X));
+            return (Delta.X * (point.Z - Start.Y)) - (Delta.Y * (point.X - Start.X));
         }
 
         /// <summary>
