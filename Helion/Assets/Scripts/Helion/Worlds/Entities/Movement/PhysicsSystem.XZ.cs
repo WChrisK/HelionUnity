@@ -56,9 +56,9 @@ namespace Helion.Worlds.Entities.Movement
 
                 if (CanMoveTo(entity, nextPosition, nextBox, out CollisionData collisions))
                 {
+                    MoveTo(entity, nextPosition, collisions);
                     position = nextPosition;
                     box = nextBox;
-                    MoveTo(entity, nextPosition, collisions);
                     continue;
                 }
 
@@ -72,8 +72,6 @@ namespace Helion.Worlds.Entities.Movement
                 ClearVelocityXZ(entity);
                 break;
             }
-
-            entity.SetPosition(position);
         }
 
         /// <summary>
@@ -196,7 +194,7 @@ namespace Helion.Worlds.Entities.Movement
 
             if (stepDelta.X >= 0)
             {
-                if (stepDelta.Y >= 0)
+                if (stepDelta.Z >= 0)
                 {
                     firstCorner = box.TopLeft;
                     secondCorner = box.TopRight;
@@ -211,7 +209,7 @@ namespace Helion.Worlds.Entities.Movement
             }
             else
             {
-                if (stepDelta.Y >= 0)
+                if (stepDelta.Z >= 0)
                 {
                     firstCorner = box.TopRight;
                     secondCorner = box.TopLeft;
@@ -254,7 +252,7 @@ namespace Helion.Worlds.Entities.Movement
                 Wall collidedWall = collisions.Walls[i];
 
                 if (tracer.Intersection(collidedWall.Line.Segment, out float intersectionTime) &&
-                    t < intersectionTime)
+                    intersectionTime < t)
                 {
                     t = intersectionTime;
                     wall = collidedWall;
@@ -284,9 +282,9 @@ namespace Helion.Worlds.Entities.Movement
 
             if (CanMoveTo(entity, nextPosition, nextBox, out CollisionData collisions))
             {
+                MoveTo(entity, nextPosition, collisions);
                 position = nextPosition;
                 box = nextBox;
-                MoveTo(entity, nextPosition, collisions);
                 return true;
             }
 
@@ -331,6 +329,7 @@ namespace Helion.Worlds.Entities.Movement
 
             // TODO: This is almost surely not how it's done... but it feels okay.
             // TODO: Eventually would need to use sector friction, not a hardcoded value.
+            // TODO: Why multiply friction? Won't this just cause friction to be applied twice? (now, then later as well?)
             entity.Velocity = entity.Velocity.WithXZ(stepProjection * Friction);
 
             float totalRemainingDistance = ((stepProjection * movesLeft) + residualProjection).Length();

@@ -129,8 +129,11 @@ namespace Helion.Worlds.Entities.Movement
                 Entity nonBlockingEntity = collisions.NonBlockingEntities[i];
                 if (nonBlockingEntity.Definition.ActorType.Inventory)
                 {
-                    // TODO: Add it to the inventory.
-                    nonBlockingEntity.Dispose();
+                    if (entity.TryPickup(nonBlockingEntity))
+                    {
+                        // TODO: Should we remove them from the `collisions` object as well?
+                        nonBlockingEntity.Dispose();
+                    }
                 }
             }
         }

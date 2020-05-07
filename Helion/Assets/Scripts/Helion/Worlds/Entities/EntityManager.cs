@@ -15,6 +15,9 @@ using MoreLinq;
 
 namespace Helion.Worlds.Entities
 {
+    /// <summary>
+    /// Responsible for managing all the entities in a map.
+    /// </summary>
     public class EntityManager : IEnumerable<Entity>, ITickable, IDisposable
     {
         internal readonly World world;

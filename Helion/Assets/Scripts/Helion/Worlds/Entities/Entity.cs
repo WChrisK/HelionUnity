@@ -10,6 +10,7 @@ using Helion.Util.Geometry.Boxes;
 using Helion.Util.Geometry.Vectors;
 using Helion.Util.Interpolation;
 using Helion.Util.Unity;
+using Helion.Worlds.Entities.Items;
 using Helion.Worlds.Geometry;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace Helion.Worlds.Entities
     /// <summary>
     /// An actor in a world.
     /// </summary>
-    public class Entity : ITickable, IDisposable
+    public class Entity : ITickable, IRenderable, IDisposable
     {
         /// <summary>
         /// The unique ID of this entity.
@@ -35,6 +36,11 @@ namespace Helion.Worlds.Entities
         /// be the interpolated position at the bottom center of the body.
         /// </summary>
         public readonly GameObject GameObject;
+
+        /// <summary>
+        /// The inventory of items this object holds.
+        /// </summary>
+        public readonly Inventory Inventory = new Inventory();
 
         /// <summary>
         /// The bottom center position of the entity. Note that this uses the
@@ -95,13 +101,6 @@ namespace Helion.Worlds.Entities
             collisionInfo = CollisionInfo.CreateOn(GameObject, this);
         }
 
-        public void Update(float tickFraction)
-        {
-            GameObject.transform.position = Position.Value(tickFraction).MapUnit();
-
-            meshComponents.Update(tickFraction);
-        }
-
         /// <summary>
         /// Sets the world position. This should be the world unit position
         /// (not the scaled map unit position).
@@ -114,6 +113,23 @@ namespace Helion.Worlds.Entities
             GameObject.transform.position = position.MapUnit();
 
             Sector = World.Geometry.BspTree.Sector(position);
+        }
+
+        /// <summary>
+        /// Tries to pickup the entity provided if it is an inventory item and
+        /// adds it to the inventory of the current entity on success. This
+        /// does not delete the picked up entity from the map.
+        /// </summary>
+        /// <param name="entity">The entity in the map to pick up.</param>
+        /// <returns>True if it picked up the item, false if not.</returns>
+        public bool TryPickup(Entity entity)
+        {
+            if (!entity.Definition.ActorType.Inventory)
+                return false;
+
+            Inventory.Add(entity.Definition);
+
+            return true;
         }
 
         /// <summary>
@@ -136,6 +152,13 @@ namespace Helion.Worlds.Entities
             frameTracker.Tick();
 
             World.Physics.TryMove(this);
+        }
+
+        public void Update(float tickFraction)
+        {
+            GameObject.transform.position = Position.Value(tickFraction).MapUnit();
+
+            meshComponents.Update(tickFraction);
         }
 
         public void Dispose()

@@ -11,7 +11,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace Helion.Worlds.Entities
 {
-    public class EntityMeshComponents : IDisposable
+    public class EntityMeshComponents : IRenderable, IDisposable
     {
         // TODO: Should we make this non static? If someone edits these accidentally, we're screwed.
         private static readonly Vector2[] nonFlippedUV =
