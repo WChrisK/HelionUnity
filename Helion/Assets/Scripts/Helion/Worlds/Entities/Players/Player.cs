@@ -94,7 +94,7 @@ namespace Helion.Worlds.Entities.Players
         private Camera CreateCamera()
         {
             Camera camera = GameObject.AddComponent<Camera>();
-            camera.nearClipPlane = Math.Min(Entity.Radius, Entity.HalfHeight).MapUnit();
+            camera.nearClipPlane = Math.Min(Entity.Radius, Entity.HalfHeight).MapUnit() / 2;
             camera.farClipPlane = FarClipPlaneDistance;
 
             return camera;

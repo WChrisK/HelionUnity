@@ -51,18 +51,23 @@ namespace Helion.Worlds.Geometry.Subsectors
         public bool IntersectedBy(in Box3F box)
         {
             Box2F box2D = box.XZ;
+            bool insideSubsector = true;
 
-            // Doing iteration by index to reduce GC pressure.
             for (int i = 0; i < Edges.Count; i++)
+            {
                 if (Edges[i].Intersects(box2D))
                     return HeightIntersectedBy(box);
 
-            // If we're not intersecting any lines, then we are either fully
-            // inside or fully outside. We can check this by taking any point
-            // (we'll use the bottom left corner) and seeing if it is on the
-            // right side of the first edge. Since the subsectors are clockwise
-            // then being on the right means it's inside (by definition).
-            if (Edges[0].OnRight(box.Min))
+                // This is for the case when we are not intersecting any edge.
+                // If we have no intersections, then all our box vertices are
+                // either inside or outside. What we'll do is check some vertex
+                // arbitrarily against every edge, and we know we're inside if
+                // the arbitrary vertex is always on the right side of every
+                // single edge (because a subsector is all clockwise edges).
+                insideSubsector &= Edges[i].OnRight(box.Min);
+            }
+
+            if (insideSubsector)
                 return HeightIntersectedBy(box);
 
             return false;
