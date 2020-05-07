@@ -38,8 +38,9 @@ namespace Helion.Worlds.Geometry
             set
             {
                 height = value;
+                // TODO: We should have the planes be a child of this so we don't need to do updates.
                 SubsectorPlanes.ForEach(subsectorPlane => subsectorPlane.UpdateMeshes());
-                WallListeners.ForEach(wall => wall.Update());
+                WallListeners.ForEach(wall => wall.NotifyPlaneUpdate());
             }
         }
 

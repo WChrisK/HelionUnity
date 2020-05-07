@@ -28,7 +28,7 @@ namespace Helion.Worlds.Geometry.Walls
     /// go along with it and rotate appropriately. This is to get around the
     /// mesh collider which does not work for planes.
     /// </remarks>
-    public class WallMeshComponents : IDisposable
+    public class WallMeshComponents : IRenderable, IDisposable
     {
         public readonly Mesh Mesh;
         public readonly MeshFilter Filter;
@@ -51,11 +51,12 @@ namespace Helion.Worlds.Geometry.Walls
             this.Collider = CreateBoxCollider();
             this.collisionInfo = CollisionInfo.CreateOn(gameObject, wall);
 
-            Update();
+            Update(0);
         }
 
-        public void Update()
+        public void Update(float tickFraction)
         {
+            // OPTIMIZE: We should cache this.
             (SectorPlane floor, SectorPlane ceiling) = wall.FindBoundingPlane();
 
             UpdateEnabledStatus(floor, ceiling);

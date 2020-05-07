@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Helion.Unity
+namespace Helion.Unity.MonoBehaviours
 {
     public class FPSDisplay : MonoBehaviour
     {

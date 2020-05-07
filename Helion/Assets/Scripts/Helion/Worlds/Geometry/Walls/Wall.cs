@@ -6,7 +6,7 @@ using Texture = Helion.Resource.Textures.Texture;
 
 namespace Helion.Worlds.Geometry.Walls
 {
-    public class Wall : IDisposable
+    public class Wall : IRenderable, IDisposable
     {
         public readonly int Index;
         public readonly Side Side;
@@ -56,9 +56,14 @@ namespace Helion.Worlds.Geometry.Walls
             return !(box.Max.Y <= FloorHeight || box.Min.Y >= CeilingHeight);
         }
 
-        public void Update()
+        public void NotifyPlaneUpdate()
         {
-            meshComponents.Update();
+            // TODO: Update plane boundings.
+        }
+
+        public void Update(float tickFraction)
+        {
+            meshComponents.Update(tickFraction);
         }
 
         public void Dispose()

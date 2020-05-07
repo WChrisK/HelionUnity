@@ -11,7 +11,7 @@ using Helion.Worlds.Entities.Players;
 using Helion.Worlds.Info;
 using UnityEngine;
 
-namespace Helion.Unity
+namespace Helion.Unity.MonoBehaviours
 {
     /// <summary>
     /// The single object in the world that is used to act as a game controller

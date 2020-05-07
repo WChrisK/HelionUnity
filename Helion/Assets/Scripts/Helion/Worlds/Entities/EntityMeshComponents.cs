@@ -34,6 +34,7 @@ namespace Helion.Worlds.Entities
         public readonly MeshRenderer Renderer;
         private readonly Entity entity;
         private readonly GameObject gameObject;
+        private readonly MeshDataManager meshDataManager = new MeshDataManager();
         private bool isDisabled;
 
         public EntityMeshComponents(Entity entity, GameObject entityGameObject)
@@ -60,7 +61,7 @@ namespace Helion.Worlds.Entities
 
             EnsureEnabled();
 
-            // TODO: If the index or the texture does not change, exit early.
+            // TODO: If the index or the texture does not change, don't do some of the following.
 
             int index = CameraManager.CalculateRotationIndex(entity, tickFraction);
             Texture texture = entity.Frame.SpriteRotations[index];
@@ -74,6 +75,12 @@ namespace Helion.Worlds.Entities
             float y = texture.Height.MapUnit() / 2;
             gameObject.transform.localPosition = new Vector3(0, y, 0);
             gameObject.transform.localScale = new Vector3(texture.Width, texture.Height, 1);
+
+            // TODO: Only do this if the brightness level changes.
+            float lightLevel = entity.Sector.LightLevelNormalized;
+            Color color = new Color(lightLevel, lightLevel, lightLevel, 1.0f);
+            Color[] colors = meshDataManager.ColorBufferSwap(color);
+            Mesh.SetColors(colors);
         }
 
         public void Dispose()
@@ -107,9 +114,9 @@ namespace Helion.Worlds.Entities
             };
             Vector2[] uvCoords = nonFlippedUV;
             Vector3[] normals = { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
-            Color[] colors = { color, color, color, color };
+            Color[] colors = meshDataManager.ColorBufferSwap(color);
 
-            return new Mesh
+            Mesh mesh = new Mesh
             {
                 vertices = vertices,
                 triangles = new[] { 0, 2, 1, 1, 2, 3 },
@@ -117,6 +124,11 @@ namespace Helion.Worlds.Entities
                 uv = uvCoords,
                 colors = colors
             };
+
+            // We're going to be changing components on this potentially a lot.
+            mesh.MarkDynamic();
+
+            return mesh;
         }
 
         private MeshFilter CreateFilter()
