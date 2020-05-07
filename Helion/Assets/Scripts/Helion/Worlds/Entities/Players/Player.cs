@@ -14,10 +14,11 @@ namespace Helion.Worlds.Entities.Players
     public class Player : ITickable, IDisposable
     {
         public const float MaxMovement = 30.0f;
+        public static readonly UpperString DefinitionName = "DOOMPLAYER";
         private const float ForwardMovementSpeed = 1.5625f;
         private const float SideMovementSpeed = 1.25f;
+        private const float FieldOfView = 70.0f;
         private const float FarClipPlaneDistance = 512.0f;
-        public static readonly UpperString DefinitionName = "DOOMPLAYER";
 
         public readonly int PlayerNumber;
         public readonly Entity Entity;
@@ -94,6 +95,7 @@ namespace Helion.Worlds.Entities.Players
         private Camera CreateCamera()
         {
             Camera camera = GameObject.AddComponent<Camera>();
+            camera.fieldOfView = FieldOfView;
             camera.nearClipPlane = Math.Min(Entity.Radius, Entity.HalfHeight).MapUnit() / 2;
             camera.farClipPlane = FarClipPlaneDistance;
 
